@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="Tests/bootstrap.php" colors="true">
+    <php>
+        <env name="IMAGEMAGICK_DIR" value="" />
+    </php>
+    <testsuites>
+        <testsuite name="PierstovalImageMagickPHP test suite">
+            <directory suffix="Test.php">Tests</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
