@@ -1,9 +1,5 @@
 composer.phar
 vendor/
 
-# IDEs
-.idea
-.nbproject
-
 Tests/Resources/outputs/*
 !Tests/Resources/outputs/.gitkeep

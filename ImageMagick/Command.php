@@ -227,7 +227,6 @@ class Command
      */
     protected function checkExistingFile($file)
     {
-//        $file = realpath($file);
         if (!file_exists($file)) {
             throw new \InvalidArgumentException(sprintf(
                 "The file \"%s\" is not found.\n" .
