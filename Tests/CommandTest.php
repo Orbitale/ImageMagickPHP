@@ -20,7 +20,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
     public function __construct($name = null, array $data = array(), $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
-        $this->resourcesDir = realpath(__DIR__ . "../../Tests/Resources");
+        $this->resourcesDir = realpath(dirname(__FILE__) . "../../Tests/Resources");
         if (!defined('IMAGEMAGICK_DIR')) {
             throw new \RuntimeException(
                 "The \"IMAGEMAGICK_DIR\" constant is not defined.\n" .
