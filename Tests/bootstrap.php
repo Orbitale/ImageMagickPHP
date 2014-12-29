@@ -14,8 +14,9 @@ if (!file_exists($file)) {
 }
 $autoload = require_once $file;
 
-// Check if ImageMagick is installed. Instead, we cannot run tests suite.
+define('TEST_RESOURCES_DIR', __DIR__.'/Resources');
 
+// Check if ImageMagick is installed. Instead, we cannot run tests suite.
 $possibleDirectories = array(
     '',// In the PATH variable
     '/usr/bin/',

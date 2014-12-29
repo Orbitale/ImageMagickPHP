@@ -20,13 +20,13 @@ class CommandTest extends \PHPUnit_Framework_TestCase
     public function __construct($name = null, array $data = array(), $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
-        $this->resourcesDir = realpath(dirname(__FILE__) . "../../Tests/Resources");
-        if (!defined('IMAGEMAGICK_DIR')) {
+        if (!defined('IMAGEMAGICK_DIR') || !defined('TEST_RESOURCES_DIR')) {
             throw new \RuntimeException(
                 "The \"IMAGEMAGICK_DIR\" constant is not defined.\n" .
                 "The bootstrap must be correctly included before executing test suite."
             );
         }
+        $this->resourcesDir = TEST_RESOURCES_DIR;
     }
 
     public function testResizeImage()
