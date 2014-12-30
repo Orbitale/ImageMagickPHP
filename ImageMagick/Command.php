@@ -101,12 +101,11 @@ class Command
 
     /**
      * Start a new command with the "mogrify" executable (if allowed)
-     * @param $source
      * @return $this
      */
-    public function mogrify($source)
+    public function mogrify()
     {
-        return $this->newCommand('mogrify')->file($source);
+        return $this->newCommand('mogrify');
     }
 
     /**
