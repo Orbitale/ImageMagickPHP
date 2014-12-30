@@ -46,12 +46,12 @@ class Command
             throw new \RuntimeException('The "exec" function must be available to use ImageMagick commands.');
         }
 
-        // Get realpath, delete trimming directory separator
+        // Delete trimming directory separator
         $imageMagickPath = preg_replace('~[\\\/]$~', '', $imageMagickPath);
         if ($imageMagickPath) {
-            // Add a proper "/" at the end if path is not empty.
+            // Add a proper directory separator at the end if path is not empty.
             // If it's empty, then it's set in the global path.
-            $imageMagickPath .= '/';
+            $imageMagickPath .= DIRECTORY_SEPARATOR;
             if (!is_dir($imageMagickPath)) {
                 throw new \InvalidArgumentException(sprintf(
                     "The specified path (%s) is not a directory.\n" .
