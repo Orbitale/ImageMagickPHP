@@ -101,11 +101,16 @@ class Command
 
     /**
      * Start a new command with the "mogrify" executable (if allowed)
+     * @var string $source An image to mogrify, it has to exist.
      * @return $this
      */
-    public function mogrify()
+    public function mogrify($source = null)
     {
-        return $this->newCommand('mogrify');
+        $this->newCommand('mogrify');
+        if ($source) {
+            $this->file($source, true, true);
+        }
+        return $this;
     }
 
     /**
@@ -209,13 +214,18 @@ class Command
      * Add a file specification, mostly for source or destination file
      * @param string $source The file must exists
      * @param bool $checkExistence If true, checks file existence before using it
+     * @param bool $append If true, appends the file name instead of adding it to the command normally
      * @return $this
      */
-    public function file($source, $checkExistence = true)
+    public function file($source, $checkExistence = true, $append = false)
     {
         $source = $checkExistence ? $this->checkExistingFile($source) : $source;
         $source = str_replace('\\', '/', $source);
-        $this->command .= ' "' . $source . '" ';
+        if ($append) {
+            $this->commandToAppend .= ' "' . $source . '" ';
+        } else {
+            $this->command .= ' "' . $source . '" ';
+        }
         return $this;
     }
 

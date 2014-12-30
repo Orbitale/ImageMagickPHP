@@ -92,14 +92,13 @@ use Pierstoval\Component\ImageMagick\Command;
 $command = new Command();
 
 $response = $command
-    ->mogrify()
+
+    // Here we are using "mogrify", so the file must exist as it is overwritten (it's basically the difference between "convert" and "mogrify")
+    ->mogrify('background.jpeg')
 
     // The "resize" method allows you to add a "Geometry" operation.
     // It must fit to the "Geometry" parameters in the ImageMagick official documentation (see links below)
     ->resize('50x50')
-
-    // Here we are using "Mogrify", so the file must exist as it is overwritten
-    ->file('background.jpeg')
 
     ->run()
 ;
