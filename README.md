@@ -45,7 +45,7 @@ The constructor will automatically search for the `convert` executable, test it,
 Usage
 ===============
 
-# Basic image converter with ImageMagick's basic logo
+### Basic image converter with ImageMagick's basic logo
 
 Read the comments :
 
@@ -82,7 +82,7 @@ Read the comments :
 
 ```
 
-# Simply resizing an image
+### Simply resizing an image
 
 ```php
     require_once 'vendor/autoload.php';
@@ -119,4 +119,4 @@ Useful links
 * ImageMagick documentation:
     * [Installation binaries](http://www.imagemagick.org/script/binary-releases.php) (depending on your OS and/or distribution)
     * [Geometry](http://www.imagemagick.org/script/command-line-processing.php#geometry) (to resize or place text)
-    * [All command-line optinos](http://www.imagemagick.org/ImageMagick-7.0.0/script/command-line-options.php) ; they're not all available for now, so feel free to make a PR ! ;)
+    * [All command-line options](http://www.imagemagick.org/ImageMagick-7.0.0/script/command-line-options.php) ; they're not all available for now, so feel free to make a PR ! ;)
