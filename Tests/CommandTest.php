@@ -29,6 +29,16 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $this->resourcesDir = TEST_RESOURCES_DIR;
     }
 
+    public function setUp()
+    {
+        $dir = TEST_RESOURCES_DIR.'/outputs';
+        foreach (scandir($dir) as $file) {
+            if ('.' !== $file && '..' !== $file && '.gitkeep' !== $file) {
+                unlink($dir.'/'.$file);
+            }
+        }
+    }
+
     public function testResizeImage()
     {
 
