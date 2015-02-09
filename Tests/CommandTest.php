@@ -44,12 +44,14 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = new Command(IMAGEMAGICK_DIR);
 
-        $this->assertFileExists($this->resourcesDir . '/moon_180.jpg');
+        $imageToResize = $this->resourcesDir . '/moon_180.jpg';
+        $imageOutput = $this->resourcesDir . '/outputs/moon.jpg';
+        $this->assertFileExists($imageToResize);
 
         $command
-            ->convert($this->resourcesDir . '/moon_180.jpg')
+            ->convert($imageToResize)
             ->resize('100x100')
-            ->file($this->resourcesDir . '/outputs/moon.jpg', false);
+            ->file($imageOutput, false);
 
         $response = $command->run();
 
@@ -57,5 +59,39 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($response->hasFailed());
 
+        $this->testIdentifyImage($imageOutput, 'JPEG', '100x94+0+0', '8-bit', 'sRGB');
+
+    }
+
+    /**
+     * @dataProvider provideImagesToIdentify
+     */
+    public function testIdentifyImage($imageToIdentify, $expectedFormat, $expectedGeometry, $expectedResolution, $expectedColorFormat)
+    {
+        $command = new Command(IMAGEMAGICK_DIR);
+
+        $response = $command->identify($imageToIdentify)->run();
+
+        $this->assertFalse($response->hasFailed());
+
+        $content = $response->getContent();
+        $content = implode("\n", $content);
+
+        $this->assertContains(sprintf(
+            '%s %s %s %s %s %s',
+            $imageToIdentify,
+            $expectedFormat,
+            preg_replace('~\+.*$~', '', $expectedGeometry),
+            $expectedGeometry,
+            $expectedResolution,
+            $expectedColorFormat
+        ), $content);
+    }
+
+    public function provideImagesToIdentify()
+    {
+        return array(
+            array($this->resourcesDir.'/moon_180.jpg', 'JPEG', '180x170+0+0', '8-bit', 'sRGB'),
+        );
     }
 }
