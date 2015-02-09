@@ -21,16 +21,27 @@ final class References
      */
     private $config = array();
 
-    public function __construct()
+    public function __construct($referenceFile = null)
     {
-        $config = Yaml::parse(file_get_contents(__DIR__ . '/Resources/references.yml'));
+        if (null === $referenceFile) {
+            $referenceFile = __DIR__ . '/Resources/references.yml';
+        }
+        if (!file_exists($referenceFile)) {
+            throw new \RuntimeException(sprintf(
+                "File %s for ImageMagick references does not exist.\n".
+                "Check that the file exists and that it is readable.",
+                $referenceFile
+            ));
+        }
+        $config = Yaml::parse(file_get_contents($referenceFile));
         if (is_array($config) && count($config)) {
             $this->config = $config;
         } else {
-            throw new \RuntimeException(
-                "Impossible to retrieve resources file for ImageMagick references.\n".
-                "Check that the file exists and that it is readable."
-            );
+            throw new \InvalidArgumentException(sprintf(
+                "File %s for ImageMagick references seems to be empty.\n".
+                "If it is a YAML file, please check its contents.",
+                $referenceFile
+            ));
         }
     }
 

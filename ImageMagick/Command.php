@@ -34,7 +34,7 @@ class Command
     protected $command = '';
     protected $commandToAppend = '';
 
-    public function __construct($imageMagickPath = '/usr/bin')
+    public function __construct($imageMagickPath = '/usr/bin', $referencesDirectory = null)
     {
         // We must use "exec" for this command, because we don't rely on the ImageMagick PHP extension.
         // To execute the ImageMagick binaries, then, we check the availability of "exec"
@@ -74,7 +74,7 @@ class Command
             ));
         }
 
-        $this->ref = new References;
+        $this->ref = new References($referencesDirectory);
 
         $this->imageMagickPath = $imageMagickPath;
     }
