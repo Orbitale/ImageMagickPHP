@@ -27,6 +27,31 @@ class ReferencesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider provideInvalidResourceFiles
+     * @param $file
+     * @param $expectedException
+     */
+    public function testInvalidResourceFile($file, $expectedException)
+    {
+        $exceptionClass = '';
+        try {
+            new References($file);
+        } catch (\Exception $e) {
+            $exceptionClass = get_class($e);
+        }
+        $this->assertEquals($exceptionClass, $expectedException);
+    }
+
+    public function provideInvalidResourceFiles()
+    {
+        return array(
+            array('/this/directory/certainly/does/not/exist', 'RuntimeException'),
+            array(TEST_RESOURCES_DIR.'/empty_reference.yml', 'InvalidArgumentException'),
+            array(TEST_RESOURCES_DIR.'/tab_file.yml', 'Symfony\Component\Yaml\Exception\ParseException'),
+        );
+    }
+
+    /**
      * @dataProvider provideCorrectColors
      * @param string $color
      */

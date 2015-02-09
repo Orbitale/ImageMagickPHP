@@ -1,0 +1,2 @@
+references:
+	"there's a tab here so it's": "invalid, cuz Yaml doesn't accept tabs. Only spaces."
