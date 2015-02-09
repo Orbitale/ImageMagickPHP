@@ -26,100 +26,136 @@ class ReferencesTest extends \PHPUnit_Framework_TestCase
         $this->ref = new References();
     }
 
-    public function testColors()
+    /**
+     * @dataProvider provideCorrectColors
+     * @param string $color
+     */
+    public function testCorrectColors($color)
     {
-
-        $correctColors = array(
-            '#000',
-            ' #000 ',
-            ' #000000 ',
-            ' #000000000000 ',
-            ' #0000000000000000 ',
-            'black',
-            'RosyBrown1',
-            'rgb(0,0,0)',
-            'rgb(0%,0%,0%)',
-            'rgb(0, 0, 0)',
-            'rgb(0.0,0.0,0.0)',
-            'rgb(0.0%,0.0%,0.0%)',
-            'rgba(0,0,0,0)',
-            'rgba(0%,0%,0%,0.0)',
-            'rgba(0, 0, 0, 0)',
-            'rgba(0.0,0.0,0.0,1)',
-            'rgba(0.0%,0.0%,0.0%,0.5)',
-        );
-
-        foreach ($correctColors as $correctColor) {
-            try {
-                $checked = $this->ref->color($correctColor);
-                $this->assertEquals($checked, trim($correctColor));
-            } catch (\InvalidArgumentException $e) {
-                $this->assertTrue(false, sprintf("Failed in checking valid color (%s)", $correctColor));
-            }
+        $exception = false;
+        try {
+            $checked = $this->ref->color($color);
+            $this->assertEquals($checked, trim($color));
+        } catch (\InvalidArgumentException $e) {
+            $exception = true;
         }
-
-        $wrongColors = array(
-            'invalidColorName',
-            '#0000',
-            'rgb(0,0,0,0)',
-            'rgba(0,0,0)',
-            'rgba(0,0,0,2)',
-            'rgba(0,0,0,1%)',
-        );
-
-        foreach ($wrongColors as $wrongColor) {
-            try {
-                $this->ref->color($wrongColor);
-            } catch (\InvalidArgumentException $e) {
-                $this->assertContains(
-                    sprintf("The specified color (%s) is invalid", $wrongColor),
-                    $e->getMessage()
-                );
-            }
-        }
-
+        $this->assertFalse($exception, sprintf("Failed in checking valid color (%s)", $color));
     }
 
-    public function testGeometry()
+    public function provideCorrectColors()
     {
-
-        $correctGeometries = array(
-            'x100',
-            '100x100',
-            '100',
-            '+0+0',
-            'x100+0+0',
-            '100+0+0',
-            '100x100+0+0',
-            '100%x100%+0+0',
+        return array(
+            array('#000'),
+            array(' #000 '),
+            array(' #000000 '),
+            array(' #000000000000 '),
+            array(' #0000000000000000 '),
+            array('black'),
+            array('RosyBrown1'),
+            array('LavenderBlush2'),
+            array('rgb(0,0,0)'),
+            array('rgb(0%,0%,0%)'),
+            array('rgb(0, 0, 0)'),
+            array('rgb(0.0,0.0,0.0)'),
+            array('rgb(0.0%,0.0%,0.0%)'),
+            array('rgba(0,0,0,0)'),
+            array('rgba(0%,0%,0%,0.0)'),
+            array('rgba(0, 0, 0, 0)'),
+            array('rgba(0.0,0.0,0.0,1)'),
+            array('rgba(0.0%,0.0%,0.0%,0.5)'),
         );
+    }
 
-        foreach ($correctGeometries as $correctGeometry) {
-            try {
-                $checked = $this->ref->geometry($correctGeometry);
-                $this->assertEquals($checked, trim($correctGeometry));
-            } catch (\InvalidArgumentException $e) {
-                $this->assertTrue(false, sprintf("Failed in checking valid geometry (%s)", $correctGeometry));
-            }
+    /**
+     * @dataProvider provideIncorrectColors
+     * @param string $color
+     */
+    public function testIncorrectColors($color)
+    {
+        $msg = '';
+        try {
+            $this->ref->color($color);
+        } catch (\InvalidArgumentException $e) {
+            $msg = $e->getMessage();
         }
-
-        $wrongGeometries = array(
-            '100x',
-            '+0',
-            'x100+0',
-            '100%x100%+0',
+        $this->assertContains(
+            sprintf("The specified color (%s) is invalid", $color),
+            $msg
         );
+    }
 
-        foreach ($wrongGeometries as $wrongGeometry) {
-            try {
-                $this->ref->geometry($wrongGeometry);
-            } catch (\InvalidArgumentException $e) {
-                $this->assertContains(
-                    sprintf("The specified geometry (%s) is invalid", $wrongGeometry),
-                    $e->getMessage()
-                );
-            }
+    public function provideIncorrectColors()
+    {
+        return array(
+            array('invalidColorName'),
+            array('#0000'),
+            array('rgb(0,0,0,0)'),
+            array('rgb(0)'),
+            array('rgb()'),
+            array('rgba(0,0,0)'),
+            array('rgba(0)'),
+            array('rgba()'),
+            array('rgba(0,0,0,2)'),
+            array('rgba(0,0,0,1%)'),
+        );
+    }
+
+    /**
+     * @dataProvider provideCorrectGeometries
+     * @param string $geometry
+     */
+    public function testCorrectGeometries($geometry)
+    {
+        $exception = false;
+        try {
+            $checked = $this->ref->geometry($geometry);
+            $this->assertEquals($checked, trim($geometry));
+        } catch (\InvalidArgumentException $e) {
+            $exception = true;
         }
+        $this->assertFalse($exception, sprintf("Failed in checking valid geometry (%s)", $geometry));
+    }
+
+    public function provideCorrectGeometries()
+    {
+        return array(
+            array('x100'),
+            array('100x100'),
+            array('100'),
+            array('+0+0'),
+            array('x100+0+0'),
+            array('100+0+0'),
+            array('100x100+0+0'),
+            array('100%x100%+0+0'),
+        );
+    }
+
+    /**
+     * @dataProvider provideIncorrectGeometries
+     * @param string $geometry
+     */
+    public function testIncorrectGeometries($geometry)
+    {
+        $msg = '';
+        try {
+            $this->ref->geometry($geometry);
+        } catch (\InvalidArgumentException $e) {
+            $msg = $e->getMessage();
+        }
+        $this->assertContains(
+            sprintf("The specified geometry (%s) is invalid", $geometry),
+            $msg
+        );
+    }
+
+    public function provideIncorrectGeometries()
+    {
+        return array(
+            array('100x'),
+            array('+0'),
+            array('x100+0'),
+            array('100%x100%+0'),
+        );
     }
 
 }
