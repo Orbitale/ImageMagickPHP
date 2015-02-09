@@ -59,14 +59,14 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($response->hasFailed());
 
-        $this->testIdentifyImage($imageOutput, 'JPEG', '100x94+0+0', '8-bit', 'sRGB');
+        $this->testIdentifyImage($imageOutput, 'JPEG', '100x94+0+0', '8-bit');
 
     }
 
     /**
      * @dataProvider provideImagesToIdentify
      */
-    public function testIdentifyImage($imageToIdentify, $expectedFormat, $expectedGeometry, $expectedResolution, $expectedColorFormat)
+    public function testIdentifyImage($imageToIdentify, $expectedFormat, $expectedGeometry, $expectedResolution)
     {
         $command = new Command(IMAGEMAGICK_DIR);
 
@@ -78,20 +78,19 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $content = implode("\n", $content);
 
         $this->assertContains(sprintf(
-            '%s %s %s %s %s %s',
+            '%s %s %s %s %s',
             $imageToIdentify,
             $expectedFormat,
             preg_replace('~\+.*$~', '', $expectedGeometry),
             $expectedGeometry,
-            $expectedResolution,
-            $expectedColorFormat
+            $expectedResolution
         ), $content);
     }
 
     public function provideImagesToIdentify()
     {
         return array(
-            array($this->resourcesDir.'/moon_180.jpg', 'JPEG', '180x170+0+0', '8-bit', 'sRGB'),
+            array($this->resourcesDir.'/moon_180.jpg', 'JPEG', '180x170+0+0', '8-bit'),
         );
     }
 }
