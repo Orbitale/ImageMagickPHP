@@ -63,14 +63,22 @@ class Command
             }
         }
 
-        exec($imageMagickPath . 'convert -version', $o, $code);
-        if ($code !== 0) {
+        if ($imageMagickPath && !file_exists($imageMagickPath . 'convert') && !file_exists($imageMagickPath . 'convert.exe')) {
             throw new \InvalidArgumentException(sprintf(
                 "The specified path (%s) does not seem to contain ImageMagick binaries, or it is not readable.\n" .
-                "If ImageMagick is set in the path, then set an empty parameter for `imageMagickPath`.\n",
+                "If ImageMagick is set in the path, then set an empty parameter for `imageMagickPath`.\n".
                 "If not, then set the absolute path of the directory containing ImageMagick following executables:\n%s",
                 $imageMagickPath,
                 implode(', ', $this->allowedExecutables)
+            ));
+        }
+
+        exec($imageMagickPath . 'convert -version', $o, $code);
+        if ($code !== 0) {
+            throw new \InvalidArgumentException(sprintf(
+                "ImageMagick does not seem to work well, the test command resulted in an error.\n" .
+                "To solve this issue, please run this command and check your error messages:\n%s",
+                $imageMagickPath . 'convert -version'
             ));
         }
 

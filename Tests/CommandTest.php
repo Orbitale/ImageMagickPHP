@@ -39,9 +39,38 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @dataProvider provideWrongConvertDirs
+     */
+    public function testWrongConvertDirs($path, $expectedMessage, $expectedException)
+    {
+        $exception = '';
+        $exceptionClass = '';
+
+        $ds = DIRECTORY_SEPARATOR;
+        $path = str_replace(array('/', '\\'), array($ds, $ds), $path);
+        $expectedMessage = str_replace(array('/', '\\'), array($ds, $ds), $expectedMessage);
+        try {
+            new Command($path);
+        } catch (\Exception $e) {
+            $exception = $e->getMessage();
+            $exceptionClass = get_class($e);
+        }
+        $this->assertContains($expectedMessage, $exception);
+        $this->assertEquals($exceptionClass, $expectedException);
+    }
+
+    public function provideWrongConvertDirs()
+    {
+        return array(
+            array('/this/is/a/dummy/dir', 'The specified path (/this/is/a/dummy/dir/) is not a directory', 'InvalidArgumentException'),
+            array('./', 'The specified path (./) does not seem to contain ImageMagick binaries, or it is not readable', 'InvalidArgumentException'),
+            array(TEST_RESOURCES_DIR.'/', 'ImageMagick does not seem to work well, the test command resulted in an error', 'InvalidArgumentException'),
+        );
+    }
+
     public function testResizeImage()
     {
-
         $command = new Command(IMAGEMAGICK_DIR);
 
         $imageToResize = $this->resourcesDir . '/moon_180.jpg';
@@ -60,7 +89,6 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($response->hasFailed());
 
         $this->testIdentifyImage($imageOutput, 'JPEG', '100x94+0+0', '8-bit');
-
     }
 
     /**
@@ -69,6 +97,9 @@ class CommandTest extends \PHPUnit_Framework_TestCase
     public function testIdentifyImage($imageToIdentify, $expectedFormat, $expectedGeometry, $expectedResolution)
     {
         $command = new Command(IMAGEMAGICK_DIR);
+
+        // ImageMagick normalizes paths with "/" as directory separator
+        $imageToIdentify = str_replace('\\', '/', $imageToIdentify);
 
         $response = $command->identify($imageToIdentify)->run();
 
