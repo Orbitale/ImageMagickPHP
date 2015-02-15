@@ -16,6 +16,11 @@ $autoload = require_once $file;
 
 define('TEST_RESOURCES_DIR', __DIR__.'/Resources');
 
+// Remove potential older output files
+foreach (glob(TEST_RESOURCES_DIR.'/outputs/*') as $file) {
+    unlink($file);
+}
+
 // Check if ImageMagick is installed. Instead, we cannot run tests suite.
 $possibleDirectories = array(
     '',// In the PATH variable
