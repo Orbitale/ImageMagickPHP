@@ -2,7 +2,7 @@
   "name": "pierstoval/imagemagick-php",
   "description": "A system that allows creating commands to send to the exec() function to use ImageMagick's powerful features.",
   "keywords": ["imagemagick", "imagick", "gd", "image", "converter"],
-  "homepage": "https://github.com/Pierstoval/imagemagick-php",
+  "homepage": "https://github.com/Pierstoval/ImageMagickPHP",
   "type": "library",
   "license": "MIT",
   "authors": [
