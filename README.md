@@ -3,6 +3,7 @@ ImageMagickPHP
 
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/ff8b439c-772a-495e-9780-4e8e8e451254/mini.png)](https://insight.sensiolabs.com/projects/ff8b439c-772a-495e-9780-4e8e8e451254)
 [![Build Status](https://travis-ci.org/Pierstoval/ImageMagickPHP.svg)](https://travis-ci.org/Pierstoval/ImageMagickPHP)
+[![Coverage Status](https://coveralls.io/repos/Pierstoval/ImageMagickPHP/badge.svg)](https://coveralls.io/r/Pierstoval/ImageMagickPHP)
 
 An ImageMagick "exec" component for PHP apps.
 
