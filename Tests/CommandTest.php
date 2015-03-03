@@ -77,24 +77,24 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $imageOutput = $this->resourcesDir . '/outputs/moon.jpg';
         $this->assertFileExists($imageToResize);
 
-        $command
+        $response = $command
             ->convert($imageToResize)
             ->resize('100x100')
-            ->file($imageOutput, false);
-
-        $response = $command->run();
+            ->file($imageOutput, false)
+            ->run()
+        ;
 
         $this->assertFileExists($this->resourcesDir . '/outputs/moon.jpg');
 
         $this->assertFalse($response->hasFailed());
 
-        $this->testIdentifyImage($imageOutput, 'JPEG', '100x94+0+0', '8-bit');
+        $this->testConvertIdentifyImage($imageOutput, 'JPEG', '100x94+0+0', '8-bit');
     }
 
     /**
      * @dataProvider provideImagesToIdentify
      */
-    public function testIdentifyImage($imageToIdentify, $expectedFormat, $expectedGeometry, $expectedResolution)
+    public function testConvertIdentifyImage($imageToIdentify, $expectedFormat, $expectedGeometry, $expectedResolution)
     {
         $command = new Command(IMAGEMAGICK_DIR);
 
@@ -124,4 +124,41 @@ class CommandTest extends \PHPUnit_Framework_TestCase
             array($this->resourcesDir.'/moon_180.jpg', 'JPEG', '180x170+0+0', '8-bit'),
         );
     }
+
+    public function testMogrifyResizeImage()
+    {
+        $command = new Command(IMAGEMAGICK_DIR);
+
+        $sourceImage = $this->resourcesDir . '/moon_180.jpg';
+        $imageOutput = $this->resourcesDir . '/outputs/moon_mogrify.jpg';
+        $this->assertFileExists($sourceImage);
+
+        if (file_exists($imageOutput)) {
+            unlink($imageOutput);
+        }
+
+        file_put_contents($imageOutput, file_get_contents($sourceImage));
+
+        if (!file_exists($imageOutput)) {
+            throw new \RuntimeException('File could not be copied from resources dir to output dir.');
+        }
+
+        $baseSize = filesize($imageOutput);
+
+        $response = $command
+            ->mogrify($imageOutput)
+            ->resize('5000x5000')
+            ->run()
+        ;
+
+        $this->assertFileExists($imageOutput);
+
+        $this->assertFalse($response->hasFailed());
+
+        clearstatcache(true);
+
+        $this->assertGreaterThan($baseSize, filesize($imageOutput));
+
+    }
+
 }
