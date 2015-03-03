@@ -73,7 +73,7 @@ class Command
             ));
         }
 
-        exec($imageMagickPath . 'convert -version', $o, $code);
+        exec($imageMagickPath . 'convert -version 2>&1', $o, $code);
         if ($code !== 0) {
             throw new \InvalidArgumentException(sprintf(
                 "ImageMagick does not seem to work well, the test command resulted in an error.\n" .
