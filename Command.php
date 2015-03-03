@@ -250,6 +250,22 @@ class Command
     }
 
     /**
+     * Escapes a string in order to inject it in the shell command
+     * @param string $string
+     * @param bool $addQuotes
+     * @return mixed|string
+     */
+    public function escape($string, $addQuotes = true)
+    {
+        $string = str_replace(
+            array('"', '`', '’', '\\\''),
+            array('\"', "'", "'", "'"),
+            trim($string)
+        );
+        return $addQuotes ? '"' . $string . '"' : $string;
+    }
+
+    /**
      * Checks if file exists in the filesystem
      * @param string $file
      * @return string
@@ -264,21 +280,5 @@ class Command
             ));
         }
         return $file;
-    }
-
-    /**
-     * Escapes a string in order to inject it in the shell command
-     * @param string $string
-     * @param bool $addQuotes
-     * @return mixed|string
-     */
-    protected function escape($string, $addQuotes = true)
-    {
-        $string = str_replace(
-            array('"', '`', '’', '\\\''),
-            array('\"', "'", "'", "'"),
-            trim($string)
-        );
-        return $addQuotes ? '"' . $string . '"' : $string;
     }
 }
