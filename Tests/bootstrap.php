@@ -27,9 +27,6 @@ $possibleDirectories = array(
     '/usr/bin/',
     '/usr/local/bin/',
 );
-if (getenv('IMAGEMAGICK_DIR')) {
-    array_unshift($possibleDirectories, getenv('IMAGEMAGICK_DIR'));
-}
 foreach ($possibleDirectories as $dir) {
     exec($dir . 'convert -version', $o, $code);
     if ($code === 0) {
