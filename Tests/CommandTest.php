@@ -158,7 +158,40 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         clearstatcache(true);
 
         $this->assertGreaterThan($baseSize, filesize($imageOutput));
+    }
 
+    /**
+     * @dataProvider provideTestCommandString
+     */
+    public function testCommandString($source, $output, $geometry, $quality)
+    {
+        $command = new Command(IMAGEMAGICK_DIR);
+
+        $commandString = $command
+            ->convert($source)
+            ->thumbnail($geometry)
+            ->quality($quality)
+            ->file($output, false)
+            ->getCommand()
+        ;
+
+        $expected = ' "'.$command->getExecutable('convert').'" '.
+                    ' "'.$source.'" '.
+                    ' -thumbnail '.$geometry.' '.
+                    ' -quality '.$quality.' '.
+                    ' "'.$output.'"  ';
+
+        $this->assertEquals($commandString, $expected);
+    }
+
+    public function provideTestCommandString()
+    {
+        return array(
+            array($this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_10_forced.jpg', '10x10!', 10),
+            array($this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_1000.jpg', '1000x1000', 100),
+            array($this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_half.jpg', '50%', 50),
+            array($this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_geometry.jpg', '30x30+20+20', 50),
+        );
     }
 
 }
