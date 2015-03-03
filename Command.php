@@ -142,6 +142,18 @@ class Command
         return $this;
     }
 
+    public function thumbnail($geometry)
+    {
+        $this->command .= ' -thumbnail '.$this->ref->geometry($geometry).' ';
+        return $this;
+    }
+
+    public function quality($quality)
+    {
+        $this->command .= ' -quality ' . ((int)$quality). ' ';
+        return $this;
+    }
+
     /**
      * Adds text to the currently converted element.
      * @param string $text The text to add
