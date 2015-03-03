@@ -24,7 +24,7 @@ final class References
     public function __construct($referenceFile = null)
     {
         if (null === $referenceFile) {
-            $referenceFile = __DIR__ . '/Resources/references.yml';
+            $referenceFile = __DIR__.'/Resources/references.yml';
         }
         if (!file_exists($referenceFile)) {
             throw new \RuntimeException(sprintf(
@@ -47,7 +47,9 @@ final class References
 
     /**
      * @link http://www.imagemagick.org/script/command-line-processing.php#geometry
+     *
      * @param mixed $geometry
+     *
      * @return string
      */
     public function geometry($geometry)
@@ -59,7 +61,7 @@ final class References
             return $geometry;
         } else {
             throw new \InvalidArgumentException(sprintf(
-                "The specified geometry (%s) is invalid.\n" .
+                "The specified geometry (%s) is invalid.\n".
                 "Please refer to ImageMagick command line documentation about geometry:\n%s",
                 $geometry,
                 'http://www.imagemagick.org/script/command-line-processing.php#geometry'
@@ -70,7 +72,9 @@ final class References
     /**
      * Checks that a color is correct according to ImageMagick command line reference
      * @link http://www.imagemagick.org/script/color.php
+     *
      * @param $color
+     *
      * @return string
      */
     public function color($color)
@@ -86,7 +90,7 @@ final class References
             return $color;
         } else {
             throw new \InvalidArgumentException(sprintf(
-                "The specified color (%s) is invalid.\n" .
+                "The specified color (%s) is invalid.\n".
                 "Please refer to ImageMagick command line documentation about colors:\n%s",
                 $color,
                 'http://www.imagemagick.org/script/color.php'

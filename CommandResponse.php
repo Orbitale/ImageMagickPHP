@@ -21,7 +21,7 @@ class CommandResponse
     public function __construct(array $content, $code)
     {
         $this->content = $content;
-        $this->code = (int)$code;
+        $this->code    = (int) $code;
     }
 
     public function hasFailed()
