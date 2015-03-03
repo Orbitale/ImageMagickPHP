@@ -194,4 +194,38 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testWrongExecutable()
+    {
+        $command = new Command(IMAGEMAGICK_DIR);
+        $command->getExecutable('this_executable_might_not_exist');
+    }
+
+    public function testInexistingFiles()
+    {
+        $command = new Command(IMAGEMAGICK_DIR);
+
+        $exception = '';
+        $file = __DIR__.'/this/file/does/not/exist';
+        try {
+            $command->file($file, true, true);
+        } catch (\Exception $e) {
+            $exception = $e->getMessage();
+        }
+        $this->assertContains(sprintf("The file \"%s\" is not found.", $file), $exception);
+    }
+
+    public function testEscape()
+    {
+        $string = 'PSR\'s a great `code` style standard. ';
+
+        $command = new Command(IMAGEMAGICK_DIR);
+
+        $escaped = $command->escape($string, true);
+
+        $this->assertEquals('"PSR\'s a great \'code\' style standard."', $escaped);
+    }
+
 }
