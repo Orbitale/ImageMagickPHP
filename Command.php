@@ -1,20 +1,17 @@
 <?php
 /*
-* This file is part of the PierstovalImageMagickPHP package.
+* This file is part of the OrbitaleImageMagickPHP package.
 *
-* (c) Alexandre "Pierstoval" Rock Ancelet <pierstoval@gmail.com>
+* (c) Alexandre Rock Ancelet <alex@orbitale.io>
 *
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
 
-namespace Pierstoval\Component\ImageMagick;
+namespace Orbitale\Component\ImageMagick;
 
 /**
- * Class Command
- * Project corahn_rin
- *
- * @author Alexandre "Pierstoval" Ancelet <pierstoval@gmail.com>
+ * @author Alexandre Rock Ancelet <alex@orbitale.io>
  */
 class Command
 {

@@ -1,21 +1,29 @@
 language: php
 
 php:
-  - 5.3.3
-  - 5.4
-  - 5.5
-  - 5.6
+    - 5.3.3
+    - 5.4
+    - 5.5
+    - 5.6
+    - nightly
+    - hhvm
+    - hhvm-nightly
+
+matrix:
+    allow_failures:
+        - php: nightly
+        - php: hhvm-nightly
 
 before_script:
-    - wget http://getcomposer.org/composer.phar
-    - php composer.phar install --no-interaction
+    - composer self-update
+    - composer install
 
 script:
     - mkdir -p build/logs
     - phpunit --coverage-clover build/logs/clover.xml
 
-after_script:
-    - vendor/bin/coveralls -v --config .coveralls.yml
+after_success: |
+ sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" -a "$TRAVIS_PHP_VERSION" != "hhvm-nightly" ]; then php vendor/bin/coveralls -v --config .coveralls.yml; fi;'
 
 notifications:
     email: pierstoval@gmail.com

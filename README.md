@@ -2,8 +2,8 @@ ImageMagickPHP
 ===============
 
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/ff8b439c-772a-495e-9780-4e8e8e451254/mini.png)](https://insight.sensiolabs.com/projects/ff8b439c-772a-495e-9780-4e8e8e451254)
-[![Build Status](https://travis-ci.org/Pierstoval/ImageMagickPHP.svg)](https://travis-ci.org/Pierstoval/ImageMagickPHP)
-[![Coverage Status](https://coveralls.io/repos/Pierstoval/ImageMagickPHP/badge.svg)](https://coveralls.io/r/Pierstoval/ImageMagickPHP)
+[![Build Status](https://travis-ci.org/Orbitale/ImageMagickPHP.svg)](https://travis-ci.org/Orbitale/ImageMagickPHP)
+[![Coverage Status](https://coveralls.io/repos/Orbitale/ImageMagickPHP/badge.svg)](https://coveralls.io/r/Orbitale/ImageMagickPHP)
 
 An ImageMagick "exec" component for PHP apps.
 
@@ -13,7 +13,7 @@ Installation
 Install with [Composer](https://getcomposer.org/), it's the best packages manager you can have :
 
 ```shell
-composer require pierstoval/imagemagick-php:dev-master
+composer require orbitale/imagemagick-php
 ```
 
 Requirements
@@ -29,13 +29,15 @@ Settings
 There are not many settings, but when you instanciate a new `Command` object, you may specify ImageMagick's executable directory directly in the constructor, for example :
 
 ```php
-// Default directory for many Linux distributions :
+use Orbitale\Component\ImageMagick\Command;
+
+// Default directory for many Linux distributions:
 $command = new Command('/usr/bin');
 
-// Or in Windows, depending of the install directory :
+// Or in Windows, depending of the install directory:
 $command = new Command('C:\ImageMagick');
 
-// If it is available in the global scope for the user running the script :
+// If it is available in the global scope for the user running the script:
 $command = new Command('');
 ```
 
@@ -53,7 +55,7 @@ Read the comments :
 ```php
 require_once 'vendor/autoload.php'; // A classic one, if you know how Composer works.
 
-use Pierstoval\Component\ImageMagick\Command;
+use Orbitale\Component\ImageMagick\Command;
 
 // Create a new command
 $command = new Command();
@@ -87,7 +89,7 @@ if (!$response->hasFailed()) {
 ```php
 require_once 'vendor/autoload.php';
 
-use Pierstoval\Component\ImageMagick\Command;
+use Orbitale\Component\ImageMagick\Command;
 
 // Create a new command
 $command = new Command();
