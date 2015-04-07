@@ -2,8 +2,8 @@ ImageMagickPHP
 ===============
 
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/ff8b439c-772a-495e-9780-4e8e8e451254/mini.png)](https://insight.sensiolabs.com/projects/ff8b439c-772a-495e-9780-4e8e8e451254)
-[![Build Status](https://travis-ci.org/Orbitale/ImageMagickPHP.svg)](https://travis-ci.org/Orbitale/ImageMagickPHP)
-[![Coverage Status](https://coveralls.io/repos/Orbitale/ImageMagickPHP/badge.svg)](https://coveralls.io/r/Orbitale/ImageMagickPHP)
+[![Build Status](https://travis-ci.org/Orbitale/ImageMagickPHP.png)](https://travis-ci.org/Orbitale/ImageMagickPHP)
+[![Coverage Status](https://coveralls.io/repos/Orbitale/ImageMagickPHP/badge.png)](https://coveralls.io/r/Orbitale/ImageMagickPHP)
 
 An ImageMagick "exec" component for PHP apps.
 
