@@ -175,13 +175,13 @@ class CommandTest extends \PHPUnit_Framework_TestCase
             ->getCommand()
         ;
 
-        $expected = ' "'.$command->getExecutable('convert').'" '.
-                    ' "'.$source.'" '.
-                    ' -thumbnail '.$geometry.' '.
-                    ' -quality '.$quality.' '.
-                    ' "'.$output.'"  ';
+        $expected = ' "'.$command->getExecutable('convert').'"'.
+                    ' "'.$source.'"'.
+                    ' -thumbnail "'.$geometry.'"'.
+                    ' -quality '.$quality.
+                    ' "'.$output.'" ';
 
-        $this->assertEquals($commandString, $expected);
+        $this->assertEquals($expected, $commandString);
     }
 
     public function provideTestCommandString()
