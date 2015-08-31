@@ -14,11 +14,14 @@ namespace Orbitale\Component\ImageMagick\ReferenceClasses;
  * Represents an ImageMagick geometry parameter.
  * Each value is optional so a big regex is used to parse it.
  *
+ * How to build the monstruous regexp? Check the gist link.
+ *
+ * @link https://gist.github.com/Pierstoval/eac8d182d2c51c93202f
  * @link http://www.imagemagick.org/script/command-line-processing.php#geometry
  */
 class Geometry
 {
-    const REGEX_VALIDATE = '~^(?:x?[0-9]+(?:\.[0-9]+)?%?|[0-9]+(?:\.[0-9]+)?%?x[0-9]+(?:\.[0-9]+)?%?[\^!<>]?)?(?:[+-][0-9]+[+-][0-9]+)?$~';
+    const REGEX_VALIDATE = '~(?<size>(?<w>(?:\d*(?:\.\d+)?)?%?)?(?:x(?<h>(?:\d*(?:\.\d+)?)?%?))?)(?<aspect>[!><@^])?(?<offset>(?<x>[+-]\d*(?:\.\d+)?)?(?<y>[+-]\d*(?:\.\d+)?)?)~';
 
     const RATIO_NONE    = null;
     const RATIO_MIN     = '^';
@@ -88,14 +91,38 @@ class Geometry
      */
     public function validate()
     {
-        if (
-        !preg_match(static::REGEX_VALIDATE, $this->value)
-        ) {
+        $errors = array();
+
+        if (!preg_match(static::REGEX_VALIDATE, $this->value, $matches)) {
+            $errors[] = 'Invalid regexp.';
+        }
+
+        $w = isset($matches['w']) && '' !== $matches['w'] ? $matches['w'] : null;
+        $h = isset($matches['h']) && '' !== $matches['h'] ? $matches['h'] : null;
+        $x = isset($matches['x']) && '' !== $matches['x'] ? $matches['x'] : null;
+        $y = isset($matches['y']) && '' !== $matches['y'] ? $matches['y'] : null;
+        $aspect = $matches['aspect'];
+
+        // The next checks will perform post-regexp matching that is impossible with preg_match natively
+
+        if ('0' === $w || '0' === $h) {
+            $errors[] = 'Cannot specify zero width nor height.';
+        }
+        if ($aspect && !$w && !$h) {
+            $errors[] = 'Aspect can be used only with both width and height.';
+        }
+
+        if (($w xor $h) && ($x || $y)) {
+            $errors[] = 'If using offset, must have both width and height';
+        }
+
+        if (count($errors)) {
             throw new \InvalidArgumentException(sprintf(
                 "The specified geometry (%s) is invalid.\n".
-                "Please refer to ImageMagick command line documentation about geometry:\n%s",
+                "Please refer to ImageMagick command line documentation about geometry:\n%s\n%s",
                 $this->value,
-                'http://www.imagemagick.org/script/command-line-processing.php#geometry'
+                'http://www.imagemagick.org/script/command-line-processing.php#geometry',
+                implode("\n", $errors)
             ));
         }
 

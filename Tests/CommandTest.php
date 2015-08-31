@@ -12,32 +12,8 @@ namespace Orbitale\Component\ImageMagick\Tests;
 
 use Orbitale\Component\ImageMagick\Command;
 
-class CommandTest extends \PHPUnit_Framework_TestCase
+class CommandTest extends AbstractTestCase
 {
-
-    private $resourcesDir;
-
-    public function __construct($name = null, array $data = array(), $dataName = '')
-    {
-        parent::__construct($name, $data, $dataName);
-        if (!defined('IMAGEMAGICK_DIR') || !defined('TEST_RESOURCES_DIR')) {
-            throw new \RuntimeException(
-                "The \"IMAGEMAGICK_DIR\" constant is not defined.\n" .
-                "The bootstrap must be correctly included before executing test suite."
-            );
-        }
-        $this->resourcesDir = TEST_RESOURCES_DIR;
-    }
-
-    public function setUp()
-    {
-        $dir = TEST_RESOURCES_DIR.'/outputs';
-        foreach (scandir($dir) as $file) {
-            if ('.' !== $file && '..' !== $file && '.gitkeep' !== $file) {
-                unlink($dir.'/'.$file);
-            }
-        }
-    }
 
     /**
      * @dataProvider provideWrongConvertDirs
