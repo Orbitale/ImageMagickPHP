@@ -29,9 +29,9 @@ class CommandResponse
         return $this->code !== 0;
     }
 
-    public function getContent()
+    public function getContent($flatten = false)
     {
-        return $this->content;
+        return $flatten ? implode("\n", $this->content) : $this->content;
     }
 
 }

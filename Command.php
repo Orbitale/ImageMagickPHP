@@ -10,6 +10,8 @@
 
 namespace Orbitale\Component\ImageMagick;
 
+use Orbitale\Component\ImageMagick\ReferenceClasses\Geometry;
+
 /**
  * @author Alexandre Rock Ancelet <alex@orbitale.io>
  */
@@ -28,7 +30,23 @@ class Command
 
     protected $imageMagickPath = '';
 
+
+    /**
+     * Environment values
+     * @var string
+     */
+    protected $env = '';
+
+    /**
+     * The shell command
+     * @var string
+     */
     protected $command = '';
+
+    /**
+     * Parameters to add at the end of the command
+     * @var string
+     */
     protected $commandToAppend = '';
 
     public function __construct($imageMagickPath = '/usr/bin', $referencesDirectory = null)
@@ -86,13 +104,21 @@ class Command
 
     /**
      * Executes the command and returns its response
+     *
+     * @param bool $getErrors If set to true, STDERR will be redirected to STDOUT
+     *
      * @return CommandResponse
      */
-    public function run()
+    public function run($getErrors = false)
     {
-        exec($this->command.' '.$this->commandToAppend, $output, $code);
+        exec($this->env.' '.$this->command.' '.$this->commandToAppend.($getErrors?' 2>&1':''), $output, $code);
 
         return new CommandResponse($output, $code);
+    }
+
+    public function setEnv($key, $value)
+    {
+        $this->env .= ' '.$key.'='.escapeshellarg($value);
     }
 
     /**
@@ -134,28 +160,82 @@ class Command
         return $this->newCommand('identify')->file($source);
     }
 
+    /**
+     * @return string
+     */
     public function getCommand()
     {
-        return $this->command.' '.$this->commandToAppend;
+        return $this->env.' '.$this->command.' '.$this->commandToAppend;
     }
 
+    /**
+     * @param string $color
+     *
+     * @return $this
+     */
+    public function background($color)
+    {
+        $this->command .= ' -background '.$this->ref->color($color);
+
+        return $this;
+    }
+
+    /**
+     * @param string|Geometry $geometry
+     *
+     * @return $this
+     */
     public function resize($geometry)
     {
-        $this->command .= ' -resize '.$this->ref->geometry($geometry).' ';
+        $this->command .= ' -resize '.$this->escape($this->ref->geometry($geometry));
 
         return $this;
     }
 
+    /**
+     * @param string|Geometry $geometry
+     *
+     * @return $this
+     */
+    public function crop($geometry)
+    {
+        $this->command .= ' -crop '.$this->escape($this->ref->geometry($geometry));
+
+        return $this;
+    }
+
+    /**
+     * @param string|Geometry $geometry
+     *
+     * @return $this
+     */
+    public function extent($geometry)
+    {
+        $this->command .= ' -extent '.$this->escape($this->ref->geometry($geometry));
+
+        return $this;
+    }
+
+    /**
+     * @param string|Geometry $geometry
+     *
+     * @return $this
+     */
     public function thumbnail($geometry)
     {
-        $this->command .= ' -thumbnail '.$this->ref->geometry($geometry).' ';
+        $this->command .= ' -thumbnail '.$this->escape($this->ref->geometry($geometry));
 
         return $this;
     }
 
+    /**
+     * @param int $quality
+     *
+     * @return $this
+     */
     public function quality($quality)
     {
-        $this->command .= ' -quality '.((int) $quality).' ';
+        $this->command .= ' -quality '.((int) $quality);
 
         return $this;
     }
@@ -164,7 +244,7 @@ class Command
      * Adds text to the currently converted element.
      *
      * @param string  $text     The text to add
-     * @param mixed   $geometry Text position in the picture or pdf. This must fit ImageMagick geometry reference
+     * @param string|Geometry   $geometry Text position in the picture or pdf. This must fit ImageMagick geometry reference
      * @param integer $size     The text size, in points unit.
      * @param string  $color    A color for your text. This must fit ImageMagick color reference
      * @param string  $font
@@ -178,7 +258,8 @@ class Command
             ' -pointsize '.(int) $size.
             ($color ? ' -fill "'.$this->ref->color($color).'"' : '').
             ' -stroke "none"'.
-            ' -annotate '.$this->ref->geometry($geometry).' '.$this->escape($text).' ';
+            ' -annotate '.$this->ref->geometry($geometry).' '.$this->escape($text)
+        ;
 
         return $this;
     }
@@ -247,7 +328,7 @@ class Command
      */
     public function newCommand($executable)
     {
-        $this->command         = ' "'.$this->getExecutable($executable).'" ';
+        $this->command         = '"'.$this->getExecutable($executable).'"';
         $this->commandToAppend = '';
 
         return $this;
@@ -267,9 +348,9 @@ class Command
         $source = $checkExistence ? $this->checkExistingFile($source) : $source;
         $source = str_replace('\\', '/', $source);
         if ($append) {
-            $this->commandToAppend .= ' "'.$source.'" ';
+            $this->commandToAppend .= ' "'.$source.'"';
         } else {
-            $this->command .= ' "'.$source.'" ';
+            $this->command .= ' "'.$source.'"';
         }
 
         return $this;
