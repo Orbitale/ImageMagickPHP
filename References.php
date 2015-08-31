@@ -11,6 +11,7 @@
 namespace Orbitale\Component\ImageMagick;
 
 
+use Orbitale\Component\ImageMagick\ReferenceClasses\Geometry;
 use Symfony\Component\Yaml\Yaml;
 
 final class References
@@ -48,25 +49,16 @@ final class References
     /**
      * @link http://www.imagemagick.org/script/command-line-processing.php#geometry
      *
-     * @param mixed $geometry
+     * @param string|Geometry $geometry
      *
      * @return string
      */
     public function geometry($geometry)
     {
-        $geometry = trim($geometry);
-        if (
-            preg_match('~^(?:x?[0-9]+(?:\.[0-9]+)?%?|[0-9]+(?:\.[0-9]+)?%?x[0-9]+(?:\.[0-9]+)?%?[\^!<>]?)?(?:[+-][0-9]+[+-][0-9]+)?$~', $geometry)
-        ) {
-            return $geometry;
-        } else {
-            throw new \InvalidArgumentException(sprintf(
-                "The specified geometry (%s) is invalid.\n".
-                "Please refer to ImageMagick command line documentation about geometry:\n%s",
-                $geometry,
-                'http://www.imagemagick.org/script/command-line-processing.php#geometry'
-            ));
+        if (!$geometry instanceof Geometry) {
+            $geometry = new Geometry(trim($geometry));
         }
+        return $geometry->validate();
     }
 
     /**

@@ -5,3 +5,5 @@ build/
 
 Tests/Resources/outputs/*
 !Tests/Resources/outputs/.gitkeep
+
+phpunit.xml
