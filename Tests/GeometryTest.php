@@ -58,9 +58,10 @@ class GeometryTest extends AbstractTestCase
         $command
             ->convert($this->resourcesDir.'/moon_180.jpg')
             ->resize($geometry)
-            ->file($this->resourcesDir.'/outputs/moon_180_test_geometry_'.uniqid($width.$height.$x.$y.$aspectRatio.'test_geo', true).'.jpg', false);
+            ->file($this->resourcesDir.'/outputs/moon_180_test_geometry_'.uniqid($width.$height.$x.$y.$aspectRatio.'test_geo', true).'.jpg', false)
+        ;
 
-        $response = $command->run(true);
+        $response = $command->run(Command::RUN_DEBUG);
 
         $this->assertFalse($response->hasFailed(), "For geometry ".$geometry->validate().", ImageMagick error:\n".$response->getContent(true));
     }

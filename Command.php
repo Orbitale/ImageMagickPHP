@@ -17,6 +17,9 @@ use Orbitale\Component\ImageMagick\ReferenceClasses\Geometry;
  */
 class Command
 {
+    const RUN_NORMAL     = null;
+    const RUN_BACKGROUND = ' > /dev/null 2>&1';
+    const RUN_DEBUG      = ' 2>&1';
 
     /**
      * @var array The list of allowed ImageMagick binaries
@@ -105,13 +108,18 @@ class Command
     /**
      * Executes the command and returns its response
      *
-     * @param bool $getErrors If set to true, STDERR will be redirected to STDOUT
+     * @param null $runMode
      *
      * @return CommandResponse
+     *
      */
-    public function run($getErrors = false)
+    public function run($runMode = self::RUN_NORMAL)
     {
-        exec($this->env.' '.$this->command.' '.$this->commandToAppend.($getErrors?' 2>&1':''), $output, $code);
+        if (!in_array($runMode, array(self::RUN_NORMAL, self::RUN_BACKGROUND, self::RUN_DEBUG))) {
+            throw new \InvalidArgumentException('The run mode must be one of '.__CLASS__.'::RUN_* constants.');
+        }
+
+        exec($this->env.' '.$this->command.' '.$this->commandToAppend.$runMode, $output, $code);
 
         return new CommandResponse($output, $code);
     }
