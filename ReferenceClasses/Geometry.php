@@ -36,17 +36,6 @@ class Geometry
      */
     private $value = '';
 
-    public function __construct($width = null, $height = null, $x = null, $y = null, $aspectRatio = self::RATIO_NONE)
-    {
-        $args = func_get_args();
-        if (count(array_map(null, $args)) > 1) {
-            $geometry = call_user_func_array(array($this, 'createFromParameters'), $args);
-        } else {
-            $geometry = $width;
-        }
-        $this->value = $geometry;
-    }
-
     /**
      * @param string|int $width Can be both
      * @param string|int $height
@@ -83,6 +72,17 @@ class Geometry
         }
 
         return $geometry;
+    }
+
+    public function __construct($width = null, $height = null, $x = null, $y = null, $aspectRatio = self::RATIO_NONE)
+    {
+        $args = func_get_args();
+        if (count(array_map(null, $args)) > 1) {
+            $geometry = call_user_func_array(array($this, 'createFromParameters'), $args);
+        } else {
+            $geometry = $width;
+        }
+        $this->value = $geometry;
     }
 
     /**
