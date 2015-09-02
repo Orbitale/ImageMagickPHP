@@ -42,3 +42,6 @@ if (!defined('IMAGEMAGICK_DIR')) {
         "in the global PATH variable, or that it is accessible in /usr/bin"
     );
 }
+
+echo "Analyzed ImageMagick directory: ".IMAGEMAGICK_DIR."\n";
+system(IMAGEMAGICK_DIR.'convert -version');
