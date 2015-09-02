@@ -21,7 +21,7 @@ namespace Orbitale\Component\ImageMagick\ReferenceClasses;
  */
 class Geometry
 {
-    const REGEX_VALIDATE = '~(?<size>(?<w>(?:\d*(?:\.\d+)?)?%?)?(?:x(?<h>(?:\d*(?:\.\d+)?)?%?))?)(?<aspect>[!><@^])?(?<offset>(?<x>[+-]\d*(?:\.\d+)?)?(?<y>[+-]\d*(?:\.\d+)?)?)~';
+    const REGEX_VALIDATE = '~(?<size>(?<w>(?:\d*(?:\.\d+)?)?%?)?(?:(?<whseparator>x)(?<h>(?:\d*(?:\.\d+)?)?%?))?)(?<aspect>[!><@^])?(?<offset>(?<x>[+-]\d*(?:\.\d+)?)?(?<y>[+-]\d*(?:\.\d+)?)?)~';
 
     const RATIO_NONE    = null;
     const RATIO_MIN     = '^';
@@ -48,8 +48,17 @@ class Geometry
     public static function createFromParameters($width = null, $height = null, $x = null, $y = null, $aspectRatio = self::RATIO_NONE)
     {
         $geometry = $width;
+
+        // If we have a height
+        // Or if we have width, no height and an offset
+        // If width is 100, it will result in 100x{offset}
+        // else, 100{offset} is incorrect
+        if (null !== $height || $width && !$height && (null !== $x || null !== $y)) {
+            $geometry .= 'x';
+        }
+
         if (null !== $height) {
-            $geometry .= 'x'.$height;
+            $geometry .= $height;
         }
 
         if ($aspectRatio && !in_array($aspectRatio, self::$validRatios)) {
@@ -101,6 +110,8 @@ class Geometry
         $h = isset($matches['h']) && '' !== $matches['h'] ? $matches['h'] : null;
         $x = isset($matches['x']) && '' !== $matches['x'] ? $matches['x'] : null;
         $y = isset($matches['y']) && '' !== $matches['y'] ? $matches['y'] : null;
+        $offset = isset($matches['offset']) && '' !== $matches['offset'] ? $matches['offset'] : null;
+        $whseparator = $matches['whseparator'];
         $aspect = $matches['aspect'];
 
         // The next checks will perform post-regexp matching that is impossible with preg_match natively
@@ -109,20 +120,20 @@ class Geometry
             $errors[] = 'Cannot specify zero width nor height.';
         }
         if ($aspect && !$w && !$h) {
-            $errors[] = 'Aspect can be used only with both width and height.';
+            $errors[] = 'Aspect can be used only with width and/or height.';
         }
 
-        if (($w xor $h) && ($x || $y)) {
-            $errors[] = 'If using offset, must have both width and height';
+        if ($w && !$h && ($x || $y) && !$whseparator) {
+            $errors[] = 'When using offsets and only width, you must specify the "x" separator like this: '.$w.'x'.$offset;
         }
 
         if (count($errors)) {
             throw new \InvalidArgumentException(sprintf(
-                "The specified geometry (%s) is invalid.\n".
-                "Please refer to ImageMagick command line documentation about geometry:\n%s\n%s",
+                "The specified geometry (%s) is invalid.\n%s\n".
+                "Please refer to ImageMagick command line documentation about geometry:\n%s\n",
                 $this->value,
-                'http://www.imagemagick.org/script/command-line-processing.php#geometry',
-                implode("\n", $errors)
+                implode("\n", $errors),
+                'http://www.imagemagick.org/script/command-line-processing.php#geometry'
             ));
         }
 
