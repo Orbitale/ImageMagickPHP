@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Imagemagickphp by Orbitale</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Imagemagickphp</h1>
+      <h2 class="project-tagline">An ImageMagick &quot;exec&quot; component for PHP apps</h2>
+      <a href="https://github.com/Orbitale/ImageMagickPHP" class="btn">View on GitHub</a>
+      <a href="https://github.com/Orbitale/ImageMagickPHP/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/Orbitale/ImageMagickPHP/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="imagemagickphp" class="anchor" href="#imagemagickphp" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ImageMagickPHP</h1>
+
+<p><a href="https://insight.sensiolabs.com/projects/ff8b439c-772a-495e-9780-4e8e8e451254"><img src="https://insight.sensiolabs.com/projects/ff8b439c-772a-495e-9780-4e8e8e451254/mini.png" alt="SensioLabsInsight"></a>
+<a href="https://travis-ci.org/Orbitale/ImageMagickPHP"><img src="https://travis-ci.org/Orbitale/ImageMagickPHP.png" alt="Build Status"></a>
+<a href="https://coveralls.io/r/Orbitale/ImageMagickPHP"><img src="https://coveralls.io/repos/Orbitale/ImageMagickPHP/badge.png" alt="Coverage Status"></a></p>
+
+<p>An ImageMagick "exec" component for PHP apps.</p>
+
+<h1>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h1>
+
+<p>Install with <a href="https://getcomposer.org/">Composer</a>, it's the best packages manager you can have :</p>
+
+<div class="highlight highlight-source-shell"><pre>composer require orbitale/imagemagick-php</pre></div>
+
+<h1>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h1>
+
+<ul>
+<li>PHP 5.3.3 or more</li>
+<li>The <code>exec()</code> function <strong>must</strong> be available and work in order to communicate with ImageMagick executables.</li>
+<li>
+<a href="http://www.imagemagick.org/">ImageMagick</a> has to be installed on your server, and the binaries must be executable by <code>exec()</code>.</li>
+</ul>
+
+<h1>
+<a id="settings" class="anchor" href="#settings" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Settings</h1>
+
+<p>There are not many settings, but when you instanciate a new <code>Command</code> object, you may specify ImageMagick's executable directory directly in the constructor, for example :</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Orbitale\Component\ImageMagick\Command</span>;</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c">// Default directory for many Linux distributions:</span></span>
+<span class="pl-s1"><span class="pl-smi">$command</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-c1">Command</span>(<span class="pl-s"><span class="pl-pds">'</span>/usr/bin<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c">// Or in Windows, depending of the install directory:</span></span>
+<span class="pl-s1"><span class="pl-smi">$command</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-c1">Command</span>(<span class="pl-s"><span class="pl-pds">'</span>C:\ImageMagick<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c">// If it is available in the global scope for the user running the script:</span></span>
+<span class="pl-s1"><span class="pl-smi">$command</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-c1">Command</span>(<span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>);</span></pre></div>
+
+<p>The constructor will automatically search for the <code>convert</code> executable, test it, and throw an exception if it's not available.</p>
+
+<p>/!\ Make sure your ImageMagick executables have the "+x" chmod option, and that the user has the rights to execute it.</p>
+
+<h1>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h1>
+
+<h3>
+<a id="basic-image-converter-with-imagemagicks-basic-logo" class="anchor" href="#basic-image-converter-with-imagemagicks-basic-logo" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Basic image converter with ImageMagick's basic logo</h3>
+
+<p>Read the comments :</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">'</span>vendor/autoload.php<span class="pl-pds">'</span></span>; <span class="pl-c">// A classic one, if you know how Composer works.</span></span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Orbitale\Component\ImageMagick\Command</span>;</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c">// Create a new command</span></span>
+<span class="pl-s1"><span class="pl-smi">$command</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-c1">Command</span>();</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$response</span> <span class="pl-k">=</span> <span class="pl-smi">$command</span></span>
+<span class="pl-s1">    <span class="pl-c">// The command will search for the "logo.png" file. If it does not exist, it will throw an exception.</span></span>
+<span class="pl-s1">    <span class="pl-c">// If it does, it will create a new command with this source image.</span></span>
+<span class="pl-s1">    <span class="pl-k">-&gt;</span>convert(<span class="pl-s"><span class="pl-pds">'</span>logo.png<span class="pl-pds">'</span></span>)</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">// The "file()" method will simply add a file name to the command.</span></span>
+<span class="pl-s1">    <span class="pl-c">// For this one, it will be used as an output file name,</span></span>
+<span class="pl-s1">    <span class="pl-c">//  that's why we set the 2nd argument "checkExistence" to "false",</span></span>
+<span class="pl-s1">    <span class="pl-c">//  so the Command will not check if the file exists (because it would throw an exception then)</span></span>
+<span class="pl-s1">    <span class="pl-k">-&gt;</span>file(<span class="pl-s"><span class="pl-pds">'</span>logo.gif<span class="pl-pds">'</span></span>, <span class="pl-c1">false</span>)</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">// At this time, the command shall look like this :</span></span>
+<span class="pl-s1">    <span class="pl-c">// $ "{ImageMagickPath}convert" "logo.png" "logo.gif"</span></span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">// Then we run the command by using "exec()" to get the CommandResponse</span></span>
+<span class="pl-s1">    <span class="pl-k">-&gt;</span>run();</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">if</span> (<span class="pl-k">!</span><span class="pl-smi">$response</span><span class="pl-k">-&gt;</span>hasFailed()) {</span>
+<span class="pl-s1">    <span class="pl-c">// If it has not failed, then we simply send it to the buffer</span></span>
+<span class="pl-s1">    <span class="pl-c1">header</span>(<span class="pl-s"><span class="pl-pds">'</span>Content-type: image/gif<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1">    <span class="pl-c1">echo</span> <span class="pl-c1">file_get_contents</span>(<span class="pl-s"><span class="pl-pds">'</span>logo.gif<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1">}</span></pre></div>
+
+<h3>
+<a id="simply-resizing-an-image" class="anchor" href="#simply-resizing-an-image" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Simply resizing an image</h3>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-s"><span class="pl-pds">'</span>vendor/autoload.php<span class="pl-pds">'</span></span>;</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Orbitale\Component\ImageMagick\Command</span>;</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c">// Create a new command</span></span>
+<span class="pl-s1"><span class="pl-smi">$command</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-c1">Command</span>();</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$response</span> <span class="pl-k">=</span> <span class="pl-smi">$command</span></span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">// Here we are using "mogrify", so the file must exist as it is overwritten (it's basically the difference between "convert" and "mogrify")</span></span>
+<span class="pl-s1">    <span class="pl-k">-&gt;</span>mogrify(<span class="pl-s"><span class="pl-pds">'</span>background.jpeg<span class="pl-pds">'</span></span>)</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">// The "resize" method allows you to add a "Geometry" operation.</span></span>
+<span class="pl-s1">    <span class="pl-c">// It must fit to the "Geometry" parameters in the ImageMagick official documentation (see links below)</span></span>
+<span class="pl-s1">    <span class="pl-k">-&gt;</span>resize(<span class="pl-s"><span class="pl-pds">'</span>50x50<span class="pl-pds">'</span></span>)</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-k">-&gt;</span>run()</span>
+<span class="pl-s1">;</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">if</span> (<span class="pl-k">!</span><span class="pl-smi">$response</span><span class="pl-k">-&gt;</span>hasFailed()) {</span>
+<span class="pl-s1">    <span class="pl-c1">header</span>(<span class="pl-s"><span class="pl-pds">'</span>Content-type: image/jpeg<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1">    <span class="pl-c1">echo</span> <span class="pl-c1">file_get_contents</span>(<span class="pl-s"><span class="pl-pds">'</span>background.jpeg<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1">}</span></pre></div>
+
+<h1>
+<a id="useful-links" class="anchor" href="#useful-links" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Useful links</h1>
+
+<ul>
+<li>ImageMagick official website: <a href="http://www.imagemagick.org">http://www.imagemagick.org</a>
+</li>
+<li>ImageMagick documentation:
+
+<ul>
+<li>
+<a href="http://www.imagemagick.org/script/binary-releases.php">Installation binaries</a> (depending on your OS and/or distribution)</li>
+<li>
+<a href="http://www.imagemagick.org/script/command-line-processing.php#geometry">Geometry</a> (to resize or place text)</li>
+<li>
+<a href="http://www.imagemagick.org/ImageMagick-7.0.0/script/command-line-options.php">All command-line options</a> ; they're not all available for now, so feel free to make a PR ! ;)</li>
+</ul>
+</li>
+</ul>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/Orbitale/ImageMagickPHP">Imagemagickphp</a> is maintained by <a href="https://github.com/Orbitale">Orbitale</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
