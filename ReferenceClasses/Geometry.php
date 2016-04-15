@@ -53,7 +53,7 @@ class Geometry
         // Or if we have width, no height and an offset
         // If width is 100, it will result in 100x{offset}
         // else, 100{offset} is incorrect
-        if (null !== $height || $width && !$height && (null !== $x || null !== $y)) {
+        if (null !== $height || ($width && !$height && (null !== $x || null !== $y))) {
             $geometry .= 'x';
         }
 
@@ -61,7 +61,7 @@ class Geometry
             $geometry .= $height;
         }
 
-        if ($aspectRatio && !in_array($aspectRatio, self::$validRatios)) {
+        if ($aspectRatio && !in_array($aspectRatio, self::$validRatios, true)) {
             throw new \InvalidArgumentException(sprintf(
                 "Invalid aspect ratio value to generate geometry, \"%s\" given.\nAvailable: %s",
                 $aspectRatio, implode(', ', self::$validRatios)

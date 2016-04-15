@@ -10,10 +10,12 @@
 
 namespace Orbitale\Component\ImageMagick;
 
-
 use Orbitale\Component\ImageMagick\ReferenceClasses\Geometry;
 use Symfony\Component\Yaml\Yaml;
 
+/**
+ * This class is here to add some validation processes when using options in the Command class.
+ */
 final class References
 {
 
@@ -50,6 +52,7 @@ final class References
     }
 
     /**
+     * Checks that a geometry option is correct according to ImageMagick Geometry reference.
      * @link http://www.imagemagick.org/script/command-line-processing.php#geometry
      *
      * @param string|Geometry $geometry
@@ -66,7 +69,7 @@ final class References
     }
 
     /**
-     * Checks that a color is correct according to ImageMagick command line reference
+     * Checks that a color is correct according to ImageMagick command line reference.
      * @link http://www.imagemagick.org/script/color.php
      *
      * @param $color
@@ -94,10 +97,32 @@ final class References
         }
 
         throw new \InvalidArgumentException(sprintf(
-            "The specified color (%s) is invalid.\n".
-            "Please refer to ImageMagick command line documentation about colors:\n%s",
+            'The specified color (%s) is invalid.'."\n".
+            'Please refer to ImageMagick command line documentation about colors:'."\n%s",
             $color,
             'http://www.imagemagick.org/script/color.php'
+        ));
+    }
+
+    /**
+     * Checks that a rotation option is correct according to ImageMagick command line reference.
+     * @link http://www.imagemagick.org/script/command-line-options.php#rotate
+     *
+     * @param string $rotation
+     *
+     * @return string
+     */
+    public function rotation($rotation)
+    {
+        if (preg_match('~^-?\d+(?:<|>)$~u', $rotation)) {
+            return $rotation;
+        }
+
+        throw new \InvalidArgumentException(sprintf(
+            'The specified rotate parameter (%s) is invalid.'."\n".
+            'Please refer to ImageMagick command line documentation about the "-rotate" option:'."\n%s",
+            $rotation,
+            'http://www.imagemagick.org/script/command-line-options.php#rotate'
         ));
     }
 }

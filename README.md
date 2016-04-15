@@ -112,6 +112,41 @@ if (!$response->hasFailed()) {
 }
 ```
 
+### Supported commands:
+
+* `convert`
+* `mogrify`
+* `identify`
+
+### Currently supported options:
+
+There are **TONS** of command-line options, and each have its own validation system.
+ 
+This is why a "few" ones are implemented now.
+
+**Note:** If an option is not implemented in the `Command` class, you should create an issue or make a Pull Request that implements the new option!
+
+* [`-background`](http://www.imagemagick.org/script/command-line-options.php#background)
+* [`-crop`](http://www.imagemagick.org/script/command-line-options.php#crop)
+* [`-extent`](http://www.imagemagick.org/script/command-line-options.php#extent)
+* [`-resize`](http://www.imagemagick.org/script/command-line-options.php#resize)
+* [`-thumbnail`](http://www.imagemagick.org/script/command-line-options.php#thumbnail)
+* [`-quality`](http://www.imagemagick.org/script/command-line-options.php#quality)
+* [`-rotate`](http://www.imagemagick.org/script/command-line-options.php#rotate)
+
+Feel free to ask if you want more!
+
+### Some aliases that do magic for you:
+
+* `Command::text()`:
+This method uses multiple options added to the `-annotate` one to generate a text block.
+You must specify its position and size, but you can specify color and the font file used.
+See [`-annotate`](http://www.imagemagick.org/script/command-line-options.php#annotate) documentation.
+
+* `Command::ellipse()`: (check source code for the heavy prototype!)
+This method uses the `-stroke`, `-fill` and `-draw` property to create an ellipse/circle/disc on your picture.
+**Note:** I recommend to check both the source code and the documentation to be sure of what you are doing.
+See [`-draw`](http://www.imagemagick.org/script/command-line-options.php#draw) documentation.
 
 Useful links
 ===============

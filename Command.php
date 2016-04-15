@@ -15,7 +15,7 @@ use Orbitale\Component\ImageMagick\ReferenceClasses\Geometry;
 /**
  * @author Alexandre Rock Ancelet <alex@orbitale.io>
  */
-class Command
+class Command extends CommandOptions
 {
     const RUN_NORMAL     = null;
     const RUN_BACKGROUND = ' > /dev/null 2>&1';
@@ -27,24 +27,15 @@ class Command
     protected $allowedExecutables = array('convert', 'mogrify', 'identify');
 
     /**
-     * @var References
+     * @var string
      */
-    protected $ref;
-
     protected $imageMagickPath = '';
-
 
     /**
      * Environment values
      * @var string
      */
     protected $env = '';
-
-    /**
-     * The shell command
-     * @var string
-     */
-    protected $command = '';
 
     /**
      * Parameters to add at the end of the command
@@ -57,9 +48,9 @@ class Command
         // We must use "exec" for this command, because we don't rely on the ImageMagick PHP extension.
         // To execute the ImageMagick binaries, then, we check the availability of "exec"
         if (
-            in_array('exec', explode(',', ini_get('disable_functions')))
+            in_array('exec', explode(',', ini_get('disable_functions')), true)
             || !function_exists('exec')
-            || (strtolower(ini_get('safe_mode')) === 'off')
+            || (PHP_VERSION_ID >= 50400 && strtolower(ini_get('safe_mode')) === 'off')
         ) {
             throw new \RuntimeException('The "exec" function must be available to use ImageMagick commands.');
         }
@@ -177,78 +168,6 @@ class Command
     }
 
     /**
-     * @param string $color
-     *
-     * @return $this
-     */
-    public function background($color)
-    {
-        $this->command .= ' -background '.$this->ref->color($color);
-
-        return $this;
-    }
-
-    /**
-     * @param string|Geometry $geometry
-     *
-     * @return $this
-     */
-    public function resize($geometry)
-    {
-        $this->command .= ' -resize '.$this->escape($this->ref->geometry($geometry));
-
-        return $this;
-    }
-
-    /**
-     * @param string|Geometry $geometry
-     *
-     * @return $this
-     */
-    public function crop($geometry)
-    {
-        $this->command .= ' -crop '.$this->escape($this->ref->geometry($geometry));
-
-        return $this;
-    }
-
-    /**
-     * @param string|Geometry $geometry
-     *
-     * @return $this
-     */
-    public function extent($geometry)
-    {
-        $this->command .= ' -extent '.$this->escape($this->ref->geometry($geometry));
-
-        return $this;
-    }
-
-    /**
-     * @param string|Geometry $geometry
-     *
-     * @return $this
-     */
-    public function thumbnail($geometry)
-    {
-        $this->command .= ' -thumbnail '.$this->escape($this->ref->geometry($geometry));
-
-        return $this;
-    }
-
-    /**
-     * @param int $quality
-     *
-     * @return $this
-     */
-    public function quality($quality)
-    {
-        $this->command .= ' -quality '.((int) $quality);
-
-        return $this;
-    }
-
-    /**
      * Adds text to the currently converted element.
      *
      * @param string  $text     The text to add
@@ -263,7 +182,7 @@ class Command
     {
         $this->command .=
             ($font ? ' -font "'.$this->checkExistingFile($font).'"' : '').
-            ' -pointsize '.(int) $size.
+            ' -pointsize '.((int) $size).
             ($color ? ' -fill "'.$this->ref->color($color).'"' : '').
             ' -stroke "none"'.
             ' -annotate '.$this->ref->geometry($geometry).' '.$this->escape($text)
@@ -365,25 +284,6 @@ class Command
     }
 
     /**
-     * Escapes a string in order to inject it in the shell command
-     *
-     * @param string $string
-     * @param bool   $addQuotes
-     *
-     * @return mixed|string
-     */
-    public function escape($string, $addQuotes = true)
-    {
-        $string = str_replace(
-            array('"', '`', '’', '\\\''),
-            array('\"', "'", "'", "'"),
-            trim($string)
-        );
-
-        return $addQuotes ? '"'.$string.'"' : $string;
-    }
-
-    /**
      * Checks if file exists in the filesystem
      *
      * @param string $file
@@ -394,8 +294,8 @@ class Command
     {
         if (!file_exists($file)) {
             throw new \InvalidArgumentException(sprintf(
-                "The file \"%s\" is not found.\n".
-                "If the file really exists in your filesystem, then maybe it is not readable.",
+                'The file "%s" is not found.'."\n".
+                'If the file really exists in your filesystem, then maybe it is not readable.',
                 $file
             ));
         }
