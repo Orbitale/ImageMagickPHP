@@ -25,7 +25,14 @@
     -->
 
     <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <file>Command.php</file>
+            <file>CommandOptions.php</file>
+            <file>CommandResponse.php</file>
+            <directory suffix=".php">./ReferenceClasses</directory>
+        </whitelist>
         <blacklist>
+            <directory>./build</directory>
             <directory>./vendor</directory>
             <directory>./Tests</directory>
         </blacklist>
