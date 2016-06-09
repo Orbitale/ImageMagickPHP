@@ -24,7 +24,7 @@ class Command extends CommandOptions
     /**
      * @var array The list of allowed ImageMagick binaries
      */
-    protected $allowedExecutables = array('convert', 'mogrify', 'identify');
+    protected $allowedExecutables = ['convert', 'mogrify', 'identify'];
 
     /**
      * @var string
@@ -43,14 +43,20 @@ class Command extends CommandOptions
      */
     protected $commandToAppend = '';
 
+    /**
+     * If ImageMagick 7 is used, will be true.
+     * There are some specific behaviors related to IM7
+     * @var bool
+     */
+    protected $v7 = false;
+
     public function __construct($imageMagickPath = '/usr/bin', $referencesDirectory = null)
     {
         // We must use "exec" for this command, because we don't rely on the ImageMagick PHP extension.
         // To execute the ImageMagick binaries, then, we check the availability of "exec"
         if (
-            in_array('exec', explode(',', ini_get('disable_functions')), true)
-            || !function_exists('exec')
-            || (PHP_VERSION_ID >= 50400 && strtolower(ini_get('safe_mode')) === 'off')
+            !function_exists('exec')
+            || in_array('exec', explode(',', ini_get('disable_functions')), true)
         ) {
             throw new \RuntimeException('The "exec" function must be available to use ImageMagick commands.');
         }
@@ -72,7 +78,13 @@ class Command extends CommandOptions
             }
         }
 
-        if ($imageMagickPath && !file_exists($imageMagickPath.'convert') && !file_exists($imageMagickPath.'convert.exe')) {
+        if (
+            $imageMagickPath
+            && !file_exists($imageMagickPath.'convert')
+            && !file_exists($imageMagickPath.'convert.exe')
+            && !file_exists($imageMagickPath.'magick')
+            && !file_exists($imageMagickPath.'magick.exe')
+        ) {
             throw new \InvalidArgumentException(sprintf(
                 "The specified path (%s) does not seem to contain ImageMagick binaries, or it is not readable.\n".
                 "If ImageMagick is set in the path, then set an empty parameter for `imageMagickPath`.\n".
@@ -82,12 +94,16 @@ class Command extends CommandOptions
             ));
         }
 
-        exec($imageMagickPath.'convert -version 2>&1', $o, $code);
+        if (!file_exists($imageMagickPath.'magick') && !file_exists($imageMagickPath.'magick.exe')) {
+            $this->v7 = true;
+        }
+
+        exec($imageMagickPath.($this->v7 ? 'magick' : 'convert').' -version 2>&1', $o, $code);
         if ($code !== 0) {
             throw new \InvalidArgumentException(sprintf(
                 "ImageMagick does not seem to work well, the test command resulted in an error.\n".
                 "To solve this issue, please run this command and check your error messages:\n%s",
-                $imageMagickPath.'convert -version'
+                $imageMagickPath.($this->v7 ? 'magick' : 'convert').' -version'
             ));
         }
 
@@ -102,11 +118,11 @@ class Command extends CommandOptions
      * @param null $runMode
      *
      * @return CommandResponse
-     *
+     * @throws \InvalidArgumentException
      */
     public function run($runMode = self::RUN_NORMAL)
     {
-        if (!in_array($runMode, array(self::RUN_NORMAL, self::RUN_BACKGROUND, self::RUN_DEBUG))) {
+        if (!in_array($runMode, [self::RUN_NORMAL, self::RUN_BACKGROUND, self::RUN_DEBUG], true)) {
             throw new \InvalidArgumentException('The run mode must be one of '.__CLASS__.'::RUN_* constants.');
         }
 
@@ -231,10 +247,11 @@ class Command extends CommandOptions
      * @param string $binary One of the allowed ImageMagick executables
      *
      * @return string
+     * @throws \InvalidArgumentException If binary is not executable
      */
     public function getExecutable($binary = 'convert')
     {
-        if (!in_array($binary, $this->allowedExecutables)) {
+        if (!in_array($binary, $this->allowedExecutables, true)) {
             throw new \InvalidArgumentException(sprintf(
                 "The ImageMagick executable \"%s\" is not allowed.\n".
                 "The only binaries allowed to be executed are the following:\n%s",
@@ -243,7 +260,7 @@ class Command extends CommandOptions
             ));
         }
 
-        return $this->imageMagickPath.$binary;
+        return $this->imageMagickPath.($this->v7 ? 'magick' : '').$binary;
     }
 
     /**
@@ -252,6 +269,7 @@ class Command extends CommandOptions
      * @param string $executable An allowed ImageMagick executable
      *
      * @return $this
+     * @throws \InvalidArgumentException If self::getExecutable does not work.
      */
     public function newCommand($executable)
     {

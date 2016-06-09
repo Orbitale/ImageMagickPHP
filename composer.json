@@ -13,8 +13,8 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3",
-        "symfony/yaml": "~2.3|~3.0"
+        "php": ">=5.4.0",
+        "symfony/yaml": "^2.3|^3.0"
     },
     "minimum-stability": "stable",
     "autoload": {
