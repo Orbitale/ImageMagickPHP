@@ -2,10 +2,6 @@ language: php
 
 sudo: required
 
-branches:
-  only:
-      - master
-
 cache:
    directories:
        - $HOME/.composer/cache
