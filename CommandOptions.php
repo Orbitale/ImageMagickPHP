@@ -130,4 +130,14 @@ abstract class CommandOptions
         return $this;
     }
 
+    /**
+     * @return $this
+     */
+    public function strip()
+    {
+        $this->command .= ' -strip ';
+
+        return $this;
+    }
+
 }
