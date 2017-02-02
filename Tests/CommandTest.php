@@ -23,9 +23,8 @@ class CommandTest extends AbstractTestCase
         $exception = '';
         $exceptionClass = '';
 
-        $ds = DIRECTORY_SEPARATOR;
-        $path = str_replace(array('/', '\\'), array($ds, $ds), $path);
-        $expectedMessage = str_replace(array('/', '\\'), array($ds, $ds), $expectedMessage);
+        $path = str_replace('\\', '/', $path);
+        $expectedMessage = str_replace('\\', '/', $expectedMessage);
         try {
             new Command($path);
         } catch (\Exception $e) {
@@ -39,9 +38,8 @@ class CommandTest extends AbstractTestCase
     public function provideWrongConvertDirs()
     {
         return array(
-            array('/this/is/a/dummy/dir', 'The specified path (/this/is/a/dummy/dir/) is not a directory', 'InvalidArgumentException'),
-            array('./', 'The specified path (./) does not seem to contain ImageMagick binaries, or it is not readable', 'InvalidArgumentException'),
-            array(TEST_RESOURCES_DIR.'/', 'ImageMagick does not seem to work well, the test command resulted in an error', 'InvalidArgumentException'),
+            array('/this/is/a/dummy/dir', 'The specified path (/this/is/a/dummy/dir) is not a directory', 'InvalidArgumentException'),
+            array('./', 'The specified path (.) does not seem to contain ImageMagick binaries, or it is not readable', 'InvalidArgumentException'),
         );
     }
 
@@ -59,6 +57,8 @@ class CommandTest extends AbstractTestCase
             ->file($imageOutput, false)
             ->run()
         ;
+
+        $this->assertFalse($response->hasFailed(), "Errors when testing:\n".$response->getProcess()->getOutput()."\t".$response->getProcess()->getErrorOutput());
 
         $this->assertFileExists($this->resourcesDir . '/outputs/moon.jpg');
 
@@ -81,8 +81,7 @@ class CommandTest extends AbstractTestCase
 
         $this->assertFalse($response->hasFailed());
 
-        $content = $response->getContent();
-        $content = implode("\n", $content);
+        $content = $response->getOutput();
 
         $this->assertContains(sprintf(
             '%s %s %s %s %s',
@@ -113,7 +112,7 @@ class CommandTest extends AbstractTestCase
             unlink($imageOutput);
         }
 
-        file_put_contents($imageOutput, file_get_contents($sourceImage));
+        copy($sourceImage, $imageOutput);
 
         if (!file_exists($imageOutput)) {
             throw new \RuntimeException('File could not be copied from resources dir to output dir.');
@@ -151,11 +150,13 @@ class CommandTest extends AbstractTestCase
             ->getCommand()
         ;
 
-        $expected = ' "'.$command->getExecutable('convert').'"'.
+        $expected = ' '.$command->getExecutable('convert').
                     ' "'.$source.'"'.
                     ' -thumbnail "'.$geometry.'"'.
                     ' -quality '.$quality.
                     ' "'.$output.'" ';
+
+        $expected = str_replace('\\', '/', $expected);
 
         $this->assertEquals($expected, $commandString);
     }

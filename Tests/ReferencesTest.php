@@ -27,31 +27,6 @@ class ReferencesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider provideInvalidResourceFiles
-     * @param $file
-     * @param $expectedException
-     */
-    public function testInvalidResourceFile($file, $expectedException)
-    {
-        $exceptionClass = '';
-        try {
-            new References($file);
-        } catch (\Exception $e) {
-            $exceptionClass = get_class($e);
-        }
-        $this->assertEquals($exceptionClass, $expectedException);
-    }
-
-    public function provideInvalidResourceFiles()
-    {
-        return array(
-            array('/this/directory/certainly/does/not/exist', 'RuntimeException'),
-            array(TEST_RESOURCES_DIR.'/empty_reference.yml', 'InvalidArgumentException'),
-            array(TEST_RESOURCES_DIR.'/tab_file.yml', 'Symfony\Component\Yaml\Exception\ParseException'),
-        );
-    }
-
-    /**
      * @dataProvider provideCorrectColors
      * @param string $color
      */
@@ -64,7 +39,7 @@ class ReferencesTest extends \PHPUnit_Framework_TestCase
         } catch (\InvalidArgumentException $e) {
             $exception = true;
         }
-        $this->assertFalse($exception, sprintf("Failed in checking valid color (%s)", $color));
+        $this->assertFalse($exception, sprintf('Failed in checking valid color (%s)', $color));
     }
 
     public function provideCorrectColors()
@@ -104,7 +79,7 @@ class ReferencesTest extends \PHPUnit_Framework_TestCase
             $msg = $e->getMessage();
         }
         $this->assertContains(
-            sprintf("The specified color (%s) is invalid", $color),
+            sprintf('The specified color (%s) is invalid', $color),
             $msg
         );
     }
