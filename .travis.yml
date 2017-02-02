@@ -14,12 +14,13 @@ php:
     - 5.4
     - 5.5
     - 5.6
-    - 7
+    - 7.0
+    - 7.1
 
 matrix:
     fast_finish: true
     allow_failures:
-        - php: 7
+        - php: 7.1
 
 before_install:
     - sudo add-apt-repository -y ppa:moti-p/cc
@@ -36,7 +37,7 @@ script:
     - mkdir -p build/logs
     - phpunit --coverage-text --coverage-clover build/logs/clover.xml
 
-after_success: 
+after_success:
     - travis_retry php vendor/bin/coveralls -v
 
 notifications:
