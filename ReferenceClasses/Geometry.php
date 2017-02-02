@@ -94,6 +94,11 @@ class Geometry
         $this->value = $geometry;
     }
 
+    public function __toString()
+    {
+        return (string) $this->value;
+    }
+
     /**
      * @throws \InvalidArgumentException
      * @return string
