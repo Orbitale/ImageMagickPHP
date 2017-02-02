@@ -1,12 +1,13 @@
 <?php
+
 /*
-* This file is part of the OrbitaleImageMagickPHP package.
-*
-* (c) Alexandre Rock Ancelet <alex@orbitale.io>
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of the OrbitaleImageMagickPHP package.
+ *
+ * (c) Alexandre Rock Ancelet <alex@orbitale.io>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Orbitale\Component\ImageMagick;
 
@@ -24,14 +25,10 @@ final class References
      */
     private $config = array();
 
-    /**
-     * @param string $referenceFile
-     */
-    public function __construct($referenceFile = null)
+    public function __construct()
     {
-        if (null === $referenceFile) {
-            $referenceFile = __DIR__.'/Resources/references.yml';
-        }
+        $referenceFile = __DIR__.'/Resources/references.yml';
+
         if (!file_exists($referenceFile)) {
             throw new \RuntimeException(sprintf(
                 'File %s for ImageMagick references does not exist.'."\n".
