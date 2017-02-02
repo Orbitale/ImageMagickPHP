@@ -23,11 +23,14 @@ foreach (glob(TEST_RESOURCES_DIR.'/outputs/*') as $file) {
 
 // Check if ImageMagick is installed. Instead, we cannot run tests suite.
 $possibleDirectories = array(
+    getenv('IMAGEMAGICK_PATH'),
     '',// In the PATH variable
     '/usr/bin/',
     '/usr/local/bin/',
 );
 foreach ($possibleDirectories as $dir) {
+    $dir = rtrim($dir, '/\\').'/';
+
     exec($dir . 'convert -version', $o, $code);
     if ($code === 0) {
         define('IMAGEMAGICK_DIR', $dir);
@@ -39,9 +42,9 @@ if (!defined('IMAGEMAGICK_DIR')) {
     throw new \RuntimeException(
         "Couldn't locate ImageMagick.\n" .
         "Please check that ImageMagick is installed and that it is located\n" .
-        "in the global PATH variable, or that it is accessible in /usr/bin"
+        'in the global PATH variable, or that it is accessible in /usr/bin'
     );
 }
 
-echo "Analyzed ImageMagick directory: ".IMAGEMAGICK_DIR."\n";
+echo 'Analyzed ImageMagick directory: '.IMAGEMAGICK_DIR."\n";
 system(IMAGEMAGICK_DIR.'convert -version');
