@@ -1,16 +1,19 @@
 <?php
+
 /*
-* This file is part of the OrbitaleImageMagickPHP package.
-*
-* (c) Alexandre Rock Ancelet <alex@orbitale.io>
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of the OrbitaleImageMagickPHP package.
+ *
+ * (c) Alexandre Rock Ancelet <alex@orbitale.io>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Orbitale\Component\ImageMagick;
 
 use Orbitale\Component\ImageMagick\ReferenceClasses\Geometry;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Process;
 
 /**
  * @author Alexandre Rock Ancelet <alex@orbitale.io>
@@ -20,6 +23,9 @@ class Command extends CommandOptions
     const RUN_NORMAL     = null;
     const RUN_BACKGROUND = ' > /dev/null 2>&1';
     const RUN_DEBUG      = ' 2>&1';
+
+    const VERSION_6 = 6;
+    const VERSION_7 = 7;
 
     /**
      * @var array The list of allowed ImageMagick binaries
@@ -43,36 +49,43 @@ class Command extends CommandOptions
      */
     protected $commandToAppend = '';
 
-    public function __construct($imageMagickPath = '/usr/bin', $referencesDirectory = null)
+    /**
+     * @var Filesystem
+     */
+    protected $fs;
+
+    /**
+     * @var int
+     */
+    protected $version;
+
+    public function __construct($imageMagickPath = '/usr/bin')
     {
-        // We must use "exec" for this command, because we don't rely on the ImageMagick PHP extension.
-        // To execute the ImageMagick binaries, then, we check the availability of "exec"
-        if (
-            in_array('exec', explode(',', ini_get('disable_functions')), true)
-            || !function_exists('exec')
-            || (PHP_VERSION_ID >= 50400 && strtolower(ini_get('safe_mode')) === 'off')
-        ) {
-            throw new \RuntimeException('The "exec" function must be available to use ImageMagick commands.');
-        }
+        $this->fs = new Filesystem();
 
         // Delete trimming directory separator
-        $imageMagickPath = preg_replace('~[\\\/]$~', '', $imageMagickPath);
-        if ($imageMagickPath) {
-            // Add a proper directory separator at the end if path is not empty.
-            // If it's empty, then it's set in the global path.
-            $imageMagickPath .= DIRECTORY_SEPARATOR;
-            if (!is_dir($imageMagickPath)) {
-                throw new \InvalidArgumentException(sprintf(
-                    "The specified path (%s) is not a directory.\n".
-                    "You must set the \"imageMagickPath\" parameter as the root directory where\n".
-                    "ImageMagick executables (%s) are located.",
-                    $imageMagickPath,
-                    implode(', ', $this->allowedExecutables)
-                ));
-            }
+        $imageMagickPath = $this->cleanPath($imageMagickPath, true);
+
+        // Add a proper directory separator at the end if path is not empty.
+        // If it's empty, then it's set in the global path.
+        if ($imageMagickPath && !is_dir($imageMagickPath)) {
+            throw new \InvalidArgumentException(sprintf(
+                'The specified path (%s) is not a directory.'."\n".
+                'You must set the "imageMagickPath" parameter as the root directory where'."\n".
+                'ImageMagick executables (%s) are located.',
+                $imageMagickPath,
+                implode(', ', $this->allowedExecutables)
+            ));
         }
 
-        if ($imageMagickPath && !file_exists($imageMagickPath.'convert') && !file_exists($imageMagickPath.'convert.exe')) {
+        // For imagemagick 7 we'll use the "magick" base command each time.
+        if ($this->fs->exists($imageMagickPath.'/magick') || $this->fs->exists($imageMagickPath.'/magick.exe')) {
+            $this->version = static::VERSION_7;
+            $imageMagickPath .= '/magick ';
+        } elseif ($this->fs->exists($imageMagickPath.'/convert') || $this->fs->exists($imageMagickPath.'/convert.exe')) {
+            $this->version = static::VERSION_6;
+            $imageMagickPath .= '/';
+        } else {
             throw new \InvalidArgumentException(sprintf(
                 "The specified path (%s) does not seem to contain ImageMagick binaries, or it is not readable.\n".
                 "If ImageMagick is set in the path, then set an empty parameter for `imageMagickPath`.\n".
@@ -82,16 +95,19 @@ class Command extends CommandOptions
             ));
         }
 
-        exec($imageMagickPath.'convert -version 2>&1', $o, $code);
-        if ($code !== 0) {
+        $process = new Process($imageMagickPath.'convert -version 2>&1');
+
+        $process->run();
+        if (!$process->isSuccessful()) {
             throw new \InvalidArgumentException(sprintf(
                 "ImageMagick does not seem to work well, the test command resulted in an error.\n".
+                "Execution returned message: \"{$process->getExitCodeText()}\"\n".
                 "To solve this issue, please run this command and check your error messages:\n%s",
                 $imageMagickPath.'convert -version'
             ));
         }
 
-        $this->ref = new References($referencesDirectory);
+        $this->ref = new References();
 
         $this->imageMagickPath = $imageMagickPath;
     }
@@ -102,17 +118,27 @@ class Command extends CommandOptions
      * @param null $runMode
      *
      * @return CommandResponse
-     *
      */
     public function run($runMode = self::RUN_NORMAL)
     {
-        if (!in_array($runMode, array(self::RUN_NORMAL, self::RUN_BACKGROUND, self::RUN_DEBUG))) {
+        if (!in_array($runMode, array(self::RUN_NORMAL, self::RUN_BACKGROUND, self::RUN_DEBUG), true)) {
             throw new \InvalidArgumentException('The run mode must be one of '.__CLASS__.'::RUN_* constants.');
         }
 
-        exec($this->env.' '.$this->command.' '.$this->commandToAppend.$runMode, $output, $code);
+        $process = new Process($this->env.' '.$this->command.' '.$this->commandToAppend.$runMode);
 
-        return new CommandResponse($output, $code);
+        $output = '';
+        $error = '';
+
+        $code = $process->run(function ($type, $buffer) use (&$output, &$error) {
+            if (Process::ERR === $type) {
+                $error .= $buffer;
+            } else {
+                $output .= $buffer;
+            }
+        });
+
+        return new CommandResponse($process, $code, $output, $error);
     }
 
     public function setEnv($key, $value)
@@ -234,7 +260,7 @@ class Command extends CommandOptions
      */
     public function getExecutable($binary = 'convert')
     {
-        if (!in_array($binary, $this->allowedExecutables)) {
+        if (!in_array($binary, $this->allowedExecutables, true)) {
             throw new \InvalidArgumentException(sprintf(
                 "The ImageMagick executable \"%s\" is not allowed.\n".
                 "The only binaries allowed to be executed are the following:\n%s",
@@ -243,7 +269,17 @@ class Command extends CommandOptions
             ));
         }
 
-        return $this->imageMagickPath.$binary;
+        $executablePath = $this->imageMagickPath;
+
+        if ($this->version === self::VERSION_7){
+            // ImageMagick 7 uses the "magick" main command,
+            //  so every binary is transformed into an argument for the magick binary.
+            $executablePath .= ' ';
+        }
+
+        $executablePath .= $binary;
+
+        return $executablePath;
     }
 
     /**
@@ -255,7 +291,7 @@ class Command extends CommandOptions
      */
     public function newCommand($executable)
     {
-        $this->command         = '"'.$this->getExecutable($executable).'"';
+        $this->command         = ''.$this->getExecutable($executable).'';
         $this->commandToAppend = '';
 
         return $this;
@@ -272,7 +308,7 @@ class Command extends CommandOptions
      */
     public function file($source, $checkExistence = true, $append = false)
     {
-        $source = $checkExistence ? $this->checkExistingFile($source) : $source;
+        $source = $checkExistence ? $this->checkExistingFile($source) : $this->cleanPath($source);
         $source = str_replace('\\', '/', $source);
         if ($append) {
             $this->commandToAppend .= ' "'.$source.'"';
@@ -300,6 +336,22 @@ class Command extends CommandOptions
             ));
         }
 
-        return $file;
+        return $this->cleanPath($file);
+    }
+
+    /**
+     * @param string $path
+     * @param bool   $rtrim
+     * @return string
+     */
+    private function cleanPath($path, $rtrim = false)
+    {
+        $path = str_replace('\\', '/', $path);
+
+        if ($rtrim) {
+            $path = rtrim($path, '/');
+        }
+
+        return $path;
     }
 }
