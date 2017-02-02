@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OrbitaleImageMagickPHP package.
+ *
+ * (c) Alexandre Rock Ancelet <alex@orbitale.io>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Orbitale\Component\ImageMagick;
 
 use Orbitale\Component\ImageMagick\ReferenceClasses\Geometry;
@@ -65,7 +74,7 @@ abstract class CommandOptions
      */
     public function resize($geometry)
     {
-        $this->command .= ' -resize ' . $this->escape($this->ref->geometry($geometry));
+        $this->command .= ' -resize ' . $this->escape($this->ref->geometry($geometry)).' ';
 
         return $this;
     }
@@ -77,7 +86,7 @@ abstract class CommandOptions
      */
     public function crop($geometry)
     {
-        $this->command .= ' -crop ' . $this->escape($this->ref->geometry($geometry));
+        $this->command .= ' -crop ' . $this->escape($this->ref->geometry($geometry)).' ';
 
         return $this;
     }
