@@ -142,6 +142,8 @@ class Geometry
             ));
         }
 
+        $this->value = trim($this->value);
+
         return $this->value;
     }
 }
