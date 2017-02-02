@@ -37,13 +37,13 @@ class Geometry
     private $value = '';
 
     /**
-     * @param string|int $width Can be both
-     * @param string|int $height
-     * @param string|int $x
-     * @param string|int $y
-     * @param string     $aspectRatio
+     * @param int    $width Can be both
+     * @param int    $height
+     * @param int    $x
+     * @param int    $y
+     * @param string $aspectRatio
      *
-     * @return static
+     * @return string
      */
     public static function createFromParameters($width = null, $height = null, $x = null, $y = null, $aspectRatio = self::RATIO_NONE)
     {
