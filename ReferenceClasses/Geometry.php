@@ -1,12 +1,13 @@
 <?php
+
 /*
-* This file is part of the OrbitaleImageMagickPHP package.
-*
-* (c) Alexandre Rock Ancelet <alex@orbitale.io>
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of the OrbitaleImageMagickPHP package.
+ *
+ * (c) Alexandre Rock Ancelet <alex@orbitale.io>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Orbitale\Component\ImageMagick\ReferenceClasses;
 
@@ -86,11 +87,13 @@ class Geometry
     public function __construct($width = null, $height = null, $x = null, $y = null, $aspectRatio = self::RATIO_NONE)
     {
         $args = func_get_args();
+
+        $geometry = $width;
+
         if (count(array_map(null, $args)) > 1) {
             $geometry = call_user_func_array(array($this, 'createFromParameters'), $args);
-        } else {
-            $geometry = $width;
         }
+
         $this->value = $geometry;
     }
 

@@ -20,7 +20,6 @@ use Orbitale\Component\ImageMagick\ReferenceClasses\Geometry;
  */
 abstract class CommandOptions
 {
-
     /**
      * @var References
      */
@@ -43,8 +42,8 @@ abstract class CommandOptions
     public function escape($string, $addQuotes = true)
     {
         $string = str_replace(
-            array('"', '`', '’', '\\\''),
-            array('\"', "'", "'", "'"),
+            ['"', '`', '’', '\\\''],
+            ['\"', "'", "'", "'"],
             trim($string)
         );
 

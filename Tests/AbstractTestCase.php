@@ -21,7 +21,7 @@ class AbstractTestCase extends \PHPUnit_Framework_TestCase
         if (!defined('IMAGEMAGICK_DIR') || !defined('TEST_RESOURCES_DIR')) {
             throw new \RuntimeException(
                 "The \"IMAGEMAGICK_DIR\" constant is not defined.\n" .
-                "The bootstrap must be correctly included before executing test suite."
+                'The bootstrap must be correctly included before executing test suite.'
             );
         }
         $this->resourcesDir = TEST_RESOURCES_DIR;
