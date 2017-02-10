@@ -150,22 +150,24 @@ abstract class CommandOptions
 
     /**
      * @param string $type
+     *
      * @return $this
      */
     public function interlace($type)
     {
-        $this->command .= ' -interlace ' . $type;
+        $this->command .= ' -interlace '.$this->ref->interlace($type);
 
         return $this;
     }
 
     /**
-     * @param Float $radius
+     * @param float $blur
+     *
      * @return $this
      */
-    public function gaussianBlur($radius)
+    public function gaussianBlur($blur)
     {
-        $this->command .= ' -gaussian-blur ' . ((float)$radius);
+        $this->command .= ' -gaussian-blur '.$this->ref->blur($blur);
 
         return $this;
     }
