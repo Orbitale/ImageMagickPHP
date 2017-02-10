@@ -172,4 +172,16 @@ abstract class CommandOptions
         return $this;
     }
 
+    /**
+     * @param float $blur
+     *
+     * @return $this
+     */
+    public function blur($blur)
+    {
+        $this->command .= ' -blur '.$this->ref->blur($blur);
+
+        return $this;
+    }
+
 }
