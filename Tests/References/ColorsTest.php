@@ -1,20 +1,20 @@
 <?php
-/*
-* This file is part of the OrbitaleImageMagickPHP package.
-*
-* (c) Alexandre Rock Ancelet <alex@orbitale.io>
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
 
-namespace Orbitale\Component\ImageMagick\Tests;
+/*
+ * This file is part of the OrbitaleImageMagickPHP package.
+ *
+ * (c) Alexandre Rock Ancelet <alex@orbitale.io>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Orbitale\Component\ImageMagick\Tests\References;
 
 use Orbitale\Component\ImageMagick\References;
 
-class ReferencesTest extends \PHPUnit_Framework_TestCase
+class ColorsTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var References
      */

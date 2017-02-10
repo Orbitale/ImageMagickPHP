@@ -36,16 +36,43 @@ final class References
                 $referenceFile
             ));
         }
+
         $config = Yaml::parse(file_get_contents($referenceFile));
-        if (is_array($config) && count($config)) {
+
+        $keysToCheck = ['colors', 'interlace_types'];
+        $keysExist = true;
+
+        foreach ($keysToCheck as $key) {
+            if (!array_key_exists($key, $config)) {
+                $keysExist = false;
+            }
+        }
+
+        if (is_array($config) && $keysExist) {
             $this->config = $config;
         } else {
             throw new \InvalidArgumentException(sprintf(
-                'File %s for ImageMagick references seems to be empty.'."\n".
+                'File %s for ImageMagick references seems to be empty or invalid.'."\n".
                 'If it is a YAML file, please check its contents.',
                 $referenceFile
             ));
         }
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getColorsReference()
+    {
+        return $this->config['colors'];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getInterlaceTypesReference()
+    {
+        return $this->config['interlace_types'];
     }
 
     /**
@@ -88,7 +115,7 @@ final class References
             || preg_match('~^rgba\(\d{1,3}(\.\d{1,2})?%?, ?\d{1,3}(\.\d{1,2})?%?, ?\d{1,3}(\.\d{1,2})?%?, ?[01](\.\d{1,6})?\)$~', $color)
 
             // Check "rgba"
-            || in_array($color, $this->config['colors'], true)// And check the dirty one : all the color names supported by ImageMagick
+            || in_array($color, $this->getColorsReference(), true)// And check the dirty one : all the color names supported by ImageMagick
         ) {
             return $color;
         }
@@ -111,6 +138,8 @@ final class References
      */
     public function rotation($rotation)
     {
+        $rotation = trim($rotation);
+
         if (preg_match('~^-?\d+(?:<|>)$~u', $rotation)) {
             return $rotation;
         }
@@ -120,6 +149,54 @@ final class References
             'Please refer to ImageMagick command line documentation about the "-rotate" option:'."\n%s",
             $rotation,
             'http://www.imagemagick.org/script/command-line-options.php#rotate'
+        ));
+    }
+
+    /**
+     * @param string $blur
+     *
+     * @return string
+     */
+    public function blur($blur)
+    {
+        $blur = trim($blur);
+
+        if (preg_match('~^\d+(?:x\d+)?$~', $blur)) {
+            return $blur;
+        }
+
+        throw new \InvalidArgumentException(sprintf(
+            'Gaussian blur must respect formats "%s" or "%s".'."\n".
+            'Please refer to ImageMagick command line documentation about the "-gaussian-blur" and "-blur" options:'."\n%s\n%s",
+            '{radius}', '{radius}x{sigma}',
+            'http://www.imagemagick.org/script/command-line-options.php#blur',
+            'http://www.imagemagick.org/script/command-line-options.php#gaussian-blur'
+        ));
+    }
+
+    /**
+     * Checks that interlace type is valid in the references.
+     *
+     * @param string $interlaceType
+     *
+     * @return string
+     */
+    public function interlace($interlaceType)
+    {
+        $interlaceType = strtolower(trim($interlaceType));
+
+        $references = $this->getInterlaceTypesReference();
+
+        if (in_array($interlaceType, $references, true)) {
+            return $interlaceType;
+        }
+
+        throw new \InvalidArgumentException(sprintf(
+            'The specified interlace type (%s) is invalid.'."\n".
+            'The available values are:'."\n%s\n".
+            'Please refer to ImageMagick command line documentation:'."\n%s",
+            $interlaceType, implode(', ', $references),
+            'http://www.imagemagick.org/script/command-line-options.php#interlace'
         ));
     }
 }
