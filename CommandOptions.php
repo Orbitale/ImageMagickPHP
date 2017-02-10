@@ -148,4 +148,26 @@ abstract class CommandOptions
         return $this;
     }
 
+    /**
+     * @param string $type
+     * @return $this
+     */
+    public function interlace($type)
+    {
+        $this->command .= ' -interlace ' . $type;
+
+        return $this;
+    }
+
+    /**
+     * @param Float $radius
+     * @return $this
+     */
+    public function gaussianBlur($radius)
+    {
+        $this->command .= ' -gaussian-blur ' . ((float)$radius);
+
+        return $this;
+    }
+
 }
