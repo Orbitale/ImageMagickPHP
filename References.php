@@ -161,7 +161,7 @@ final class References
     {
         $blur = trim($blur);
 
-        if (preg_match('~^\d+(?:x\d+)?$~', $blur)) {
+        if (preg_match('~^\d+(?:\.\d+)?(?:x\d+(?:\.\d+)?)?$~', $blur)) {
             return $blur;
         }
 
