@@ -166,7 +166,7 @@ abstract class CommandOptions
      */
     public function gaussianBlur($radius)
     {
-        $this->command .= ' -gaussian-blur ' . $radius;
+        $this->command .= ' -gaussian-blur ' . ((float)$radius);
 
         return $this;
     }
