@@ -61,7 +61,7 @@ abstract class CommandOptions
      */
     public function background($color)
     {
-        $this->command .= ' -background ' . $this->ref->color($color);
+        $this->command .= ' -background ' . $this->escape($this->ref->color($color));
 
         return $this;
     }
