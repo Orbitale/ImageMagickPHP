@@ -12,8 +12,9 @@
 namespace Orbitale\Component\ImageMagick\Tests\References;
 
 use Orbitale\Component\ImageMagick\References;
+use PHPUnit\Framework\TestCase;
 
-class ColorsTest extends \PHPUnit_Framework_TestCase
+class ColorsTest extends TestCase
 {
     /**
      * @var References

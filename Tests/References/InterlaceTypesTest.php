@@ -12,8 +12,9 @@
 namespace Orbitale\Component\ImageMagick\Tests\References;
 
 use Orbitale\Component\ImageMagick\References;
+use PHPUnit\Framework\TestCase;
 
-class InterlaceTypesTest extends \PHPUnit_Framework_TestCase
+class InterlaceTypesTest extends TestCase
 {
     /**
      * @var References

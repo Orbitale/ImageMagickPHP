@@ -22,32 +22,28 @@ namespace Orbitale\Component\ImageMagick\ReferenceClasses;
  */
 class Geometry
 {
-    const REGEX_VALIDATE = '~(?<size>(?<w>(?:\d*(?:\.\d+)?)?%?)?(?:(?<whseparator>x)(?<h>(?:\d*(?:\.\d+)?)?%?))?)(?<aspect>[!><@^])?(?<offset>(?<x>[+-]\d*(?:\.\d+)?)?(?<y>[+-]\d*(?:\.\d+)?)?)~';
+    private const REGEX_VALIDATE = '~(?<size>(?<w>(?:\d*(?:\.\d+)?)?%?)?(?:(?<whseparator>x)(?<h>(?:\d*(?:\.\d+)?)?%?))?)(?<aspect>[!><@^])?(?<offset>(?<x>[+-]\d*(?:\.\d+)?)?(?<y>[+-]\d*(?:\.\d+)?)?)~';
 
-    const RATIO_NONE    = null;
-    const RATIO_MIN     = '^';
-    const RATIO_IGNORE  = '!';
-    const RATIO_SHRINK  = '>';
-    const RATIO_ENLARGE = '<';
+    public const RATIO_NONE    = null;
+    public const RATIO_MIN     = '^';
+    public const RATIO_IGNORE  = '!';
+    public const RATIO_SHRINK  = '>';
+    public const RATIO_ENLARGE = '<';
 
     private static $validRatios = array(self::RATIO_ENLARGE, self::RATIO_IGNORE, self::RATIO_MIN, self::RATIO_SHRINK);
 
     /**
      * @var string
      */
-    private $value = '';
+    private $value;
 
-    /**
-     * @param int    $width Can be both
-     * @param int    $height
-     * @param int    $x
-     * @param int    $y
-     * @param string $aspectRatio
-     *
-     * @return string
-     */
-    public static function createFromParameters($width = null, $height = null, $x = null, $y = null, $aspectRatio = self::RATIO_NONE)
-    {
+    public static function createFromParameters(
+        $width = null,
+        int $height = null,
+        int $x = null,
+        int $y = null,
+        ?string $aspectRatio = self::RATIO_NONE
+    ): string {
         $geometry = $width;
 
         // If we have a height
@@ -84,8 +80,13 @@ class Geometry
         return $geometry;
     }
 
-    public function __construct($width = null, $height = null, $x = null, $y = null, $aspectRatio = self::RATIO_NONE)
-    {
+    public function __construct(
+        $width = null,
+        int $height = null,
+        int $x = null,
+        int $y = null,
+        ?string $aspectRatio = self::RATIO_NONE
+    ) {
         $args = func_get_args();
 
         $geometry = $width;
@@ -102,11 +103,7 @@ class Geometry
         return (string) $this->value;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     * @return string
-     */
-    public function validate()
+    public function validate(): string
     {
         $errors = array();
 

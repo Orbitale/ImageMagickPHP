@@ -11,22 +11,15 @@ cache:
        - $HOME/.composer/cache
 
 php:
-    - 5.4
-    - 5.5
-    - 5.6
-    - 7.0
     - 7.1
+    - 7.2
 
 matrix:
     fast_finish: true
     allow_failures:
-        - php: 7.1
+        - php: 7.2
 
 before_install:
-    - sudo add-apt-repository -y ppa:moti-p/cc
-    - sudo apt-get update
-    - sudo apt-get -y --reinstall install imagemagick
-    - sudo apt-get -y --reinstall install libmagickwand4
     - composer self-update
 
 install:
@@ -35,7 +28,7 @@ install:
 
 script:
     - mkdir -p build/logs
-    - phpunit --coverage-text --coverage-clover build/logs/clover.xml
+    - vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml
 
 after_success:
     - travis_retry php vendor/bin/coveralls -v

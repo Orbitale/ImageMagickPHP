@@ -20,17 +20,17 @@ use Symfony\Component\Process\Process;
  */
 class Command extends CommandOptions
 {
-    const RUN_NORMAL     = null;
-    const RUN_BACKGROUND = ' > /dev/null 2>&1';
-    const RUN_DEBUG      = ' 2>&1';
+    public const RUN_NORMAL     = null;
+    public const RUN_BACKGROUND = ' > /dev/null 2>&1';
+    public const RUN_DEBUG      = ' 2>&1';
 
-    const VERSION_6 = 6;
-    const VERSION_7 = 7;
+    public const VERSION_6 = 6;
+    public const VERSION_7 = 7;
 
     /**
-     * @var array The list of allowed ImageMagick binaries
+     * The list of allowed ImageMagick binaries
      */
-    protected $allowedExecutables = array('convert', 'mogrify', 'identify');
+    public const ALLOWED_EXECUTABLES = ['convert', 'mogrify', 'identify'];
 
     /**
      * @var string
@@ -59,7 +59,7 @@ class Command extends CommandOptions
      */
     protected $version;
 
-    public function __construct($imageMagickPath = '/usr/bin')
+    public function __construct(string $imageMagickPath = '/usr/bin')
     {
         $this->fs = new Filesystem();
 
@@ -74,7 +74,7 @@ class Command extends CommandOptions
                 'You must set the "imageMagickPath" parameter as the root directory where'."\n".
                 'ImageMagick executables (%s) are located.',
                 $imageMagickPath,
-                implode(', ', $this->allowedExecutables)
+                implode(', ', static::ALLOWED_EXECUTABLES)
             ));
         }
 
@@ -91,7 +91,7 @@ class Command extends CommandOptions
                 "If ImageMagick is set in the path, then set an empty parameter for `imageMagickPath`.\n".
                 "If not, then set the absolute path of the directory containing ImageMagick following executables:\n%s",
                 $imageMagickPath,
-                implode(', ', $this->allowedExecutables)
+                implode(', ', static::ALLOWED_EXECUTABLES)
             ));
         }
 
@@ -112,16 +112,9 @@ class Command extends CommandOptions
         $this->imageMagickPath = $imageMagickPath;
     }
 
-    /**
-     * Executes the command and returns its response
-     *
-     * @param null $runMode
-     *
-     * @return CommandResponse
-     */
-    public function run($runMode = self::RUN_NORMAL)
+    public function run(?string $runMode = self::RUN_NORMAL): CommandResponse
     {
-        if (!in_array($runMode, array(self::RUN_NORMAL, self::RUN_BACKGROUND, self::RUN_DEBUG), true)) {
+        if (!\in_array($runMode, [self::RUN_NORMAL, self::RUN_BACKGROUND, self::RUN_DEBUG], true)) {
             throw new \InvalidArgumentException('The run mode must be one of '.__CLASS__.'::RUN_* constants.');
         }
 
@@ -141,33 +134,27 @@ class Command extends CommandOptions
         return new CommandResponse($process, $code, $output, $error);
     }
 
-    public function setEnv($key, $value)
+    public function setEnv(string $key, string $value)
     {
         $this->env .= ' '.$key.'='.escapeshellarg($value);
     }
 
     /**
-     * Start a new command with the "convert" executable (if allowed)
-     *
-     * @param $source
-     *
-     * @return $this
+     * Start a new command with the "convert" executable (if allowed).
      */
-    public function convert($source)
+    public function convert(string $sourceFile): self
     {
-        return $this->newCommand('convert')->file($source);
+        return $this->newCommand('convert')->file($sourceFile);
     }
 
     /**
      * Start a new command with the "mogrify" executable (if allowed)
-     * @var string $source An image to mogrify, it has to exist.
-     * @return $this
      */
-    public function mogrify($source = null)
+    public function mogrify(string $sourceFile = null): self
     {
         $this->newCommand('mogrify');
-        if ($source) {
-            $this->file($source, true, true);
+        if ($sourceFile) {
+            $this->file($sourceFile, true, true);
         }
 
         return $this;
@@ -175,20 +162,13 @@ class Command extends CommandOptions
 
     /**
      * Start a new command with the "identify" executable (if allowed)
-     *
-     * @param $source
-     *
-     * @return $this
      */
-    public function identify($source)
+    public function identify(string $sourceFile): self
     {
-        return $this->newCommand('identify')->file($source);
+        return $this->newCommand('identify')->file($sourceFile);
     }
 
-    /**
-     * @return string
-     */
-    public function getCommand()
+    public function getCommand(): string
     {
         return $this->env.' '.$this->command.' '.$this->commandToAppend;
     }
@@ -196,20 +176,14 @@ class Command extends CommandOptions
     /**
      * Adds text to the currently converted element.
      *
-     * @param string  $text     The text to add
-     * @param string|Geometry   $geometry Text position in the picture or pdf. This must fit ImageMagick geometry reference
-     * @param integer $size     The text size, in points unit.
-     * @param string  $color    A color for your text. This must fit ImageMagick color reference
-     * @param string  $font
-     *
-     * @return $this
+     * @param string|Geometry $geometry
      */
-    public function text($text, $geometry, $size, $color = 'black', $font = null)
+    public function text(string $text, $geometry, int $textSize, string $textColor = 'black', string $font = null): self
     {
         $this->command .=
-            ($font ? ' -font "'.$this->checkExistingFile($font).'"' : '').
-            ' -pointsize '.((int) $size).
-            ($color ? ' -fill "'.$this->ref->color($color).'"' : '').
+            ($font ? ' -font '.$this->escape($this->checkExistingFile($font)) : '').
+            ' -pointsize '.$textSize.
+            ($textColor ? ' -fill '.$this->escape($this->ref->color($textColor)) : '').
             ' -stroke "none"'.
             ' -annotate '.$this->ref->geometry($geometry).' '.$this->escape($text)
         ;
@@ -218,54 +192,38 @@ class Command extends CommandOptions
     }
 
     /**
-     * Creates an ellipse (or a circle, depending of the settings) to place in the picture or pdf
-     *
-     * @param integer $xCenter      The "x" coordinate to the center of the ellipse
-     * @param integer $yCenter      The "y" coordinate to the center of the ellipse
-     * @param integer $width        The ellipse width
-     * @param integer $height       The ellipse height
-     * @param string  $fill_color   A color to fill. This must fit ImageMagick color reference
-     * @param string  $stroke_color A color for the stroke outline. This must fit ImageMagick color reference
-     * @param int     $angle_start  The start angle position, in degrees
-     * @param int     $angle_end    The end angle position, in degrees
-     *
-     * @return $this
+     * Creates an ellipse (or a circle, depending of the settings) to place in the previously selected source file.
      */
     public function ellipse(
-        $xCenter,
-        $yCenter,
-        $width,
-        $height,
-        $fill_color,
-        $stroke_color = '',
-        $angle_start = 0,
-        $angle_end = 360
-    ) {
-        if ($stroke_color) {
-            $this->command .= ' -stroke "'.$this->ref->color($stroke_color).'"';
+        int $xCenter,
+        int $yCenter,
+        int $width,
+        int $height,
+        string $fillColor,
+        string $strokeColor = '',
+        int $startAngleInDegree = 0,
+        int $endAngleInDegree = 360
+    ): self {
+        if ($strokeColor) {
+            $this->command .= ' -stroke "'.$this->ref->color($strokeColor).'"';
         }
         $this->command .=
-            ' -fill "'.$this->ref->color($fill_color).'"'.
-            ' -draw "ellipse '.(int) $xCenter.','.(int) $yCenter.
-            ' '.(int) $width.','.(int) $height.
-            ' '.(int) $angle_start.','.(int) $angle_end.'"';
+            ' -fill "'.$this->ref->color($fillColor).'"'.
+            ' -draw "ellipse '.$xCenter.','.$yCenter.
+            ' '.$width.','.$height.
+            ' '.$startAngleInDegree.','.$endAngleInDegree.'"';
 
         return $this;
     }
 
-    /**
-     * @param string $binary One of the allowed ImageMagick executables
-     *
-     * @return string
-     */
-    public function getExecutable($binary = 'convert')
+    public function getExecutable(string $binary = 'convert'): string
     {
-        if (!in_array($binary, $this->allowedExecutables, true)) {
+        if (!\in_array($binary, static::ALLOWED_EXECUTABLES, true)) {
             throw new \InvalidArgumentException(sprintf(
                 "The ImageMagick executable \"%s\" is not allowed.\n".
                 "The only binaries allowed to be executed are the following:\n%s",
                 $binary,
-                implode(', ', $this->allowedExecutables)
+                implode(', ', static::ALLOWED_EXECUTABLES)
             ));
         }
 
@@ -283,13 +241,9 @@ class Command extends CommandOptions
     }
 
     /**
-     * Start a whole new command
-     *
-     * @param string $executable An allowed ImageMagick executable
-     *
-     * @return $this
+     * Start a whole new command.
      */
-    public function newCommand($executable)
+    public function newCommand(string $executable): self
     {
         $this->command         = ''.$this->getExecutable($executable).'';
         $this->commandToAppend = '';
@@ -298,19 +252,13 @@ class Command extends CommandOptions
     }
 
     /**
-     * Add a file specification, mostly for source or destination file
-     *
-     * @param string $source         The file must exists
-     * @param bool   $checkExistence If true, checks file existence before using it
-     * @param bool   $append         If true, appends the file name instead of adding it to the command normally
-     *
-     * @return $this
+     * Add a file specification to the command, mostly for source or destination file.
      */
-    public function file($source, $checkExistence = true, $append = false)
+    public function file(string $source, bool $checkIfFileExists = true, bool $appendToCommend = false): self
     {
-        $source = $checkExistence ? $this->checkExistingFile($source) : $this->cleanPath($source);
+        $source = $checkIfFileExists ? $this->checkExistingFile($source) : $this->cleanPath($source);
         $source = str_replace('\\', '/', $source);
-        if ($append) {
+        if ($appendToCommend) {
             $this->commandToAppend .= ' "'.$source.'"';
         } else {
             $this->command .= ' "'.$source.'"';
@@ -320,13 +268,9 @@ class Command extends CommandOptions
     }
 
     /**
-     * Checks if file exists in the filesystem
-     *
-     * @param string $file
-     *
-     * @return string
+     * Checks if file exists in the filesystem.
      */
-    protected function checkExistingFile($file)
+    protected function checkExistingFile(string $file): string
     {
         if (!file_exists($file)) {
             throw new \InvalidArgumentException(sprintf(
@@ -339,12 +283,7 @@ class Command extends CommandOptions
         return $this->cleanPath($file);
     }
 
-    /**
-     * @param string $path
-     * @param bool   $rtrim
-     * @return string
-     */
-    private function cleanPath($path, $rtrim = false)
+    private function cleanPath(string $path, bool $rtrim = false): string
     {
         $path = str_replace('\\', '/', $path);
 

@@ -32,14 +32,9 @@ abstract class CommandOptions
     protected $command = '';
 
     /**
-     * Escapes a string in order to inject it in the shell command
-     *
-     * @param string $string
-     * @param bool   $addQuotes
-     *
-     * @return mixed|string
+     * Escapes a string in order to inject it in the shell command.
      */
-    public function escape($string, $addQuotes = true)
+    public function escape(string $string, bool $addQuotes = true): string
     {
         $string = str_replace(
             ['"', '`', '’', '\\\''],
@@ -50,16 +45,10 @@ abstract class CommandOptions
         return $addQuotes ? '"'.$string.'"' : $string;
     }
 
-    //
-    // Now, the options.
-    //
-
     /**
-     * @param string $color
-     *
      * @return $this
      */
-    public function background($color)
+    public function background(string $color)
     {
         $this->command .= ' -background ' . $this->escape($this->ref->color($color));
 
@@ -115,23 +104,19 @@ abstract class CommandOptions
     }
 
     /**
-     * @param int $quality
-     *
      * @return $this
      */
-    public function quality($quality)
+    public function quality(int $quality)
     {
-        $this->command .= ' -quality ' . ((int)$quality);
+        $this->command .= ' -quality ' .$quality;
 
         return $this;
     }
 
     /**
-     * @param string $rotation
-     *
      * @return $this
      */
-    public function rotate($rotation)
+    public function rotate(string $rotation)
     {
         $this->command .= ' -rotate ' . $this->escape($this->ref->rotation($rotation));
 
@@ -149,11 +134,9 @@ abstract class CommandOptions
     }
 
     /**
-     * @param string $type
-     *
      * @return $this
      */
-    public function interlace($type)
+    public function interlace(string $type)
     {
         $this->command .= ' -interlace '.$this->ref->interlace($type);
 
@@ -161,11 +144,9 @@ abstract class CommandOptions
     }
 
     /**
-     * @param float $blur
-     *
      * @return $this
      */
-    public function gaussianBlur($blur)
+    public function gaussianBlur(string $blur)
     {
         $this->command .= ' -gaussian-blur '.$this->ref->blur($blur);
 
@@ -173,11 +154,9 @@ abstract class CommandOptions
     }
 
     /**
-     * @param float $blur
-     *
      * @return $this
      */
-    public function blur($blur)
+    public function blur(string $blur)
     {
         $this->command .= ' -blur '.$this->ref->blur($blur);
 

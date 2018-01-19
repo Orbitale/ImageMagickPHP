@@ -19,11 +19,10 @@ use Symfony\Component\Yaml\Yaml;
  */
 final class References
 {
-
     /**
      * @var array Configuration from the references.yml file
      */
-    private $config = array();
+    private $config = [];
 
     public function __construct()
     {
@@ -48,7 +47,7 @@ final class References
             }
         }
 
-        if (is_array($config) && $keysExist) {
+        if (\is_array($config) && $keysExist) {
             $this->config = $config;
         } else {
             throw new \InvalidArgumentException(sprintf(
@@ -62,7 +61,7 @@ final class References
     /**
      * @return string[]
      */
-    public function getColorsReference()
+    public function getColorsReference(): array
     {
         return $this->config['colors'];
     }
@@ -70,20 +69,15 @@ final class References
     /**
      * @return string[]
      */
-    public function getInterlaceTypesReference()
+    public function getInterlaceTypesReference(): array
     {
         return $this->config['interlace_types'];
     }
 
     /**
-     * Checks that a geometry option is correct according to ImageMagick Geometry reference.
-     * @link http://www.imagemagick.org/script/command-line-processing.php#geometry
-     *
      * @param string|Geometry $geometry
-     *
-     * @return string
      */
-    public function geometry($geometry)
+    public function geometry($geometry): string
     {
         if (!$geometry instanceof Geometry) {
             $geometry = new Geometry(trim($geometry));
@@ -95,12 +89,8 @@ final class References
     /**
      * Checks that a color is correct according to ImageMagick command line reference.
      * @link http://www.imagemagick.org/script/color.php
-     *
-     * @param $color
-     *
-     * @return string
      */
-    public function color($color)
+    public function color(string $color): string
     {
         $color = trim($color);
         if (
@@ -131,12 +121,8 @@ final class References
     /**
      * Checks that a rotation option is correct according to ImageMagick command line reference.
      * @link http://www.imagemagick.org/script/command-line-options.php#rotate
-     *
-     * @param string $rotation
-     *
-     * @return string
      */
-    public function rotation($rotation)
+    public function rotation(string $rotation): string
     {
         $rotation = trim($rotation);
 
@@ -152,12 +138,7 @@ final class References
         ));
     }
 
-    /**
-     * @param string $blur
-     *
-     * @return string
-     */
-    public function blur($blur)
+    public function blur(string $blur): float
     {
         $blur = trim($blur);
 
@@ -176,12 +157,8 @@ final class References
 
     /**
      * Checks that interlace type is valid in the references.
-     *
-     * @param string $interlaceType
-     *
-     * @return string
      */
-    public function interlace($interlaceType)
+    public function interlace(string $interlaceType): string
     {
         $interlaceType = strtolower(trim($interlaceType));
 

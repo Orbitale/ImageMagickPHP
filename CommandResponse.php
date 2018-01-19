@@ -11,7 +11,6 @@
 
 namespace Orbitale\Component\ImageMagick;
 
-
 use Symfony\Component\Process\Process;
 
 class CommandResponse

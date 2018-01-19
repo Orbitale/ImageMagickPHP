@@ -10,7 +10,9 @@
 
 namespace Orbitale\Component\ImageMagick\Tests;
 
-class AbstractTestCase extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class AbstractTestCase extends TestCase
 {
 
     protected $resourcesDir;
