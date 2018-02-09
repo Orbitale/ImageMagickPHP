@@ -80,13 +80,25 @@ abstract class CommandOptions
     }
 
     /**
+     * @param string $canvasColor
+     *
+     * @return $this
+     */
+    public function xc(string $canvasColor = 'none')
+    {
+        $this->command .= ' xc:' . $this->escape($this->ref->color($canvasColor)).' ';
+
+        return $this;
+    }
+
+    /**
      * @param string|Geometry $geometry
      *
      * @return $this
      */
     public function crop($geometry)
     {
-        $this->command .= ' -crop ' . $this->escape($this->ref->geometry($geometry)).' ';
+        $this->command .= ' -crop ' . $this->escape($this->ref->geometry($geometry), false).' ';
 
         return $this;
     }
