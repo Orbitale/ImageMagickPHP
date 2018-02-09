@@ -72,6 +72,18 @@ abstract class CommandOptions
      *
      * @return $this
      */
+    public function size($geometry)
+    {
+        $this->command .= ' -size ' . $this->escape($this->ref->geometry($geometry)).' ';
+
+        return $this;
+    }
+
+    /**
+     * @param string|Geometry $geometry
+     *
+     * @return $this
+     */
     public function crop($geometry)
     {
         $this->command .= ' -crop ' . $this->escape($this->ref->geometry($geometry)).' ';
