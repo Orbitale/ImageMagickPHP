@@ -16,11 +16,11 @@ matrix:
         - php: 7.1
           env: 'IMAGEMAGICK_SOURCE="ImageMagick-6.9.9-34"'
         - php: 7.1
-          env: 'IMAGEMAGICK_SOURCE="ImageMagick"'
+          env: 'IMAGEMAGICK_SOURCE="ImageMagick-7.0.7-22"'
         - php: 7.2
           env: 'IMAGEMAGICK_SOURCE="ImageMagick-6.9.9-34"'
         - php: 7.2
-          env: 'IMAGEMAGICK_SOURCE="ImageMagick"'
+          env: 'IMAGEMAGICK_SOURCE="ImageMagick-7.0.7-22"'
 
 before_install:
     - composer self-update
