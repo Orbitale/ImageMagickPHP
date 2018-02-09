@@ -14,13 +14,13 @@ matrix:
     fast_finish: true
     include:
         - php: 7.1
-          env: 'IMAGEMAGICK_SOURCE="ImageMagick-6.9.9-33"'
+          env: 'IMAGEMAGICK_SOURCE="ImageMagick-6.9.9-34"'
         - php: 7.1
-          env: 'IMAGEMAGICK_SOURCE="ImageMagick-7.0.7-21"'
+          env: 'IMAGEMAGICK_SOURCE="ImageMagick"'
         - php: 7.2
-          env: 'IMAGEMAGICK_SOURCE="ImageMagick-6.9.9-33"'
+          env: 'IMAGEMAGICK_SOURCE="ImageMagick-6.9.9-34"'
         - php: 7.2
-          env: 'IMAGEMAGICK_SOURCE="ImageMagick-7.0.7-21"'
+          env: 'IMAGEMAGICK_SOURCE="ImageMagick"'
 
 before_install:
     - composer self-update
