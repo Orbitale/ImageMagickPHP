@@ -268,6 +268,14 @@ class Command extends CommandOptions
     }
 
     /**
+     * Add an output file to the end of the command.
+     */
+    public function output(string $source): self
+    {
+        return $this->file($source, false, true);
+    }
+
+    /**
      * Checks if file exists in the filesystem.
      */
     protected function checkExistingFile(string $file): string
