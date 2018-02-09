@@ -112,6 +112,11 @@ class Command extends CommandOptions
         $this->imageMagickPath = $imageMagickPath;
     }
 
+    public static function create(string $imageMagickPath = '/usr/bin'): self
+    {
+        return new self($imageMagickPath);
+    }
+
     public function run(?string $runMode = self::RUN_NORMAL): CommandResponse
     {
         if (!\in_array($runMode, [self::RUN_NORMAL, self::RUN_BACKGROUND, self::RUN_DEBUG], true)) {
