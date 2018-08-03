@@ -19,7 +19,10 @@ composer require orbitale/imagemagick-php
 Requirements
 ===============
 
-* PHP 5.3.3 or more
+* PHP 7.1 or higher
+* symfony/yaml 3.0 or higher
+* symfony/process 3.0 or higher
+* smyfony/filesystem 3.0 or higher
 * The `exec()` function **must** be available and work in order to communicate with ImageMagick executables.
 * [ImageMagick](http://www.imagemagick.org/) has to be installed on your server, and the binaries must be executable by `exec()`.
 
@@ -38,7 +41,7 @@ $command = new Command('/usr/bin');
 $command = new Command('C:\ImageMagick');
 
 // If it is available in the global scope for the user running the script:
-$command = new Command('');
+$command = new Command();
 ```
 
 The constructor will automatically search for the `convert` executable, test it, and throw an exception if it's not available.
