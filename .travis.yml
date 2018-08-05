@@ -14,18 +14,19 @@ matrix:
     fast_finish: true
     include:
         - php: 7.1
-          env: 'IMAGEMAGICK_SOURCE="ImageMagick-6.9.9-34"'
+          env: 'IM_VERSION="ImageMagick6"'
         - php: 7.1
-          env: 'IMAGEMAGICK_SOURCE="ImageMagick-7.0.7-22"'
+          env: 'IM_VERSION="ImageMagick"' # IM 7
         - php: 7.2
-          env: 'IMAGEMAGICK_SOURCE="ImageMagick-6.9.9-34"'
+          env: 'IM_VERSION="ImageMagick6"'
         - php: 7.2
-          env: 'IMAGEMAGICK_SOURCE="ImageMagick-7.0.7-22"'
+          env: 'IM_VERSION="ImageMagick"' # IM 7
 
 before_install:
     - composer self-update
-    - curl https://www.imagemagick.org/download/$IMAGEMAGICK_SOURCE.tar.gz | tar xz
-    - cd $IMAGEMAGICK_SOURCE
+    - export TAR_URL=$(curl -L https://api.github.com/repos/ImageMagick/$IM_VERSION/tags | jq .[1].tarball_url | tr -d '"')
+    - curl -L $TAR_URL | tar xz
+    - cd ImageMagick-$IM_VERSION*
     - ./configure
     - make
     - sudo make install
