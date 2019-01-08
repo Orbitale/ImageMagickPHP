@@ -35,59 +35,36 @@ class CommandResponse
      */
     private $error;
 
-    /**
-     * CommandResponse constructor.
-     * @param Process $process
-     * @param int $code
-     * @param string $output
-     * @param string $error
-     */
-    public function __construct(Process $process, $code, $output, $error)
+    public function __construct(Process $process, int $code, string $output, string $error)
     {
-        $this->code    = $code;
+        $this->code = $code;
         $this->output = $output;
         $this->error = $error;
         $this->process = $process;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasFailed()
+    public function hasFailed(): bool
     {
         return $this->code !== 0;
     }
 
-    /**
-     * @return Process
-     */
-    public function getProcess()
+    public function getProcess(): Process
     {
         return $this->process;
     }
 
-    /**
-     * @return int
-     */
-    public function getCode()
+    public function getCode(): int
     {
         return $this->code;
     }
 
-    /**
-     * @return string
-     */
-    public function getOutput()
+    public function getOutput(): string
     {
         return $this->output;
     }
 
-    /**
-     * @return string
-     */
-    public function getError()
+    public function getError(): string
     {
         return $this->error;
     }
-
 }

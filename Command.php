@@ -12,13 +12,12 @@
 namespace Orbitale\Component\ImageMagick;
 
 use Orbitale\Component\ImageMagick\ReferenceClasses\Geometry;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
 /**
  * @author Alexandre Rock Ancelet <alex@orbitale.io>
  */
-class Command extends CommandOptions
+class Command
 {
     public const RUN_NORMAL     = null;
     public const RUN_BACKGROUND = ' > /dev/null 2>&1';
@@ -61,26 +60,19 @@ class Command extends CommandOptions
     protected $commandToAppend = '';
 
     /**
-     * @var Filesystem
-     */
-    protected $fs;
-
-    /**
      * @var int
      */
     protected $version;
 
     public function __construct(string $imageMagickPath = '/usr/bin')
     {
-        $this->fs = new Filesystem();
-
         // Delete trimming directory separator
         $imageMagickPath = $this->cleanPath($imageMagickPath, true);
 
         // Add a proper directory separator at the end if path is not empty.
         // If it's empty, then it's set in the global path.
         if ($imageMagickPath && !is_dir($imageMagickPath)) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new \InvalidArgumentException(\sprintf(
                 'The specified path (%s) is not a directory.'."\n".
                 'You must set the "imageMagickPath" parameter as the root directory where'."\n".
                 'ImageMagick executables (%s) are located.',
@@ -90,14 +82,14 @@ class Command extends CommandOptions
         }
 
         // For imagemagick 7 we'll use the "magick" base command each time.
-        if ($this->fs->exists($imageMagickPath.'/magick') || $this->fs->exists($imageMagickPath.'/magick.exe')) {
+        if (file_exists($imageMagickPath.'/magick') || file_exists($imageMagickPath.'/magick.exe')) {
             $this->version = static::VERSION_7;
             $imageMagickPath .= '/magick ';
-        } elseif ($this->fs->exists($imageMagickPath.'/convert') || $this->fs->exists($imageMagickPath.'/convert.exe')) {
+        } elseif (file_exists($imageMagickPath.'/convert') || file_exists($imageMagickPath.'/convert.exe')) {
             $this->version = static::VERSION_6;
             $imageMagickPath .= '/';
         } else {
-            throw new \InvalidArgumentException(sprintf(
+            throw new \InvalidArgumentException(\sprintf(
                 "The specified path (%s) does not seem to contain ImageMagick binaries, or it is not readable.\n".
                 "If ImageMagick is set in the path, then set an empty parameter for `imageMagickPath`.\n".
                 "If not, then set the absolute path of the directory containing ImageMagick following executables:\n%s",
@@ -110,7 +102,7 @@ class Command extends CommandOptions
 
         $process->run();
         if (!$process->isSuccessful()) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new \InvalidArgumentException(\sprintf(
                 "ImageMagick does not seem to work well, the test command resulted in an error.\n".
                 "Execution returned message: \"{$process->getExitCodeText()}\"\n".
                 "To solve this issue, please run this command and check your error messages:\n%s",
@@ -131,7 +123,7 @@ class Command extends CommandOptions
     public function getExecutable(string $binary = 'convert'): string
     {
         if (!\in_array($binary, static::ALLOWED_EXECUTABLES, true)) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new \InvalidArgumentException(\sprintf(
                 "The ImageMagick executable \"%s\" is not allowed.\n".
                 "The only binaries allowed to be executed are the following:\n%s",
                 $binary,
@@ -141,7 +133,7 @@ class Command extends CommandOptions
 
         $executablePath = $this->imageMagickPath;
 
-        if ($this->version === self::VERSION_7){
+        if ($this->version === self::VERSION_7) {
             // ImageMagick 7 uses the "magick" main command,
             //  so every binary is transformed into an argument for the magick binary.
             $executablePath .= ' ';
@@ -158,7 +150,7 @@ class Command extends CommandOptions
      */
     public function newCommand(string $executable): self
     {
-        $this->command         = ''.$this->getExecutable($executable).'';
+        $this->command = ''.$this->getExecutable($executable).'';
         $this->commandToAppend = '';
 
         return $this;
@@ -279,7 +271,7 @@ class Command extends CommandOptions
      */
     public function background(string $color): self
     {
-        $this->command .= ' -background ' . $this->escape($this->ref->color($color));
+        $this->command .= ' -background '.$this->escape($this->ref->color($color));
 
         return $this;
     }
@@ -289,7 +281,7 @@ class Command extends CommandOptions
      */
     public function fill(string $color): self
     {
-        $this->command .= ' -fill ' . $this->escape($this->ref->color($color));
+        $this->command .= ' -fill '.$this->escape($this->ref->color($color));
 
         return $this;
     }
@@ -301,7 +293,7 @@ class Command extends CommandOptions
      */
     public function resize($geometry): self
     {
-        $this->command .= ' -resize ' . $this->escape($this->ref->geometry($geometry)).' ';
+        $this->command .= ' -resize '.$this->escape($this->ref->geometry($geometry)).' ';
 
         return $this;
     }
@@ -313,7 +305,7 @@ class Command extends CommandOptions
      */
     public function size($geometry): self
     {
-        $this->command .= ' -size ' . $this->escape($this->ref->geometry($geometry)).' ';
+        $this->command .= ' -size '.$this->escape($this->ref->geometry($geometry)).' ';
 
         return $this;
     }
@@ -327,7 +319,7 @@ class Command extends CommandOptions
      */
     public function xc(string $canvasColor = 'none'): self
     {
-        $this->command .= ' xc:' . $this->escape($this->ref->color($canvasColor)).' ';
+        $this->command .= ' xc:'.$this->escape($this->ref->color($canvasColor)).' ';
 
         return $this;
     }
@@ -339,7 +331,7 @@ class Command extends CommandOptions
      */
     public function crop($geometry): self
     {
-        $this->command .= ' -crop ' . $this->escape($this->ref->geometry($geometry), false).' ';
+        $this->command .= ' -crop '.$this->escape($this->ref->geometry($geometry), false).' ';
 
         return $this;
     }
@@ -351,7 +343,7 @@ class Command extends CommandOptions
      */
     public function extent($geometry): self
     {
-        $this->command .= ' -extent ' . $this->escape($this->ref->geometry($geometry));
+        $this->command .= ' -extent '.$this->escape($this->ref->geometry($geometry));
 
         return $this;
     }
@@ -363,7 +355,7 @@ class Command extends CommandOptions
      */
     public function thumbnail($geometry): self
     {
-        $this->command .= ' -thumbnail ' . $this->escape($this->ref->geometry($geometry));
+        $this->command .= ' -thumbnail '.$this->escape($this->ref->geometry($geometry));
 
         return $this;
     }
@@ -373,7 +365,7 @@ class Command extends CommandOptions
      */
     public function quality(int $quality): self
     {
-        $this->command .= ' -quality ' .$quality;
+        $this->command .= ' -quality '.$quality;
 
         return $this;
     }
@@ -383,7 +375,7 @@ class Command extends CommandOptions
      */
     public function rotate(string $rotation): self
     {
-        $this->command .= ' -rotate ' . $this->escape($this->ref->rotation($rotation));
+        $this->command .= ' -rotate '.$this->escape($this->ref->rotation($rotation));
 
         return $this;
     }
@@ -433,7 +425,7 @@ class Command extends CommandOptions
      */
     public function font(string $fontFile): self
     {
-        $this->command .= ' '.$this->escape($this->checkExistingFile($fontFile)).' ';
+        $this->command .= ' -font '.$this->escape($this->checkExistingFile($fontFile)).' ';
 
         return $this;
     }
@@ -443,7 +435,7 @@ class Command extends CommandOptions
      */
     public function pointsize(int $pointsize): self
     {
-        $this->command .= ' -pointsize ' .$pointsize;
+        $this->command .= ' -pointsize '.$pointsize;
 
         return $this;
     }
@@ -453,7 +445,7 @@ class Command extends CommandOptions
      */
     public function stroke(int $color): self
     {
-        $this->command .= ' -stroke ' .$this->ref->color($color);
+        $this->command .= ' -stroke '.$this->ref->color($color);
 
         return $this;
     }
@@ -494,8 +486,7 @@ class Command extends CommandOptions
         string $strokeColor = '',
         int $startAngleInDegree = 0,
         int $endAngleInDegree = 360
-    ): self
-    {
+    ): self {
         if ($strokeColor) {
             $this->stroke($strokeColor);
         }
@@ -514,9 +505,6 @@ class Command extends CommandOptions
      * End of ImageMagick functions *
      * ---------------------------- */
 
-    /**
-     * Checks if file exists in the filesystem.
-     */
     protected function checkExistingFile(string $file): string
     {
         if (!file_exists($file)) {
