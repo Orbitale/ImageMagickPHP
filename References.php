@@ -12,7 +12,6 @@
 namespace Orbitale\Component\ImageMagick;
 
 use Orbitale\Component\ImageMagick\ReferenceClasses\Geometry;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * This class is here to add some validation processes when using options in the Command class.
@@ -20,13 +19,13 @@ use Symfony\Component\Yaml\Yaml;
 final class References
 {
     /**
-     * @var array Configuration from the references.yml file
+     * @var array Configuration from the references.php file
      */
     private $config = [];
 
     public function __construct()
     {
-        $referenceFile = __DIR__.'/Resources/references.yml';
+        $referenceFile = __DIR__.'/Resources/references.php';
 
         if (!file_exists($referenceFile)) {
             throw new \RuntimeException(sprintf(
@@ -36,7 +35,7 @@ final class References
             ));
         }
 
-        $config = Yaml::parse(file_get_contents($referenceFile));
+        $config = require $referenceFile;
 
         $keysToCheck = ['colors', 'interlace_types'];
         $keysExist = true;
