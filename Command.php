@@ -423,9 +423,9 @@ class Command
     /**
      * @link http://imagemagick.org/script/command-line-options.php#font
      */
-    public function font(string $fontFile): self
+    public function font(string $fontFile, bool $checkFontFileExists = false): self
     {
-        $this->command .= ' -font '.$this->escape($this->checkExistingFile($fontFile)).' ';
+        $this->command .= ' -font '.$this->escape($checkFontFileExists  ? $this->checkExistingFile($fontFile) : $fontFile).' ';
 
         return $this;
     }
