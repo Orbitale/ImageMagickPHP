@@ -10,17 +10,14 @@ cache:
    directories:
        - $HOME/.composer/cache
 
-matrix:
-    fast_finish: true
-    include:
-        - php: 7.1
-          env: 'IM_VERSION="ImageMagick6"'
-        - php: 7.1
-          env: 'IM_VERSION="ImageMagick"' # IM 7
-        - php: 7.2
-          env: 'IM_VERSION="ImageMagick6"'
-        - php: 7.2
-          env: 'IM_VERSION="ImageMagick"' # IM 7
+php:
+    - 7.1
+    - 7.2
+    - 7.3
+
+env:
+    - 'IM_VERSION="ImageMagick6"'
+    - 'IM_VERSION="ImageMagick"' # Version 7
 
 before_install:
     - composer self-update
