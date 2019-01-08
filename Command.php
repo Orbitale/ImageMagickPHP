@@ -455,10 +455,24 @@ class Command
      *
      * @link http://imagemagick.org/script/command-line-options.php#annotate
      */
-    public function text(string $text, $geometry, int $textSize, string $textColor = 'black', string $font = null): self
+    public function text(array $options = []): self
     {
+        $mandatoryKeys = ['text', 'geometry', 'textSize'];
+        foreach ($options as $key => $v) {
+            if (!isset($mandatoryKeys[$key])) {
+                throw new \InvalidArgumentException(\sprintf('Key "%s" is missing for the %s function.', $key, __METHOD__));
+            }
+        }
+
+        $text = $options['text'];
+        $textSize = $options['textSize'];
+        $geometry = $options['geometry'];
+        $font = $options['font'] ?? null;
+        $checkFont = $options['checkFont'] ?? false;
+        $textColor = $options['textColor'] ?? null;
+
         if ($font) {
-            $this->font($font);
+            $this->font($font, $checkFont);
         }
 
         $this->pointsize($textSize);
