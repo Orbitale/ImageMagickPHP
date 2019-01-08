@@ -44,6 +44,17 @@ class Command extends CommandOptions
     protected $env = '';
 
     /**
+     * @var References
+     */
+    protected $ref;
+
+    /**
+     * The shell command
+     * @var string
+     */
+    protected $command = '';
+
+    /**
      * Parameters to add at the end of the command
      * @var string
      */
@@ -117,6 +128,42 @@ class Command extends CommandOptions
         return new self($imageMagickPath);
     }
 
+    public function getExecutable(string $binary = 'convert'): string
+    {
+        if (!\in_array($binary, static::ALLOWED_EXECUTABLES, true)) {
+            throw new \InvalidArgumentException(sprintf(
+                "The ImageMagick executable \"%s\" is not allowed.\n".
+                "The only binaries allowed to be executed are the following:\n%s",
+                $binary,
+                implode(', ', static::ALLOWED_EXECUTABLES)
+            ));
+        }
+
+        $executablePath = $this->imageMagickPath;
+
+        if ($this->version === self::VERSION_7){
+            // ImageMagick 7 uses the "magick" main command,
+            //  so every binary is transformed into an argument for the magick binary.
+            $executablePath .= ' ';
+        }
+
+        $executablePath .= $binary;
+
+        return $executablePath;
+    }
+
+    /**
+     * Entirely reset all current command statements, and start a whole new command.
+     *
+     */
+    public function newCommand(string $executable): self
+    {
+        $this->command         = ''.$this->getExecutable($executable).'';
+        $this->commandToAppend = '';
+
+        return $this;
+    }
+
     public function run(?string $runMode = self::RUN_NORMAL): CommandResponse
     {
         if (!\in_array($runMode, [self::RUN_NORMAL, self::RUN_BACKGROUND, self::RUN_DEBUG], true)) {
@@ -139,7 +186,7 @@ class Command extends CommandOptions
         return new CommandResponse($process, $code, $output, $error);
     }
 
-    public function setEnv(string $key, string $value)
+    public function setEnv(string $key, string $value): void
     {
         $this->env .= ' '.$key.'='.escapeshellarg($value);
     }
@@ -173,87 +220,26 @@ class Command extends CommandOptions
         return $this->newCommand('identify')->file($sourceFile);
     }
 
+    /**
+     * Get the final command that will be executed when using Command::run()
+     */
     public function getCommand(): string
     {
         return $this->env.' '.$this->command.' '.$this->commandToAppend;
     }
 
     /**
-     * Adds text to the currently converted element.
-     *
-     * @param string|Geometry $geometry
+     * Escapes a string in order to inject it in the shell command.
      */
-    public function text(string $text, $geometry, int $textSize, string $textColor = 'black', string $font = null): self
+    public function escape(string $string, bool $addQuotes = true): string
     {
-        $this->command .=
-            ($font ? ' -font '.$this->escape($this->checkExistingFile($font)) : '').
-            ' -pointsize '.$textSize.
-            ($textColor ? ' -fill '.$this->escape($this->ref->color($textColor)) : '').
-            ' -stroke "none"'.
-            ' -annotate '.$this->ref->geometry($geometry).' '.$this->escape($text)
-        ;
+        $string = str_replace(
+            ['"', '`', '’', '\\\''],
+            ['\"', "'", "'", "'"],
+            trim($string)
+        );
 
-        return $this;
-    }
-
-    /**
-     * Creates an ellipse (or a circle, depending of the settings) to place in the previously selected source file.
-     */
-    public function ellipse(
-        int $xCenter,
-        int $yCenter,
-        int $width,
-        int $height,
-        string $fillColor,
-        string $strokeColor = '',
-        int $startAngleInDegree = 0,
-        int $endAngleInDegree = 360
-    ): self {
-        if ($strokeColor) {
-            $this->command .= ' -stroke "'.$this->ref->color($strokeColor).'"';
-        }
-        $this->command .=
-            ' -fill "'.$this->ref->color($fillColor).'"'.
-            ' -draw "ellipse '.$xCenter.','.$yCenter.
-            ' '.$width.','.$height.
-            ' '.$startAngleInDegree.','.$endAngleInDegree.'"';
-
-        return $this;
-    }
-
-    public function getExecutable(string $binary = 'convert'): string
-    {
-        if (!\in_array($binary, static::ALLOWED_EXECUTABLES, true)) {
-            throw new \InvalidArgumentException(sprintf(
-                "The ImageMagick executable \"%s\" is not allowed.\n".
-                "The only binaries allowed to be executed are the following:\n%s",
-                $binary,
-                implode(', ', static::ALLOWED_EXECUTABLES)
-            ));
-        }
-
-        $executablePath = $this->imageMagickPath;
-
-        if ($this->version === self::VERSION_7){
-            // ImageMagick 7 uses the "magick" main command,
-            //  so every binary is transformed into an argument for the magick binary.
-            $executablePath .= ' ';
-        }
-
-        $executablePath .= $binary;
-
-        return $executablePath;
-    }
-
-    /**
-     * Start a whole new command.
-     */
-    public function newCommand(string $executable): self
-    {
-        $this->command         = ''.$this->getExecutable($executable).'';
-        $this->commandToAppend = '';
-
-        return $this;
+        return $addQuotes ? '"'.$string.'"' : $string;
     }
 
     /**
@@ -279,6 +265,254 @@ class Command extends CommandOptions
     {
         return $this->file($source, false, true);
     }
+
+    /* ---------------------------- *
+     * ---------------------------- *
+     * ---------------------------- *
+     *     ImageMagick Features     *
+     * ---------------------------- *
+     * ---------------------------- *
+     * ---------------------------- */
+
+    /**
+     * @link http://imagemagick.org/script/command-line-options.php#background
+     */
+    public function background(string $color): self
+    {
+        $this->command .= ' -background ' . $this->escape($this->ref->color($color));
+
+        return $this;
+    }
+
+    /**
+     * @link http://imagemagick.org/script/command-line-options.php#fill
+     */
+    public function fill(string $color): self
+    {
+        $this->command .= ' -fill ' . $this->escape($this->ref->color($color));
+
+        return $this;
+    }
+
+    /**
+     * @param string|Geometry $geometry
+     *
+     * @link http://imagemagick.org/script/command-line-options.php#resize
+     */
+    public function resize($geometry): self
+    {
+        $this->command .= ' -resize ' . $this->escape($this->ref->geometry($geometry)).' ';
+
+        return $this;
+    }
+
+    /**
+     * @param string|Geometry $geometry
+     *
+     * @link http://imagemagick.org/script/command-line-options.php#size
+     */
+    public function size($geometry): self
+    {
+        $this->command .= ' -size ' . $this->escape($this->ref->geometry($geometry)).' ';
+
+        return $this;
+    }
+
+    /**
+     * Create a colored canvas.
+     *
+     * @param string $canvasColor
+     *
+     * @link http://www.imagemagick.org/Usage/canvas/
+     */
+    public function xc(string $canvasColor = 'none'): self
+    {
+        $this->command .= ' xc:' . $this->escape($this->ref->color($canvasColor)).' ';
+
+        return $this;
+    }
+
+    /**
+     * @param string|Geometry $geometry
+     *
+     * @link http://imagemagick.org/script/command-line-options.php#crop
+     */
+    public function crop($geometry): self
+    {
+        $this->command .= ' -crop ' . $this->escape($this->ref->geometry($geometry), false).' ';
+
+        return $this;
+    }
+
+    /**
+     * @param string|Geometry $geometry
+     *
+     * @link http://imagemagick.org/script/command-line-options.php#extent
+     */
+    public function extent($geometry): self
+    {
+        $this->command .= ' -extent ' . $this->escape($this->ref->geometry($geometry));
+
+        return $this;
+    }
+
+    /**
+     * @param string|Geometry $geometry
+     *
+     * @link http://imagemagick.org/script/command-line-options.php#thumbnail
+     */
+    public function thumbnail($geometry): self
+    {
+        $this->command .= ' -thumbnail ' . $this->escape($this->ref->geometry($geometry));
+
+        return $this;
+    }
+
+    /**
+     * @link http://imagemagick.org/script/command-line-options.php#quality
+     */
+    public function quality(int $quality): self
+    {
+        $this->command .= ' -quality ' .$quality;
+
+        return $this;
+    }
+
+    /**
+     * @link http://imagemagick.org/script/command-line-options.php#rotate
+     */
+    public function rotate(string $rotation): self
+    {
+        $this->command .= ' -rotate ' . $this->escape($this->ref->rotation($rotation));
+
+        return $this;
+    }
+
+    /**
+     * @link http://imagemagick.org/script/command-line-options.php#strip
+     */
+    public function strip(): self
+    {
+        $this->command .= ' -strip ';
+
+        return $this;
+    }
+
+    /**
+     * @link http://imagemagick.org/script/command-line-options.php#interlace
+     */
+    public function interlace(string $type): self
+    {
+        $this->command .= ' -interlace '.$this->ref->interlace($type);
+
+        return $this;
+    }
+
+    /**
+     * @link http://imagemagick.org/script/command-line-options.php#gaussian-blur
+     */
+    public function gaussianBlur(string $blur): self
+    {
+        $this->command .= ' -gaussian-blur '.$this->ref->blur($blur);
+
+        return $this;
+    }
+
+    /**
+     * @link http://imagemagick.org/script/command-line-options.php#blur
+     */
+    public function blur(string $blur): self
+    {
+        $this->command .= ' -blur '.$this->ref->blur($blur);
+
+        return $this;
+    }
+
+    /**
+     * @link http://imagemagick.org/script/command-line-options.php#font
+     */
+    public function font(string $fontFile): self
+    {
+        $this->command .= ' '.$this->escape($this->checkExistingFile($fontFile)).' ';
+
+        return $this;
+    }
+
+    /**
+     * @link http://imagemagick.org/script/command-line-options.php#pointsize
+     */
+    public function pointsize(int $pointsize): self
+    {
+        $this->command .= ' -pointsize ' .$pointsize;
+
+        return $this;
+    }
+
+    /**
+     * @link http://imagemagick.org/script/command-line-options.php#stroke
+     */
+    public function stroke(int $color): self
+    {
+        $this->command .= ' -stroke ' .$this->ref->color($color);
+
+        return $this;
+    }
+
+    /**
+     * @param string|Geometry $geometry
+     *
+     * @link http://imagemagick.org/script/command-line-options.php#annotate
+     */
+    public function text(string $text, $geometry, int $textSize, string $textColor = 'black', string $font = null): self
+    {
+        if ($font) {
+            $this->font($font);
+        }
+
+        $this->pointsize($textSize);
+
+        if ($textColor) {
+            $this->fill($textColor);
+        }
+
+        $this->stroke('none');
+
+        $this->command .= ' -annotate '.$this->ref->geometry($geometry).' '.$this->escape($text);
+
+        return $this;
+    }
+
+    /**
+     * @link http://imagemagick.org/script/command-line-options.php#draw
+     */
+    public function ellipse(
+        int $xCenter,
+        int $yCenter,
+        int $width,
+        int $height,
+        string $fillColor,
+        string $strokeColor = '',
+        int $startAngleInDegree = 0,
+        int $endAngleInDegree = 360
+    ): self
+    {
+        if ($strokeColor) {
+            $this->stroke($strokeColor);
+        }
+
+        $this->fill($fillColor);
+
+        $this->command .=
+            ' -draw "ellipse '.$xCenter.','.$yCenter.
+            ' '.$width.','.$height.
+            ' '.$startAngleInDegree.','.$endAngleInDegree.'"';
+
+        return $this;
+    }
+
+    /* ---------------------------- *
+     * End of ImageMagick functions *
+     * ---------------------------- */
 
     /**
      * Checks if file exists in the filesystem.
