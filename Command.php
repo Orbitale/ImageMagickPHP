@@ -443,7 +443,7 @@ class Command
     /**
      * @link http://imagemagick.org/script/command-line-options.php#stroke
      */
-    public function stroke(int $color): self
+    public function stroke(string $color): self
     {
         $this->command .= ' -stroke '.$this->ref->color($color);
 
