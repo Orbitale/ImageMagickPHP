@@ -43,6 +43,11 @@ class CommandResponse
         $this->process = $process;
     }
 
+    public function isSuccessful(): bool
+    {
+        return $this->code === 0;
+    }
+
     public function hasFailed(): bool
     {
         return $this->code !== 0;
