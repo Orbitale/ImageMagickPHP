@@ -223,13 +223,9 @@ class Command
     /**
      * Escapes a string in order to inject it in the shell command.
      */
-    public function escape(string $string, bool $addQuotes = true): string
+    public function escape(string $string, bool $addQuotes = false): string
     {
-        $string = str_replace(
-            ['"', '`', '’', '\\\''],
-            ['\"', "'", "'", "'"],
-            trim($string)
-        );
+        $string = escapeshellarg($string);
 
         return $addQuotes ? '"'.$string.'"' : $string;
     }
