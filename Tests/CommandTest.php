@@ -197,13 +197,13 @@ class CommandTest extends AbstractTestCase
 
     public function testEscape()
     {
-        $string = 'PSR\'s a great `code` style standard. ';
+        $string = '25% $(touch hacked) #';
 
         $command = new Command(IMAGEMAGICK_DIR);
 
-        $escaped = $command->escape($string, true);
+        $escaped = $command->escape($string);
 
-        $this->assertEquals('"PSR\'s a great \'code\' style standard."', $escaped);
+        $this->assertEquals("'25% $(touch hacked) #'", $escaped);
     }
 
 }

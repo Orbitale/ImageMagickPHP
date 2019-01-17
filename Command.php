@@ -223,11 +223,11 @@ class Command
     /**
      * Escapes a string in order to inject it in the shell command.
      */
-    public function escape(string $string, bool $addQuotes = false): string
+    public function escape(string $string): string
     {
         $string = escapeshellarg($string);
 
-        return $addQuotes ? '"'.$string.'"' : $string;
+        return $string;
     }
 
     /**
