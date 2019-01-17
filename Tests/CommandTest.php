@@ -153,7 +153,7 @@ class CommandTest extends AbstractTestCase
 
         $expected = ' '.$command->getExecutable('convert').
                     ' "'.$source.'"'.
-                    ' -thumbnail "'.$geometry.'"'.
+                    ' -thumbnail \''.$geometry.'\''.
                     ' -quality '.$quality.
                     ' "'.$output.'" ';
 
