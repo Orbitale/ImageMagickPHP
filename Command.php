@@ -451,16 +451,16 @@ class Command
     }
 
     /**
-     * @param string|Geometry $geometry
+     * @param string|array $options
      *
      * @link http://imagemagick.org/script/command-line-options.php#annotate
      */
-    public function text(array $options = []): self
+    public function text($options = []): self
     {
         $mandatoryKeys = ['text', 'geometry', 'textSize'];
         foreach ($options as $key => $v) {
             if (!isset($mandatoryKeys[$key])) {
-                throw new \InvalidArgumentException(\sprintf('Key "%s" is missing for the %s function.', $key, __METHOD__));
+                throw new \InvalidArgumentException(\sprintf('Options "%s" is missing for the %s function.', $key, __METHOD__));
             }
         }
 
