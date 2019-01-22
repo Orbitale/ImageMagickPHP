@@ -82,7 +82,7 @@ class Command
         }
 
         // For imagemagick 7 we'll use the "magick" base command each time.
-        if (file_exists($imageMagickPath.'/magick') || file_exists($imageMagickPath.'/magick.exe')) {
+        if (preg_match('~magick(?:\.exe)?$~iU', $imageMagickPath) || file_exists($imageMagickPath.'/magick') || file_exists($imageMagickPath.'/magick.exe')) {
             $this->version = static::VERSION_7;
             $imageMagickPath .= '/magick ';
         } elseif (file_exists($imageMagickPath.'/convert') || file_exists($imageMagickPath.'/convert.exe')) {
@@ -289,7 +289,7 @@ class Command
      */
     public function resize($geometry): self
     {
-        $this->command .= ' -resize '.$this->escape($this->ref->geometry($geometry)).' ';
+        $this->command .= ' -resize "'.$this->ref->geometry($geometry).'" ';
 
         return $this;
     }
@@ -301,7 +301,7 @@ class Command
      */
     public function size($geometry): self
     {
-        $this->command .= ' -size '.$this->escape($this->ref->geometry($geometry)).' ';
+        $this->command .= ' -size "'.$this->ref->geometry($geometry).'" ';
 
         return $this;
     }
@@ -327,7 +327,7 @@ class Command
      */
     public function crop($geometry): self
     {
-        $this->command .= ' -crop '.$this->escape($this->ref->geometry($geometry), false).' ';
+        $this->command .= ' -crop '.$this->ref->geometry($geometry, false).' ';
 
         return $this;
     }
@@ -339,7 +339,7 @@ class Command
      */
     public function extent($geometry): self
     {
-        $this->command .= ' -extent '.$this->escape($this->ref->geometry($geometry));
+        $this->command .= ' -extent '.$this->ref->geometry($geometry);
 
         return $this;
     }
@@ -351,7 +351,7 @@ class Command
      */
     public function thumbnail($geometry): self
     {
-        $this->command .= ' -thumbnail '.$this->escape($this->ref->geometry($geometry));
+        $this->command .= ' -thumbnail "'.$this->ref->geometry($geometry).'" ';
 
         return $this;
     }

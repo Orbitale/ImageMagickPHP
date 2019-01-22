@@ -19,28 +19,22 @@ class CommandTest extends AbstractTestCase
     /**
      * @dataProvider provideWrongConvertDirs
      */
-    public function testWrongConvertDirs($path, $expectedMessage, $expectedException)
+    public function testWrongConvertDirs($path, $expectedMessage)
     {
-        $exception = '';
-        $exceptionClass = '';
-
         $path = str_replace('\\', '/', $path);
         $expectedMessage = str_replace('\\', '/', $expectedMessage);
-        try {
-            new Command($path);
-        } catch (\Exception $e) {
-            $exception = $e->getMessage();
-            $exceptionClass = get_class($e);
-        }
-        $this->assertContains($expectedMessage, $exception);
-        $this->assertEquals($exceptionClass, $expectedException);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage($expectedMessage);
+
+        new Command($path);
     }
 
     public function provideWrongConvertDirs()
     {
         return array(
-            array('/this/is/a/dummy/dir', 'The specified path (/this/is/a/dummy/dir) is not a directory', 'InvalidArgumentException'),
-            array('./', 'The specified path (.) does not seem to contain ImageMagick binaries, or it is not readable', 'InvalidArgumentException'),
+            array('/this/is/a/dummy/dir', 'The specified path (/this/is/a/dummy/dir) is not a directory'),
+            array('./', 'The specified path (.) does not seem to contain ImageMagick binaries, or it is not readable'),
         );
     }
 
@@ -153,7 +147,7 @@ class CommandTest extends AbstractTestCase
 
         $expected = ' '.$command->getExecutable('convert').
                     ' "'.$source.'"'.
-                    ' -thumbnail \''.$geometry.'\''.
+                    ' -thumbnail "'.$geometry.'" '.
                     ' -quality '.$quality.
                     ' "'.$output.'" ';
 
@@ -203,7 +197,7 @@ class CommandTest extends AbstractTestCase
 
         $escaped = $command->escape($string);
 
-        $this->assertEquals("'25% $(touch hacked) #'", $escaped);
+        $this->assertEquals('"25  $(touch hacked) #"', $escaped);
     }
 
 }

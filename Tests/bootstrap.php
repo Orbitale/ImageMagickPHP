@@ -30,11 +30,14 @@ $possibleDirectories = [
     '/usr/local/bin/',
 ];
 foreach ($possibleDirectories as $dir) {
-    $dir = rtrim($dir, '/\\').'/';
-
     echo 'Check "'.$dir.'convert" binary'."\n";
-    exec($dir.'convert -version', $o, $code);
+    exec($dir.'convert -version 2>&1', $o, $code);
+    if (0 !== $code) {
+        echo 'Check "'.$dir.'magick" binary (for ImageMagick 7)'."\n";
+        exec($dir.'magick -version 2>&1', $o, $code);
+    }
     if (0 === $code) {
+        echo "Resolved as $dir\n";
         define('IMAGEMAGICK_DIR', $dir);
         break;
     }
