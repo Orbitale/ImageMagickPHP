@@ -21,8 +21,8 @@ env:
 
 before_install:
     - composer self-update
-    - export TAR_URL=$(curl -L https://api.github.com/repos/ImageMagick/$IM_VERSION/tags | jq "[.[] | .tarball_url] | .[0]" | tr -d '"')
-    - curl -L $TAR_URL | tar xz
+    - export TAR_URL=$(curl -L "https://api.github.com/repos/ImageMagick/${IM_VERSION}/tags" | jq "[.[] | .tarball_url] | .[1]" | tr -d '"')
+    - curl -L "${TAR_URL}" | tar xz
     - cd ImageMagick-$IM_VERSION*
     - ./configure
     - make
