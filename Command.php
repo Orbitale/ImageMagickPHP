@@ -186,9 +186,9 @@ class Command
     /**
      * Start a new command with the "convert" executable (if allowed).
      */
-    public function convert(string $sourceFile): self
+    public function convert(string $sourceFile, bool $checkIfFileExists = true): self
     {
-        return $this->newCommand('convert')->file($sourceFile);
+        return $this->newCommand('convert')->file($sourceFile, $checkIfFileExists);
     }
 
     /**
