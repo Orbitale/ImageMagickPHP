@@ -81,8 +81,7 @@ $response = $command
 // Check if the command failed and get the error if needed
 if ($response->hasFailed()) {
     throw new Exception('An error occurred:'.$response->getError());
-}
-else {
+} else {
     // If it has not failed, then we simply send it to the buffer
     header('Content-type: image/gif');
     echo file_get_contents('logo.gif');
@@ -116,8 +115,7 @@ $response = $command
 // Check if the command failed and get the error if needed
 if ($response->hasFailed()) {
     throw new Exception('An error occurred:'.$response->getError());
-}
-else {
+} else {
     // If it has not failed, then we simply send it to the buffer
     header('Content-type: image/gif');
     echo file_get_contents('logo.gif');
