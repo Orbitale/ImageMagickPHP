@@ -1,7 +1,7 @@
 <?php
 
 return [
-  'interlace_types' => [
+    'interlace_types' => [
         'none',
         'line',
         'plane',

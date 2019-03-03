@@ -85,7 +85,7 @@ class Geometry
         int $height = null,
         int $x = null,
         int $y = null,
-        ?string $aspectRatio = self::RATIO_NONE
+        string $aspectRatio = self::RATIO_NONE
     ) {
         $args = func_get_args();
 

@@ -24,7 +24,7 @@ class GeometryTest extends AbstractTestCase
      * @param int    $y
      * @param string $aspectRatio
      *
-     * @dataProvider provideRightGeometries
+     * @dataProvider provideValidGeometries
      */
     public function testGeometry($width, $height, $x, $y, $aspectRatio)
     {
@@ -37,7 +37,7 @@ class GeometryTest extends AbstractTestCase
             return;
         }
 
-        $this->assertInternalType('string', $validatedGeometry);
+        $this->assertIsString($validatedGeometry);
         $this->assertNotEmpty($validatedGeometry);
 
         if ('' === $validatedGeometry) {
@@ -64,7 +64,7 @@ class GeometryTest extends AbstractTestCase
         $this->assertFileExists($outputFile);
     }
 
-    public function provideRightGeometries()
+    public function provideValidGeometries()
     {
         // width, height, x, y, aspectRatio
         return array(
