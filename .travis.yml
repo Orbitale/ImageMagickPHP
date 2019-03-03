@@ -8,19 +8,16 @@ branches:
 
 cache:
    directories:
-       - $HOME/.composer/cache
+       - '$HOME/.composer/cache'
 
 php:
-    - 7.1
-    - 7.2
-    - 7.3
-
-env:
-    - 'TAR_URL="https://imagemagick.org/download/ImageMagick.tar.gz"'
+    - '7.1'
+    - '7.2'
+    - '7.3'
 
 before_install:
     - composer self-update
-    - curl -L "${TAR_URL}" | tar xvzf
+    - curl -L "https://imagemagick.org/download/ImageMagick.tar.gz" | tar xz
     - cd ImageMagick-*
     - ./configure
     - make
