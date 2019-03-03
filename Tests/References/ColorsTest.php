@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the OrbitaleImageMagickPHP package.
  *
@@ -21,7 +23,7 @@ class ColorsTest extends TestCase
      */
     private $ref;
 
-    public function __construct($name = null, array $data = array(), $dataName = '')
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
         $this->ref = new References();
@@ -29,49 +31,49 @@ class ColorsTest extends TestCase
 
     /**
      * @dataProvider provideCorrectColors
+     *
      * @param string $color
      */
-    public function testCorrectColors($color)
+    public function testCorrectColors($color): void
     {
         $exception = false;
         try {
             $checked = $this->ref->color($color);
-            $this->assertEquals($checked, trim($color));
+            static::assertEquals($checked, \trim($color));
         } catch (\InvalidArgumentException $e) {
             $exception = true;
         }
-        $this->assertFalse($exception, sprintf('Failed in checking valid color (%s)', $color));
+        static::assertFalse($exception, \sprintf('Failed in checking valid color (%s)', $color));
     }
 
-    public function provideCorrectColors()
+    public function provideCorrectColors(): ?\Generator
     {
-        return array(
-            array('#000'),
-            array(' #000 '),
-            array(' #000000 '),
-            array(' #000000000000 '),
-            array(' #0000000000000000 '),
-            array('black'),
-            array('RosyBrown1'),
-            array('LavenderBlush2'),
-            array('rgb(0,0,0)'),
-            array('rgb(0%,0%,0%)'),
-            array('rgb(0, 0, 0)'),
-            array('rgb(0.0,0.0,0.0)'),
-            array('rgb(0.0%,0.0%,0.0%)'),
-            array('rgba(0,0,0,0)'),
-            array('rgba(0%,0%,0%,0.0)'),
-            array('rgba(0, 0, 0, 0)'),
-            array('rgba(0.0,0.0,0.0,1)'),
-            array('rgba(0.0%,0.0%,0.0%,0.5)'),
-        );
+        yield ['#000'];
+        yield [' #000 '];
+        yield [' #000000 '];
+        yield [' #000000000000 '];
+        yield [' #0000000000000000 '];
+        yield ['black'];
+        yield ['RosyBrown1'];
+        yield ['LavenderBlush2'];
+        yield ['rgb(0,0,0)'];
+        yield ['rgb(0%,0%,0%)'];
+        yield ['rgb(0, 0, 0)'];
+        yield ['rgb(0.0,0.0,0.0)'];
+        yield ['rgb(0.0%,0.0%,0.0%)'];
+        yield ['rgba(0,0,0,0)'];
+        yield ['rgba(0%,0%,0%,0.0)'];
+        yield ['rgba(0, 0, 0, 0)'];
+        yield ['rgba(0.0,0.0,0.0,1)'];
+        yield ['rgba(0.0%,0.0%,0.0%,0.5)'];
     }
 
     /**
      * @dataProvider provideIncorrectColors
+     *
      * @param string $color
      */
-    public function testIncorrectColors($color)
+    public function testIncorrectColors($color): void
     {
         $msg = '';
         try {
@@ -79,26 +81,23 @@ class ColorsTest extends TestCase
         } catch (\InvalidArgumentException $e) {
             $msg = $e->getMessage();
         }
-        $this->assertContains(
-            sprintf('The specified color (%s) is invalid', $color),
+        static::assertContains(
+            \sprintf('The specified color (%s) is invalid', $color),
             $msg
         );
     }
 
-    public function provideIncorrectColors()
+    public function provideIncorrectColors(): ?\Generator
     {
-        return array(
-            array('invalidColorName'),
-            array('#0000'),
-            array('rgb(0,0,0,0)'),
-            array('rgb(0)'),
-            array('rgb()'),
-            array('rgba(0,0,0)'),
-            array('rgba(0)'),
-            array('rgba()'),
-            array('rgba(0,0,0,2)'),
-            array('rgba(0,0,0,1%)'),
-        );
+        yield ['invalidColorName'];
+        yield ['#0000'];
+        yield ['rgb(0,0,0,0)'];
+        yield ['rgb(0)'];
+        yield ['rgb()'];
+        yield ['rgba(0,0,0)'];
+        yield ['rgba(0)'];
+        yield ['rgba()'];
+        yield ['rgba(0,0,0,2)'];
+        yield ['rgba(0,0,0,1%)'];
     }
-
 }

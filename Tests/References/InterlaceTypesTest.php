@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the OrbitaleImageMagickPHP package.
  *
@@ -21,7 +23,7 @@ class InterlaceTypesTest extends TestCase
      */
     private $ref;
 
-    public function __construct($name = null, array $data = array(), $dataName = '')
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
         $this->ref = new References();
@@ -33,28 +35,26 @@ class InterlaceTypesTest extends TestCase
      *
      * @dataProvider provideValidInterlaceTypes
      */
-    public function testValidInterlaceTypes($interlaceType, $expected)
+    public function testValidInterlaceTypes($interlaceType, $expected): void
     {
         $validatedType = $this->ref->interlace($interlaceType);
 
         static::assertSame($expected, $validatedType);
     }
 
-    public function provideValidInterlaceTypes()
+    public function provideValidInterlaceTypes(): ?\Generator
     {
-        return [
-            ['none', 'none'],
-            ['line', 'line'],
-            ['plane', 'plane'],
-            ['partition', 'partition'],
-            ['jpeg', 'jpeg'],
-            ['gif', 'gif'],
-            ['png', 'png'],
-            ['PNG', 'png'],
-            [' none ', 'none'],
-            ['NONE', 'none'],
-            ['NONE', 'none'],
-        ];
+        yield ['none', 'none'];
+        yield ['line', 'line'];
+        yield ['plane', 'plane'];
+        yield ['partition', 'partition'];
+        yield ['jpeg', 'jpeg'];
+        yield ['gif', 'gif'];
+        yield ['png', 'png'];
+        yield ['PNG', 'png'];
+        yield [' none ', 'none'];
+        yield ['NONE', 'none'];
+        yield ['NONE', 'none'];
     }
 
     /**
@@ -62,7 +62,7 @@ class InterlaceTypesTest extends TestCase
      *
      * @dataProvider provideInvalidInterlaceTypes
      */
-    public function testInvalidInterlaceTypes($interlaceType)
+    public function testInvalidInterlaceTypes($interlaceType): void
     {
         $msg = '';
         try {
@@ -70,21 +70,19 @@ class InterlaceTypesTest extends TestCase
         } catch (\InvalidArgumentException $e) {
             $msg = $e->getMessage();
         }
-        $this->assertContains(
-            sprintf('The specified interlace type (%s) is invalid', strtolower(trim($interlaceType))),
+        static::assertContains(
+            \sprintf('The specified interlace type (%s) is invalid', \mb_strtolower(\trim($interlaceType))),
             $msg
         );
     }
 
-    public function provideInvalidInterlaceTypes()
+    public function provideInvalidInterlaceTypes(): ?\Generator
     {
-        return [
-            [1],
-            ['2'],
-            ['wow'],
-            [''],
-            [' '],
-            [0x00],
-        ];
+        yield [1];
+        yield ['2'];
+        yield ['wow'];
+        yield [''];
+        yield [' '];
+        yield [0x00];
     }
 }

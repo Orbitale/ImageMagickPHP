@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the OrbitaleImageMagickPHP package.
  *
@@ -27,8 +29,8 @@ final class References
     {
         $referenceFile = __DIR__.'/Resources/references.php';
 
-        if (!file_exists($referenceFile)) {
-            throw new \RuntimeException(sprintf(
+        if (!\file_exists($referenceFile)) {
+            throw new \RuntimeException(\sprintf(
                 'File %s for ImageMagick references does not exist.'."\n".
                 'Check that the file exists and that it is readable.',
                 $referenceFile
@@ -41,7 +43,7 @@ final class References
         $keysExist = true;
 
         foreach ($keysToCheck as $key) {
-            if (!array_key_exists($key, $config)) {
+            if (!\array_key_exists($key, $config)) {
                 $keysExist = false;
             }
         }
@@ -49,7 +51,7 @@ final class References
         if (\is_array($config) && $keysExist) {
             $this->config = $config;
         } else {
-            throw new \InvalidArgumentException(sprintf(
+            throw new \InvalidArgumentException(\sprintf(
                 'File %s for ImageMagick references seems to be empty or invalid.'."\n".
                 'If it is a YAML file, please check its contents.',
                 $referenceFile
@@ -79,7 +81,7 @@ final class References
     public function geometry($geometry): string
     {
         if (!$geometry instanceof Geometry) {
-            $geometry = new Geometry(trim($geometry));
+            $geometry = new Geometry(\trim($geometry));
         }
 
         return $geometry->validate();
@@ -87,29 +89,30 @@ final class References
 
     /**
      * Checks that a color is correct according to ImageMagick command line reference.
-     * @link http://www.imagemagick.org/script/color.php
+     *
+     * @see http://www.imagemagick.org/script/color.php
      */
     public function color(string $color): string
     {
-        $color = trim($color);
+        $color = \trim($color);
         if (
             // Check "hex"
-            preg_match('~^#(?:[a-f0-9]{3}|[a-f0-9]{6}|[a-f0-9]{12})$~i', $color)
+            \preg_match('~^#(?:[a-f0-9]{3}|[a-f0-9]{6}|[a-f0-9]{12})$~i', $color)
 
             // Check "hexa"
-            || preg_match('~^#([a-f0-9]{8}|[a-f0-9]{16})$~i', $color)
-            || preg_match('~^rgb\(\d{1,3}(\.\d{1,2})?%?, ?\d{1,3}(\.\d{1,2})?%?, ?\d{1,3}(\.\d{1,2})?%?\)$~', $color)
+            || \preg_match('~^#([a-f0-9]{8}|[a-f0-9]{16})$~i', $color)
+            || \preg_match('~^rgb\(\d{1,3}(\.\d{1,2})?%?, ?\d{1,3}(\.\d{1,2})?%?, ?\d{1,3}(\.\d{1,2})?%?\)$~', $color)
 
             // Check "rgb"
-            || preg_match('~^rgba\(\d{1,3}(\.\d{1,2})?%?, ?\d{1,3}(\.\d{1,2})?%?, ?\d{1,3}(\.\d{1,2})?%?, ?[01](\.\d{1,6})?\)$~', $color)
+            || \preg_match('~^rgba\(\d{1,3}(\.\d{1,2})?%?, ?\d{1,3}(\.\d{1,2})?%?, ?\d{1,3}(\.\d{1,2})?%?, ?[01](\.\d{1,6})?\)$~', $color)
 
             // Check "rgba"
-            || in_array($color, $this->getColorsReference(), true)// And check the dirty one : all the color names supported by ImageMagick
+            || \in_array($color, $this->getColorsReference(), true)// And check the dirty one : all the color names supported by ImageMagick
         ) {
             return $color;
         }
 
-        throw new \InvalidArgumentException(sprintf(
+        throw new \InvalidArgumentException(\sprintf(
             'The specified color (%s) is invalid.'."\n".
             'Please refer to ImageMagick command line documentation about colors:'."\n%s",
             $color,
@@ -119,17 +122,18 @@ final class References
 
     /**
      * Checks that a rotation option is correct according to ImageMagick command line reference.
-     * @link http://www.imagemagick.org/script/command-line-options.php#rotate
+     *
+     * @see http://www.imagemagick.org/script/command-line-options.php#rotate
      */
     public function rotation(string $rotation): string
     {
-        $rotation = trim($rotation);
+        $rotation = \trim($rotation);
 
-        if (preg_match('~^-?\d+(?:<|>)$~u', $rotation)) {
+        if (\preg_match('~^-?\d+(?:<|>)$~u', $rotation)) {
             return $rotation;
         }
 
-        throw new \InvalidArgumentException(sprintf(
+        throw new \InvalidArgumentException(\sprintf(
             'The specified rotate parameter (%s) is invalid.'."\n".
             'Please refer to ImageMagick command line documentation about the "-rotate" option:'."\n%s",
             $rotation,
@@ -139,13 +143,13 @@ final class References
 
     public function blur(string $blur): float
     {
-        $blur = trim($blur);
+        $blur = \trim($blur);
 
-        if (preg_match('~^\d+(?:\.\d+)?(?:x\d+(?:\.\d+)?)?$~', $blur)) {
-            return $blur;
+        if (\preg_match('~^\d+(?:\.\d+)?(?:x\d+(?:\.\d+)?)?$~', $blur)) {
+            return (float) $blur;
         }
 
-        throw new \InvalidArgumentException(sprintf(
+        throw new \InvalidArgumentException(\sprintf(
             'Gaussian blur must respect formats "%s" or "%s".'."\n".
             'Please refer to ImageMagick command line documentation about the "-gaussian-blur" and "-blur" options:'."\n%s\n%s",
             '{radius}', '{radius}x{sigma}',
@@ -159,19 +163,19 @@ final class References
      */
     public function interlace(string $interlaceType): string
     {
-        $interlaceType = strtolower(trim($interlaceType));
+        $interlaceType = \mb_strtolower(\trim($interlaceType));
 
         $references = $this->getInterlaceTypesReference();
 
-        if (in_array($interlaceType, $references, true)) {
+        if (\in_array($interlaceType, $references, true)) {
             return $interlaceType;
         }
 
-        throw new \InvalidArgumentException(sprintf(
+        throw new \InvalidArgumentException(\sprintf(
             'The specified interlace type (%s) is invalid.'."\n".
             'The available values are:'."\n%s\n".
             'Please refer to ImageMagick command line documentation:'."\n%s",
-            $interlaceType, implode(', ', $references),
+            $interlaceType, \implode(', ', $references),
             'http://www.imagemagick.org/script/command-line-options.php#interlace'
         ));
     }

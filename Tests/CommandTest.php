@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the OrbitaleImageMagickPHP package.
  *
@@ -15,42 +17,39 @@ use Orbitale\Component\ImageMagick\Command;
 
 class CommandTest extends AbstractTestCase
 {
-
     /**
      * @dataProvider provideWrongConvertDirs
      */
-    public function testWrongConvertDirs($path, $expectedMessage, $expectedException)
+    public function testWrongConvertDirs($path, $expectedMessage, $expectedException): void
     {
         $exception = '';
         $exceptionClass = '';
 
-        $path = str_replace('\\', '/', $path);
-        $expectedMessage = str_replace('\\', '/', $expectedMessage);
+        $path = \str_replace('\\', '/', $path);
+        $expectedMessage = \str_replace('\\', '/', $expectedMessage);
         try {
             new Command($path);
         } catch (\Exception $e) {
             $exception = $e->getMessage();
-            $exceptionClass = get_class($e);
+            $exceptionClass = \get_class($e);
         }
-        $this->assertContains($expectedMessage, $exception);
-        $this->assertEquals($exceptionClass, $expectedException);
+        static::assertContains($expectedMessage, $exception);
+        static::assertEquals($exceptionClass, $expectedException);
     }
 
-    public function provideWrongConvertDirs()
+    public function provideWrongConvertDirs(): ?\Generator
     {
-        return array(
-            array('/this/is/a/dummy/dir', 'The specified path (/this/is/a/dummy/dir) is not a file.', 'InvalidArgumentException'),
-            array('./', 'The specified path (.) is not a file.', 'InvalidArgumentException'),
-        );
+        yield ['/this/is/a/dummy/dir', 'The specified path (/this/is/a/dummy/dir) is not a file.', 'InvalidArgumentException'];
+        yield ['./', 'The specified path (.) is not a file.', 'InvalidArgumentException'];
     }
 
-    public function testResizeImage()
+    public function testResizeImage(): void
     {
         $command = new Command(IMAGEMAGICK_DIR);
 
-        $imageToResize = $this->resourcesDir . '/moon_180.jpg';
-        $imageOutput = $this->resourcesDir . '/outputs/moon.jpg';
-        $this->assertFileExists($imageToResize);
+        $imageToResize = $this->resourcesDir.'/moon_180.jpg';
+        $imageOutput = $this->resourcesDir.'/outputs/moon.jpg';
+        static::assertFileExists($imageToResize);
 
         $response = $command
             ->convert($imageToResize)
@@ -59,11 +58,11 @@ class CommandTest extends AbstractTestCase
             ->run()
         ;
 
-        $this->assertFalse($response->hasFailed(), "Errors when testing:\n".$response->getProcess()->getOutput()."\t".$response->getProcess()->getErrorOutput());
+        static::assertFalse($response->hasFailed(), "Errors when testing:\n".$response->getProcess()->getOutput()."\t".$response->getProcess()->getErrorOutput());
 
-        $this->assertFileExists($this->resourcesDir . '/outputs/moon.jpg');
+        static::assertFileExists($this->resourcesDir.'/outputs/moon.jpg');
 
-        $this->assertFalse($response->hasFailed());
+        static::assertFalse($response->hasFailed());
 
         $this->testConvertIdentifyImage($imageOutput, 'JPEG', '100x94+0+0', '8-bit');
     }
@@ -71,55 +70,53 @@ class CommandTest extends AbstractTestCase
     /**
      * @dataProvider provideImagesToIdentify
      */
-    public function testConvertIdentifyImage($imageToIdentify, $expectedFormat, $expectedGeometry, $expectedResolution)
+    public function testConvertIdentifyImage($imageToIdentify, $expectedFormat, $expectedGeometry, $expectedResolution): void
     {
         $command = new Command(IMAGEMAGICK_DIR);
 
         // ImageMagick normalizes paths with "/" as directory separator
-        $imageToIdentify = str_replace('\\', '/', $imageToIdentify);
+        $imageToIdentify = \str_replace('\\', '/', $imageToIdentify);
 
         $response = $command->identify($imageToIdentify)->run();
 
-        $this->assertFalse($response->hasFailed());
+        static::assertFalse($response->hasFailed());
 
         $content = $response->getOutput();
 
-        $this->assertContains(sprintf(
+        static::assertContains(\sprintf(
             '%s %s %s %s %s',
             $imageToIdentify,
             $expectedFormat,
-            preg_replace('~\+.*$~', '', $expectedGeometry),
+            \preg_replace('~\+.*$~', '', $expectedGeometry),
             $expectedGeometry,
             $expectedResolution
         ), $content);
     }
 
-    public function provideImagesToIdentify()
+    public function provideImagesToIdentify(): ?\Generator
     {
-        return array(
-            array($this->resourcesDir.'/moon_180.jpg', 'JPEG', '180x170+0+0', '8-bit'),
-        );
+        yield [$this->resourcesDir.'/moon_180.jpg', 'JPEG', '180x170+0+0', '8-bit'];
     }
 
-    public function testMogrifyResizeImage()
+    public function testMogrifyResizeImage(): void
     {
         $command = new Command(IMAGEMAGICK_DIR);
 
-        $sourceImage = $this->resourcesDir . '/moon_180.jpg';
-        $imageOutput = $this->resourcesDir . '/outputs/moon_mogrify.jpg';
-        $this->assertFileExists($sourceImage);
+        $sourceImage = $this->resourcesDir.'/moon_180.jpg';
+        $imageOutput = $this->resourcesDir.'/outputs/moon_mogrify.jpg';
+        static::assertFileExists($sourceImage);
 
-        $baseSize = filesize($sourceImage);
+        $baseSize = \filesize($sourceImage);
 
-        if (file_exists($imageOutput)) {
-            unlink($imageOutput);
+        if (\file_exists($imageOutput)) {
+            \unlink($imageOutput);
         }
 
-        copy($sourceImage, $imageOutput);
+        \copy($sourceImage, $imageOutput);
 
-        clearstatcache($imageOutput);
+        \clearstatcache($imageOutput);
 
-        if (!file_exists($imageOutput)) {
+        if (!\file_exists($imageOutput)) {
             static::fail('File could not be copied from resources dir to output dir.');
         }
 
@@ -130,17 +127,17 @@ class CommandTest extends AbstractTestCase
             ->run()
         ;
 
-        $this->assertFileExists($imageOutput);
+        static::assertFileExists($imageOutput);
 
-        $this->assertTrue($response->isSuccessful(), "Command returned an error when testing mogrify resize:\n".$response->getOutput()."\n".$response->getError());
+        static::assertTrue($response->isSuccessful(), "Command returned an error when testing mogrify resize:\n".$response->getOutput()."\n".$response->getError());
 
-        $this->assertGreaterThan($baseSize, filesize($imageOutput));
+        static::assertGreaterThan($baseSize, \filesize($imageOutput));
     }
 
     /**
      * @dataProvider provideTestCommandString
      */
-    public function testCommandString($source, $output, $geometry, $quality)
+    public function testCommandString($source, $output, $geometry, $quality): void
     {
         $command = new Command(IMAGEMAGICK_DIR);
 
@@ -158,31 +155,29 @@ class CommandTest extends AbstractTestCase
                     ' -quality '.$quality.
                     ' '.$output;
 
-        $expected = str_replace('\\', '/', $expected);
+        $expected = \str_replace('\\', '/', $expected);
 
-        $this->assertEquals($expected, $commandString);
+        static::assertEquals($expected, $commandString);
     }
 
-    public function provideTestCommandString()
+    public function provideTestCommandString(): ?\Generator
     {
-        return array(
-            array($this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_10_forced.jpg', '10x10!', 10),
-            array($this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_1000.jpg', '1000x1000', 100),
-            array($this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_half.jpg', '50%', 50),
-            array($this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_geometry.jpg', '30x30+20+20', 50),
-        );
+        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_10_forced.jpg', '10x10!', 10];
+        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_1000.jpg', '1000x1000', 100];
+        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_half.jpg', '50%', 50];
+        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_geometry.jpg', '30x30+20+20', 50];
     }
 
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testWrongExecutable()
+    public function testWrongExecutable(): void
     {
         $command = new Command(IMAGEMAGICK_DIR);
         $command->getExecutable('this_executable_might_not_exist');
     }
 
-    public function testInexistingFiles()
+    public function testInexistingFiles(): void
     {
         $command = new Command(IMAGEMAGICK_DIR);
 
@@ -193,6 +188,6 @@ class CommandTest extends AbstractTestCase
         } catch (\Exception $e) {
             $exception = $e->getMessage();
         }
-        $this->assertContains(sprintf("The file \"%s\" is not found.", $file), $exception);
+        static::assertContains(\sprintf('The file "%s" is not found.', $file), $exception);
     }
 }

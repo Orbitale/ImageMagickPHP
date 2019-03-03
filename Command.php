@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the OrbitaleImageMagickPHP package.
  *
@@ -20,7 +22,7 @@ use Symfony\Component\Process\Process;
 class Command
 {
     /**
-     * The list of allowed ImageMagick binaries
+     * The list of allowed ImageMagick binaries.
      */
     public const ALLOWED_EXECUTABLES = [
         'animate',
@@ -54,13 +56,15 @@ class Command
     protected $ref;
 
     /**
-     * The shell command
+     * The shell command.
+     *
      * @var string[]
      */
     protected $command = [];
 
     /**
-     * Parameters to add at the end of the command
+     * Parameters to add at the end of the command.
+     *
      * @var string[]
      */
     protected $commandToAppend = [];
@@ -77,7 +81,7 @@ class Command
 
         // Add a proper directory separator at the end if path is not empty.
         // If it's empty, then it's set in the global path.
-        if ($magickBinaryPath && !is_file($magickBinaryPath)) {
+        if ($magickBinaryPath && !\is_file($magickBinaryPath)) {
             throw new \InvalidArgumentException(\sprintf(
                 'The specified path (%s) is not a file.'."\n".
                 'You must set the "magickBinaryPath" parameter as the main "magick" binary installed by ImageMagick.',
@@ -121,10 +125,10 @@ class Command
 
     private static function cleanPath(string $path, bool $rtrim = false): string
     {
-        $path = str_replace('\\', '/', $path);
+        $path = \str_replace('\\', '/', $path);
 
         if ($rtrim) {
-            $path = rtrim($path, '/');
+            $path = \rtrim($path, '/');
         }
 
         return $path;
@@ -142,7 +146,7 @@ class Command
                 "The ImageMagick executable \"%s\" is not allowed.\n".
                 "The only binaries allowed to be executed are the following:\n%s",
                 $binary,
-                implode(', ', static::ALLOWED_EXECUTABLES)
+                \implode(', ', static::ALLOWED_EXECUTABLES)
             ));
         }
 
@@ -155,7 +159,7 @@ class Command
     public function newCommand(string $binary = null): self
     {
         $this->env = [];
-        $this->command = $binary ? $this->getExecutable($binary): [];
+        $this->command = $binary ? $this->getExecutable($binary) : [];
         $this->commandToAppend = [];
 
         return $this;
@@ -261,7 +265,7 @@ class Command
         $output = '';
         $error = '';
 
-        $code = $process->run(function ($type, $buffer) use (&$output, &$error) {
+        $code = $process->run(function ($type, $buffer) use (&$output, &$error): void {
             if (Process::ERR === $type) {
                 $error .= $buffer;
             } else {
@@ -283,11 +287,11 @@ class Command
     }
 
     /**
-     * Get the final command that will be executed when using Command::run()
+     * Get the final command that will be executed when using Command::run().
      */
     public function getCommand(): string
     {
-        return \implode(' ', array_merge($this->command, $this->commandToAppend));
+        return \implode(' ', \array_merge($this->command, $this->commandToAppend));
     }
 
     /**
@@ -296,7 +300,7 @@ class Command
     public function file(string $source, bool $checkIfFileExists = true, bool $appendToCommend = false): self
     {
         $source = $checkIfFileExists ? $this->checkExistingFile($source) : self::cleanPath($source);
-        $source = str_replace('\\', '/', $source);
+        $source = \str_replace('\\', '/', $source);
         if ($appendToCommend) {
             $this->commandToAppend[] = $source;
         } else {
@@ -319,7 +323,7 @@ class Command
      * --------------------------------- */
 
     /**
-     * @link http://imagemagick.org/script/command-line-options.php#background
+     * @see http://imagemagick.org/script/command-line-options.php#background
      */
     public function background(string $color): self
     {
@@ -330,7 +334,7 @@ class Command
     }
 
     /**
-     * @link http://imagemagick.org/script/command-line-options.php#fill
+     * @see http://imagemagick.org/script/command-line-options.php#fill
      */
     public function fill(string $color): self
     {
@@ -343,7 +347,7 @@ class Command
     /**
      * @param string|Geometry $geometry
      *
-     * @link http://imagemagick.org/script/command-line-options.php#resize
+     * @see http://imagemagick.org/script/command-line-options.php#resize
      */
     public function resize($geometry): self
     {
@@ -356,7 +360,7 @@ class Command
     /**
      * @param string|Geometry $geometry
      *
-     * @link http://imagemagick.org/script/command-line-options.php#size
+     * @see http://imagemagick.org/script/command-line-options.php#size
      */
     public function size($geometry): self
     {
@@ -369,9 +373,8 @@ class Command
     /**
      * Create a colored canvas.
      *
-     * @param string $canvasColor
      *
-     * @link http://www.imagemagick.org/Usage/canvas/
+     * @see http://www.imagemagick.org/Usage/canvas/
      */
     public function xc(string $canvasColor = 'none'): self
     {
@@ -383,7 +386,7 @@ class Command
     /**
      * @param string|Geometry $geometry
      *
-     * @link http://imagemagick.org/script/command-line-options.php#crop
+     * @see http://imagemagick.org/script/command-line-options.php#crop
      */
     public function crop($geometry): self
     {
@@ -396,7 +399,7 @@ class Command
     /**
      * @param string|Geometry $geometry
      *
-     * @link http://imagemagick.org/script/command-line-options.php#extent
+     * @see http://imagemagick.org/script/command-line-options.php#extent
      */
     public function extent($geometry): self
     {
@@ -409,7 +412,7 @@ class Command
     /**
      * @param string|Geometry $geometry
      *
-     * @link http://imagemagick.org/script/command-line-options.php#thumbnail
+     * @see http://imagemagick.org/script/command-line-options.php#thumbnail
      */
     public function thumbnail($geometry): self
     {
@@ -420,7 +423,7 @@ class Command
     }
 
     /**
-     * @link http://imagemagick.org/script/command-line-options.php#quality
+     * @see http://imagemagick.org/script/command-line-options.php#quality
      */
     public function quality(int $quality): self
     {
@@ -431,7 +434,7 @@ class Command
     }
 
     /**
-     * @link http://imagemagick.org/script/command-line-options.php#rotate
+     * @see http://imagemagick.org/script/command-line-options.php#rotate
      */
     public function rotate(string $rotation): self
     {
@@ -442,7 +445,7 @@ class Command
     }
 
     /**
-     * @link http://imagemagick.org/script/command-line-options.php#strip
+     * @see http://imagemagick.org/script/command-line-options.php#strip
      */
     public function strip(): self
     {
@@ -452,7 +455,7 @@ class Command
     }
 
     /**
-     * @link http://imagemagick.org/script/command-line-options.php#interlace
+     * @see http://imagemagick.org/script/command-line-options.php#interlace
      */
     public function interlace(string $type): self
     {
@@ -463,7 +466,7 @@ class Command
     }
 
     /**
-     * @link http://imagemagick.org/script/command-line-options.php#gaussian-blur
+     * @see http://imagemagick.org/script/command-line-options.php#gaussian-blur
      */
     public function gaussianBlur(string $blur): self
     {
@@ -474,7 +477,7 @@ class Command
     }
 
     /**
-     * @link http://imagemagick.org/script/command-line-options.php#blur
+     * @see http://imagemagick.org/script/command-line-options.php#blur
      */
     public function blur(string $blur): self
     {
@@ -485,7 +488,7 @@ class Command
     }
 
     /**
-     * @link http://imagemagick.org/script/command-line-options.php#font
+     * @see http://imagemagick.org/script/command-line-options.php#font
      */
     public function font(string $fontFile, bool $checkFontFileExists = false): self
     {
@@ -496,7 +499,7 @@ class Command
     }
 
     /**
-     * @link http://imagemagick.org/script/command-line-options.php#pointsize
+     * @see http://imagemagick.org/script/command-line-options.php#pointsize
      */
     public function pointsize(int $pointsize): self
     {
@@ -507,7 +510,7 @@ class Command
     }
 
     /**
-     * @link http://imagemagick.org/script/command-line-options.php#stroke
+     * @see http://imagemagick.org/script/command-line-options.php#stroke
      */
     public function stroke(string $color): self
     {
@@ -532,9 +535,7 @@ class Command
      * ------------------------------------------------------ */
 
     /**
-     * @param string|Geometry $geometry
-     *
-     * @link http://imagemagick.org/script/command-line-options.php#annotate
+     * @see http://imagemagick.org/script/command-line-options.php#annotate
      */
     public function text(array $options = []): self
     {
@@ -548,9 +549,9 @@ class Command
         $text = $options['text'];
         $textSize = $options['textSize'];
         $geometry = $options['geometry'];
-        $font = $options['font'] ?? null;
+        $font = $options['font'] ?? '';
         $checkFont = $options['checkFont'] ?? false;
-        $textColor = $options['textColor'] ?? null;
+        $textColor = $options['textColor'] ?? '';
 
         if ($font) {
             $this->font($font, $checkFont);
@@ -571,7 +572,7 @@ class Command
     }
 
     /**
-     * @link http://imagemagick.org/script/command-line-options.php#draw
+     * @see http://imagemagick.org/script/command-line-options.php#draw
      */
     public function ellipse(
         int $xCenter,
@@ -597,8 +598,8 @@ class Command
 
     protected function checkExistingFile(string $file): string
     {
-        if (!file_exists($file)) {
-            throw new \InvalidArgumentException(sprintf(
+        if (!\file_exists($file)) {
+            throw new \InvalidArgumentException(\sprintf(
                 'The file "%s" is not found.'."\n".
                 'If the file really exists in your filesystem, then maybe it is not readable.',
                 $file

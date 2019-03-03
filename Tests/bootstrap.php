@@ -43,7 +43,7 @@ foreach ($possibleDirectories as $dir) {
 }
 
 if (!defined('IMAGEMAGICK_DIR')) {
-    throw new \RuntimeException(
+    throw new RuntimeException(
         "Couldn't locate ImageMagick.\n" .
         "Please check that ImageMagick is installed and that it is located\n" .
         'in the global PATH variable, or that it is accessible in /usr/bin'

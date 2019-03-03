@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the OrbitaleImageMagickPHP package.
  *
@@ -45,12 +47,12 @@ class CommandResponse
 
     public function isSuccessful(): bool
     {
-        return $this->code === 0;
+        return 0 === $this->code;
     }
 
     public function hasFailed(): bool
     {
-        return $this->code !== 0;
+        return 0 !== $this->code;
     }
 
     public function getProcess(): Process
