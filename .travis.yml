@@ -3,13 +3,19 @@ language: php
 sudo: required
 
 branches:
-  only:
-      - master
+    only:
+        - master
 
 cache:
-   directories:
-       - '$HOME/.composer/cache'
+    directories:
+        - '$HOME/.composer/cache'
 
+addons:
+    apt:
+        packages:
+            - libjpeg-dev
+            - libpng-dev
+            - libgif-dev
 php:
     - '7.2'
     - '7.3'
