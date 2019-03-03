@@ -16,29 +16,24 @@ php:
     - 7.3
 
 env:
-    - 'IM_VERSION="ImageMagick6"'
-    - 'IM_VERSION="ImageMagick"' # Version 7
+    - 'TAR_URL="https://imagemagick.org/download/ImageMagick.tar.gz"'
 
 before_install:
     - composer self-update
-    - export TAR_URL=$(curl -L "https://api.github.com/repos/ImageMagick/${IM_VERSION}/tags" | jq "[.[] | .tarball_url] | .[1]" | tr -d '"')
-    - curl -L "${TAR_URL}" | tar xz
-    - cd ImageMagick-$IM_VERSION*
+    - curl -L "${TAR_URL}" | tar xvzf
+    - cd ImageMagick-*
     - ./configure
     - make
     - sudo make install
+    - cd ..
+    - mkdir -p build/logs
 
 install:
-    - cd ..
     - composer install --no-interaction
     - composer require --dev satooshi/php-coveralls:~0.6
 
 script:
-    - mkdir -p build/logs
     - vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml
 
 after_success:
     - travis_retry php vendor/bin/coveralls -v
-
-notifications:
-    email: pierstoval@gmail.com

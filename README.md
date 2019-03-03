@@ -20,7 +20,7 @@ Requirements
 ===============
 
 * PHP 7.1 or higher
-* [ImageMagick](https://www.imagemagick.org/) has to be installed on your server, and the binaries must be executable by the user running the PHP process.
+* [ImageMagick 7](https://www.imagemagick.org/) has to be installed on your server, and the binaries must be executable by the user running the PHP process.
 
 Settings
 ===============
@@ -31,24 +31,37 @@ There are not many settings, but when you instantiate a new `Command` object, yo
 use Orbitale\Component\ImageMagick\Command;
 
 // Default directory for many Linux distributions:
-$command = new Command('/usr/bin');
+$command = new Command('/usr/bin/magick');
 
 // Or in Windows, depending of the install directory:
-$command = new Command('C:\ImageMagick');
+$command = new Command('C:\ImageMagick\magick.exe');
 
 // If it is available in the global scope for the user running the script:
 $command = new Command();
 ```
 
-The constructor will automatically search for the `convert` (v6) or `magick` (v7) executable, test it, and throw an exception if it's not available.
+The constructor will automatically search for the `magick` executable, test it, and throw an exception if it's not available.
 
-*Note:* `convert` is looked up only because it's the most used binary. With ImageMagick 7, you can install the `magick` binary that will wrap all other IM commands (like `magick convert ...` instead of `convert ...`). This is better for encapsulation and to avoid conflicts with other `convert` tools.
-Of course, ImageMagick 7 is recommended. 
-
-/!\ Make sure your ImageMagick executables have the "+x" chmod option, and that the user has the rights to execute it.
+/!\ Make sure your ImageMagick executable have the "+x" chmod option, and that the user has the rights to execute it.
 
 Usage
 ===============
+
+First, we recommend you to note all possible scripts that you can use with ImageMagick in the [official docs](https://imagemagick.org/script/command-line-tools.php):
+
+* [animate](https://imagemagick.org/script/animate.php)
+* [compare](https://imagemagick.org/script/compare.php)
+* [composite](https://imagemagick.org/script/composite.php)
+* [conjure](https://imagemagick.org/script/conjure.php)
+* [convert](https://imagemagick.org/script/convert.php)
+* [display](https://imagemagick.org/script/display.php)
+* [identify](https://imagemagick.org/script/identify.php)
+* [import](https://imagemagick.org/script/import.php)
+* [mogrify](https://imagemagick.org/script/mogrify.php)
+* [montage](https://imagemagick.org/script/montage.php)
+* [stream](https://imagemagick.org/script/stream.php)
+
+These correspond to the "legacy binaries", and you can use them when 
 
 ### Basic image type converter with ImageMagick's basic logo
 
@@ -122,19 +135,13 @@ if ($response->hasFailed()) {
 }
 ```
 
-### Supported commands:
-
-* `convert`
-* `mogrify`
-* `identify`
-
 ### Currently supported options:
 
 There are **a lot** of command-line options, and each have its own validation system.
  
-This is why a "few" ones are implemented now.
+This is why a "few" ones are implemented now, to make sure validation is possible for each of them.
 
-**Note:** If an option is not implemented in the `Command` class, you should create an issue or make a Pull Request that implements the new option!
+**Note:** If an option is not implemented in the `Command` class, you can create an issue or make a Pull Request that implements the new option!
 
 * [`-background`](http://www.imagemagick.org/script/command-line-options.php#background)
 * [`-blur`](http://www.imagemagick.org/script/command-line-options.php#blur)
@@ -156,15 +163,15 @@ This is why a "few" ones are implemented now.
 * [`-draw`](http://www.imagemagick.org/script/command-line-options.php#draw)
 * [`xc:`](http://www.imagemagick.org/Usage/canvas/)
 
-Feel free to ask if you want more!
+Feel free to ask/create an issue if you need more!
 
 ### Some aliases that do magic for you:
 
-* `Command::text()`:
+* `$command->text()`:
 This method uses multiple options added to the `-annotate` one to generate a text block.
 You must specify its position and size, but you can specify color and the font file used.
 
-* `Command::ellipse()`: (check source code for the heavy prototype!)
+* `$command->ellipse()`: (check source code for the heavy prototype!)
 This method uses the `-stroke`, `-fill` and `-draw` options to create an ellipse/circle/disc on your picture.
 **Note:** I recommend to check both the source code and the documentation to be sure of what you are doing.
 
@@ -173,6 +180,6 @@ Useful links
 
 * ImageMagick official website: http://www.imagemagick.org
 * ImageMagick documentation:
-    * [Installation binaries](https://www.imagemagick.org/script/download.php) (depending on your OS and/or distribution)
-    * [Geometry](https://www.imagemagick.org/script/command-line-processing.php#geometry) (to resize or place text)
-    * [All command-line options](https://imagemagick.org/script/command-line-options.php) ; they're not all available for now, so feel free to make a PR ! ;)
+    * [Installation of the binaries](https://www.imagemagick.org/script/download.php) (depending on your OS and/or distribution)
+    * [Geometry option](https://www.imagemagick.org/script/command-line-processing.php#geometry) (to resize or place text)
+    * [All command-line options](https://imagemagick.org/script/command-line-options.php) ; they're not all available in this tool for now, so feel free to make a PR ! ;)

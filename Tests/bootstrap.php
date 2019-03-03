@@ -25,15 +25,17 @@ foreach (glob(TEST_RESOURCES_DIR.'/outputs/*') as $file) {
 // Check if ImageMagick is installed. Instead, we cannot run tests suite.
 $possibleDirectories = [
     getenv('IMAGEMAGICK_PATH'),
-    '',// In the PATH variable
-    '/usr/bin/',
-    '/usr/local/bin/',
+    'magick',// In the PATH variable
+    '/usr/bin/magick',
+    '/usr/local/bin/magick',
 ];
 foreach ($possibleDirectories as $dir) {
-    $dir = rtrim($dir, '/\\').'/';
-
-    echo 'Check "'.$dir.'convert" binary'."\n";
-    exec($dir.'convert -version', $o, $code);
+    if (!$dir) {
+        // Could happen if "getenv()" returns false or empty string.
+        continue;
+    }
+    echo 'Check "'.$dir.'" binary'."\n";
+    exec($dir.' -version', $o, $code);
     if (0 === $code) {
         define('IMAGEMAGICK_DIR', $dir);
         break;
@@ -49,4 +51,4 @@ if (!defined('IMAGEMAGICK_DIR')) {
 }
 
 echo 'Analyzed ImageMagick directory: '.IMAGEMAGICK_DIR."\n";
-system(IMAGEMAGICK_DIR.'convert -version');
+system(IMAGEMAGICK_DIR.' -version');

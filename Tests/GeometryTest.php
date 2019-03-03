@@ -58,9 +58,15 @@ class GeometryTest extends AbstractTestCase
             ->file($outputFile, false)
         ;
 
-        $response = $command->run(Command::RUN_DEBUG);
+        $response = $command->run();
 
-        $this->assertFalse($response->hasFailed(), 'For geometry ' .$geometry->validate().", ImageMagick error:\n".$response->getOutput());
+        $this->assertTrue($response->isSuccessful(), \sprintf(
+            "Geometry fixture \"%s\" returned an ImageMagick error.\nFull command: %s\nErrors:\n%s\n%s",
+            $geometry->validate(),
+            $command->getCommand(),
+            $response->getOutput(),
+            $response->getError()
+        ));
         $this->assertFileExists($outputFile);
     }
 

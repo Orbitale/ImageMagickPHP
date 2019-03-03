@@ -19,28 +19,34 @@ use Symfony\Component\Process\Process;
  */
 class Command
 {
-    public const RUN_NORMAL     = null;
-    public const RUN_BACKGROUND = ' > /dev/null 2>&1';
-    public const RUN_DEBUG      = ' 2>&1';
-
-    public const VERSION_6 = 6;
-    public const VERSION_7 = 7;
-
     /**
      * The list of allowed ImageMagick binaries
      */
-    public const ALLOWED_EXECUTABLES = ['convert', 'mogrify', 'identify'];
+    public const ALLOWED_EXECUTABLES = [
+        'animate',
+        'compare',
+        'composite',
+        'conjure',
+        'convert',
+        'display',
+        'identify',
+        'import',
+        'mogrify',
+        'montage',
+        'stream',
+    ];
 
     /**
      * @var string
      */
-    protected $imageMagickPath = '';
+    protected $magickBinaryPath = '';
 
     /**
-     * Environment values
-     * @var string
+     * Environment variables used during the execution of this command.
+     *
+     * @var string[]
      */
-    protected $env = '';
+    protected $env = [];
 
     /**
      * @var References
@@ -49,78 +55,87 @@ class Command
 
     /**
      * The shell command
-     * @var string
+     * @var string[]
      */
-    protected $command = '';
+    protected $command = [];
 
     /**
      * Parameters to add at the end of the command
-     * @var string
+     * @var string[]
      */
-    protected $commandToAppend = '';
+    protected $commandToAppend = [];
 
     /**
      * @var int
      */
     protected $version;
 
-    public function __construct(string $imageMagickPath = '/usr/bin')
+    public function __construct(string $magickBinaryPath = '/usr/bin/magick')
     {
         // Delete trimming directory separator
-        $imageMagickPath = $this->cleanPath($imageMagickPath, true);
+        $magickBinaryPath = self::cleanPath($magickBinaryPath, true);
 
         // Add a proper directory separator at the end if path is not empty.
         // If it's empty, then it's set in the global path.
-        if ($imageMagickPath && !is_dir($imageMagickPath)) {
+        if ($magickBinaryPath && !is_file($magickBinaryPath)) {
             throw new \InvalidArgumentException(\sprintf(
-                'The specified path (%s) is not a directory.'."\n".
-                'You must set the "imageMagickPath" parameter as the root directory where'."\n".
-                'ImageMagick executables (%s) are located.',
-                $imageMagickPath,
-                implode(', ', static::ALLOWED_EXECUTABLES)
+                'The specified path (%s) is not a file.'."\n".
+                'You must set the "magickBinaryPath" parameter as the main "magick" binary installed by ImageMagick.',
+                $magickBinaryPath
             ));
         }
 
-        // For imagemagick 7 we'll use the "magick" base command each time.
-        if (file_exists($imageMagickPath.'/magick') || file_exists($imageMagickPath.'/magick.exe')) {
-            $this->version = static::VERSION_7;
-            $imageMagickPath .= '/magick ';
-        } elseif (file_exists($imageMagickPath.'/convert') || file_exists($imageMagickPath.'/convert.exe')) {
-            $this->version = static::VERSION_6;
-            $imageMagickPath .= '/';
-        } else {
+        if (!\is_executable($magickBinaryPath)) {
             throw new \InvalidArgumentException(\sprintf(
-                "The specified path (%s) does not seem to contain ImageMagick binaries, or it is not readable.\n".
-                "If ImageMagick is set in the path, then set an empty parameter for `imageMagickPath`.\n".
-                "If not, then set the absolute path of the directory containing ImageMagick following executables:\n%s",
-                $imageMagickPath,
-                implode(', ', static::ALLOWED_EXECUTABLES)
+                'The specified script (%s) is not executable.',
+                $magickBinaryPath
             ));
         }
 
-        $process = new Process($imageMagickPath.'convert -version 2>&1');
+        $process = new Process([$magickBinaryPath, '-version']);
 
-        $process->run();
-        if (!$process->isSuccessful()) {
+        try {
+            $code = $process->run();
+        } catch (\Throwable $e) {
+            throw new \RuntimeException('Could not check ImageMagick version', 1, $e);
+        }
+
+        if (0 !== $code || !$process->isSuccessful()) {
             throw new \InvalidArgumentException(\sprintf(
                 "ImageMagick does not seem to work well, the test command resulted in an error.\n".
                 "Execution returned message: \"{$process->getExitCodeText()}\"\n".
-                "To solve this issue, please run this command and check your error messages:\n%s",
-                $imageMagickPath.'convert -version'
+                "To solve this issue, please run this command and check your error messages to see if ImageMagick was correctly installed:\n%s",
+                $magickBinaryPath.' -version'
             ));
         }
 
         $this->ref = new References();
 
-        $this->imageMagickPath = $imageMagickPath;
+        $this->magickBinaryPath = $magickBinaryPath;
     }
 
-    public static function create(string $imageMagickPath = '/usr/bin'): self
+    public static function create(string $magickBinaryPath = '/usr/bin/magick'): self
     {
-        return new self($imageMagickPath);
+        return new self($magickBinaryPath);
     }
 
-    public function getExecutable(string $binary = 'convert'): string
+    private static function cleanPath(string $path, bool $rtrim = false): string
+    {
+        $path = str_replace('\\', '/', $path);
+
+        if ($rtrim) {
+            $path = rtrim($path, '/');
+        }
+
+        return $path;
+    }
+
+    /**
+     * This command is used for the "legacy" binaries that can still be used with ImageMagick 7.
+     *
+     * @see https://imagemagick.org/script/command-line-tools.php
+     */
+    public function getExecutable(string $binary = null): array
     {
         if (!\in_array($binary, static::ALLOWED_EXECUTABLES, true)) {
             throw new \InvalidArgumentException(\sprintf(
@@ -131,38 +146,117 @@ class Command
             ));
         }
 
-        $executablePath = $this->imageMagickPath;
-
-        if ($this->version === self::VERSION_7) {
-            // ImageMagick 7 uses the "magick" main command,
-            //  so every binary is transformed into an argument for the magick binary.
-            $executablePath .= ' ';
-        }
-
-        $executablePath .= $binary;
-
-        return $executablePath;
+        return [$this->magickBinaryPath, $binary];
     }
 
     /**
      * Entirely reset all current command statements, and start a whole new command.
-     *
      */
-    public function newCommand(string $executable): self
+    public function newCommand(string $binary = null): self
     {
-        $this->command = ''.$this->getExecutable($executable).'';
-        $this->commandToAppend = '';
+        $this->env = [];
+        $this->command = $binary ? $this->getExecutable($binary): [];
+        $this->commandToAppend = [];
 
         return $this;
     }
 
-    public function run(?string $runMode = self::RUN_NORMAL): CommandResponse
+    /**
+     * @see https://imagemagick.org/script/convert.php
+     */
+    public function convert(string $sourceFile, bool $checkIfFileExists = true): self
     {
-        if (!\in_array($runMode, [self::RUN_NORMAL, self::RUN_BACKGROUND, self::RUN_DEBUG], true)) {
-            throw new \InvalidArgumentException('The run mode must be one of '.__CLASS__.'::RUN_* constants.');
+        return $this->newCommand('convert')->file($sourceFile, $checkIfFileExists);
+    }
+
+    /**
+     * @see https://imagemagick.org/script/mogrify.php
+     */
+    public function mogrify(string $sourceFile = null): self
+    {
+        $this->newCommand('mogrify');
+        if ($sourceFile) {
+            $this->file($sourceFile, true, true);
         }
 
-        $process = new Process($this->env.' '.$this->command.' '.$this->commandToAppend.$runMode);
+        return $this;
+    }
+
+    /**
+     * @see https://imagemagick.org/script/identify.php
+     */
+    public function identify(string $sourceFile): self
+    {
+        return $this->newCommand('identify')->file($sourceFile);
+    }
+
+    /**
+     * @see https://imagemagick.org/script/composite.php
+     */
+    public function composite(): self
+    {
+        return $this->newCommand('composite');
+    }
+
+    /**
+     * @see https://imagemagick.org/script/animate.php
+     */
+    public function animate(): self
+    {
+        return $this->newCommand('animate');
+    }
+
+    /**
+     * @see https://imagemagick.org/script/compare.php
+     */
+    public function compare(): self
+    {
+        return $this->newCommand('compare');
+    }
+
+    /**
+     * @see https://imagemagick.org/script/conjure.php
+     */
+    public function conjure(): self
+    {
+        return $this->newCommand('conjure');
+    }
+
+    /**
+     * @see https://imagemagick.org/script/display.php
+     */
+    public function display(): self
+    {
+        return $this->newCommand('display');
+    }
+
+    /**
+     * @see https://imagemagick.org/script/import.php
+     */
+    public function import(): self
+    {
+        return $this->newCommand('import');
+    }
+
+    /**
+     * @see https://imagemagick.org/script/montage.php
+     */
+    public function montage(): self
+    {
+        return $this->newCommand('montage');
+    }
+
+    /**
+     * @see https://imagemagick.org/script/stream.php
+     */
+    public function stream(): self
+    {
+        return $this->newCommand('stream');
+    }
+
+    public function run(): CommandResponse
+    {
+        $process = Process::fromShellCommandline($this->getCommand(), null, $this->env);
 
         $output = '';
         $error = '';
@@ -178,38 +272,14 @@ class Command
         return new CommandResponse($process, $code, $output, $error);
     }
 
+    /**
+     * Adds environment variable to ImageMagick at runtime.
+     *
+     * @see https://imagemagick.org/script/resources.php#environment
+     */
     public function setEnv(string $key, string $value): void
     {
-        $this->env .= ' '.$key.'='.escapeshellarg($value);
-    }
-
-    /**
-     * Start a new command with the "convert" executable (if allowed).
-     */
-    public function convert(string $sourceFile, bool $checkIfFileExists = true): self
-    {
-        return $this->newCommand('convert')->file($sourceFile, $checkIfFileExists);
-    }
-
-    /**
-     * Start a new command with the "mogrify" executable (if allowed)
-     */
-    public function mogrify(string $sourceFile = null): self
-    {
-        $this->newCommand('mogrify');
-        if ($sourceFile) {
-            $this->file($sourceFile, true, true);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Start a new command with the "identify" executable (if allowed)
-     */
-    public function identify(string $sourceFile): self
-    {
-        return $this->newCommand('identify')->file($sourceFile);
+        $this->env[$key] = $value;
     }
 
     /**
@@ -217,21 +287,7 @@ class Command
      */
     public function getCommand(): string
     {
-        return $this->env.' '.$this->command.' '.$this->commandToAppend;
-    }
-
-    /**
-     * Escapes a string in order to inject it in the shell command.
-     */
-    public function escape(string $string, bool $addQuotes = true): string
-    {
-        $string = str_replace(
-            ['"', '`', '’', '\\\''],
-            ['\"', "'", "'", "'"],
-            trim($string)
-        );
-
-        return $addQuotes ? '"'.$string.'"' : $string;
+        return \implode(' ', array_merge($this->command, $this->commandToAppend));
     }
 
     /**
@@ -239,12 +295,12 @@ class Command
      */
     public function file(string $source, bool $checkIfFileExists = true, bool $appendToCommend = false): self
     {
-        $source = $checkIfFileExists ? $this->checkExistingFile($source) : $this->cleanPath($source);
+        $source = $checkIfFileExists ? $this->checkExistingFile($source) : self::cleanPath($source);
         $source = str_replace('\\', '/', $source);
         if ($appendToCommend) {
-            $this->commandToAppend .= ' "'.$source.'"';
+            $this->commandToAppend[] = $source;
         } else {
-            $this->command .= ' "'.$source.'"';
+            $this->command[] = $source;
         }
 
         return $this;
@@ -258,20 +314,17 @@ class Command
         return $this->file($source, false, true);
     }
 
-    /* ---------------------------- *
-     * ---------------------------- *
-     * ---------------------------- *
-     *     ImageMagick Features     *
-     * ---------------------------- *
-     * ---------------------------- *
-     * ---------------------------- */
+    /* --------------------------------- *
+     * Start imagemagick native options. *
+     * --------------------------------- */
 
     /**
      * @link http://imagemagick.org/script/command-line-options.php#background
      */
     public function background(string $color): self
     {
-        $this->command .= ' -background '.$this->escape($this->ref->color($color));
+        $this->command[] = '-background';
+        $this->command[] = '"'.$this->ref->color($color).'"';
 
         return $this;
     }
@@ -281,7 +334,8 @@ class Command
      */
     public function fill(string $color): self
     {
-        $this->command .= ' -fill '.$this->escape($this->ref->color($color));
+        $this->command[] = '-fill';
+        $this->command[] = '"'.$this->ref->color($color).'"';
 
         return $this;
     }
@@ -293,7 +347,8 @@ class Command
      */
     public function resize($geometry): self
     {
-        $this->command .= ' -resize '.$this->escape($this->ref->geometry($geometry)).' ';
+        $this->command[] = '-resize';
+        $this->command[] = '"'.$this->ref->geometry($geometry).'"';
 
         return $this;
     }
@@ -305,7 +360,8 @@ class Command
      */
     public function size($geometry): self
     {
-        $this->command .= ' -size '.$this->escape($this->ref->geometry($geometry)).' ';
+        $this->command[] = '-size';
+        $this->command[] = '"'.$this->ref->geometry($geometry).'"';
 
         return $this;
     }
@@ -319,7 +375,7 @@ class Command
      */
     public function xc(string $canvasColor = 'none'): self
     {
-        $this->command .= ' xc:'.$this->escape($this->ref->color($canvasColor)).' ';
+        $this->command[] = 'xc:'.$this->ref->color($canvasColor);
 
         return $this;
     }
@@ -331,7 +387,8 @@ class Command
      */
     public function crop($geometry): self
     {
-        $this->command .= ' -crop '.$this->escape($this->ref->geometry($geometry), false).' ';
+        $this->command[] = '-crop';
+        $this->command[] = '"'.$this->ref->geometry($geometry).'"';
 
         return $this;
     }
@@ -343,7 +400,8 @@ class Command
      */
     public function extent($geometry): self
     {
-        $this->command .= ' -extent '.$this->escape($this->ref->geometry($geometry));
+        $this->command[] = '-extent';
+        $this->command[] = '"'.$this->ref->geometry($geometry).'"';
 
         return $this;
     }
@@ -355,7 +413,8 @@ class Command
      */
     public function thumbnail($geometry): self
     {
-        $this->command .= ' -thumbnail '.$this->escape($this->ref->geometry($geometry));
+        $this->command[] = '-thumbnail';
+        $this->command[] = '"'.$this->ref->geometry($geometry).'"';
 
         return $this;
     }
@@ -365,7 +424,8 @@ class Command
      */
     public function quality(int $quality): self
     {
-        $this->command .= ' -quality '.$quality;
+        $this->command[] = '-quality';
+        $this->command[] = (string) $quality;
 
         return $this;
     }
@@ -375,7 +435,8 @@ class Command
      */
     public function rotate(string $rotation): self
     {
-        $this->command .= ' -rotate '.$this->escape($this->ref->rotation($rotation));
+        $this->command[] = '-rotate';
+        $this->command[] = $this->ref->rotation($rotation);
 
         return $this;
     }
@@ -385,7 +446,7 @@ class Command
      */
     public function strip(): self
     {
-        $this->command .= ' -strip ';
+        $this->command[] = '-strip';
 
         return $this;
     }
@@ -395,7 +456,8 @@ class Command
      */
     public function interlace(string $type): self
     {
-        $this->command .= ' -interlace '.$this->ref->interlace($type);
+        $this->command[] = '-interlace';
+        $this->command[] = $this->ref->interlace($type);
 
         return $this;
     }
@@ -405,7 +467,8 @@ class Command
      */
     public function gaussianBlur(string $blur): self
     {
-        $this->command .= ' -gaussian-blur '.$this->ref->blur($blur);
+        $this->command[] = '-gaussian-blur';
+        $this->command[] = $this->ref->blur($blur);
 
         return $this;
     }
@@ -415,7 +478,8 @@ class Command
      */
     public function blur(string $blur): self
     {
-        $this->command .= ' -blur '.$this->ref->blur($blur);
+        $this->command[] = '-blur';
+        $this->command[] = $this->ref->blur($blur);
 
         return $this;
     }
@@ -425,7 +489,8 @@ class Command
      */
     public function font(string $fontFile, bool $checkFontFileExists = false): self
     {
-        $this->command .= ' -font '.$this->escape($checkFontFileExists  ? $this->checkExistingFile($fontFile) : $fontFile).' ';
+        $this->command[] = '-font';
+        $this->command[] = ($checkFontFileExists ? $this->checkExistingFile($fontFile) : $fontFile);
 
         return $this;
     }
@@ -435,7 +500,8 @@ class Command
      */
     public function pointsize(int $pointsize): self
     {
-        $this->command .= ' -pointsize '.$pointsize;
+        $this->command[] = '-pointsize';
+        $this->command[] = $pointsize;
 
         return $this;
     }
@@ -445,10 +511,25 @@ class Command
      */
     public function stroke(string $color): self
     {
-        $this->command .= ' -stroke '.$this->ref->color($color);
+        $this->command[] = '-stroke';
+        $this->command[] = $this->ref->color($color);
 
         return $this;
     }
+
+    /* ------------------------------------------ *
+     * End of ImageMagick native options.         *
+     * Want more? Some options are missing?       *
+     * PRs are welcomed ;)                        *
+     * https://github.com/Orbitale/ImageMagickPHP *
+     * ------------------------------------------ */
+
+    /* ------------------------------------------------------ *
+     * Here are some nice aliases you might be interested in. *
+     * They use some combinations of ImageMagick options to   *
+     * ease certain common habits.                            *
+     * Feel free to contribute if you have cool aliases!      *
+     * ------------------------------------------------------ */
 
     /**
      * @param string|Geometry $geometry
@@ -483,7 +564,8 @@ class Command
 
         $this->stroke('none');
 
-        $this->command .= ' -annotate '.$this->ref->geometry($geometry).' '.$this->escape($text);
+        $this->command[] = '-annotate';
+        $this->command[] = '"'.$this->ref->geometry($geometry).'"'.$text;
 
         return $this;
     }
@@ -507,17 +589,11 @@ class Command
 
         $this->fill($fillColor);
 
-        $this->command .=
-            ' -draw "ellipse '.$xCenter.','.$yCenter.
-            ' '.$width.','.$height.
-            ' '.$startAngleInDegree.','.$endAngleInDegree.'"';
+        $this->command[] = '-draw';
+        $this->command[] = '"ellipse '.$xCenter.','.$yCenter.$width.','.$height.$startAngleInDegree.','.$endAngleInDegree.'"';
 
         return $this;
     }
-
-    /* ---------------------------- *
-     * End of ImageMagick functions *
-     * ---------------------------- */
 
     protected function checkExistingFile(string $file): string
     {
@@ -529,17 +605,6 @@ class Command
             ));
         }
 
-        return $this->cleanPath($file);
-    }
-
-    private function cleanPath(string $path, bool $rtrim = false): string
-    {
-        $path = str_replace('\\', '/', $path);
-
-        if ($rtrim) {
-            $path = rtrim($path, '/');
-        }
-
-        return $path;
+        return self::cleanPath($file);
     }
 }

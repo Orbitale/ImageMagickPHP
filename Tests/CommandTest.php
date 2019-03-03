@@ -39,8 +39,8 @@ class CommandTest extends AbstractTestCase
     public function provideWrongConvertDirs()
     {
         return array(
-            array('/this/is/a/dummy/dir', 'The specified path (/this/is/a/dummy/dir) is not a directory', 'InvalidArgumentException'),
-            array('./', 'The specified path (.) does not seem to contain ImageMagick binaries, or it is not readable', 'InvalidArgumentException'),
+            array('/this/is/a/dummy/dir', 'The specified path (/this/is/a/dummy/dir) is not a file.', 'InvalidArgumentException'),
+            array('./', 'The specified path (.) is not a file.', 'InvalidArgumentException'),
         );
     }
 
@@ -109,29 +109,30 @@ class CommandTest extends AbstractTestCase
         $imageOutput = $this->resourcesDir . '/outputs/moon_mogrify.jpg';
         $this->assertFileExists($sourceImage);
 
+        $baseSize = filesize($sourceImage);
+
         if (file_exists($imageOutput)) {
             unlink($imageOutput);
         }
 
         copy($sourceImage, $imageOutput);
 
-        if (!file_exists($imageOutput)) {
-            throw new \RuntimeException('File could not be copied from resources dir to output dir.');
-        }
+        clearstatcache($imageOutput);
 
-        $baseSize = filesize($imageOutput);
+        if (!file_exists($imageOutput)) {
+            static::fail('File could not be copied from resources dir to output dir.');
+        }
 
         $response = $command
             ->mogrify($imageOutput)
-            ->resize('5000x5000')
+            ->background('#000000')
+            ->extent('5000x5000')
             ->run()
         ;
 
         $this->assertFileExists($imageOutput);
 
-        $this->assertFalse($response->hasFailed());
-
-        clearstatcache(true);
+        $this->assertTrue($response->isSuccessful(), "Command returned an error when testing mogrify resize:\n".$response->getOutput()."\n".$response->getError());
 
         $this->assertGreaterThan($baseSize, filesize($imageOutput));
     }
@@ -151,11 +152,11 @@ class CommandTest extends AbstractTestCase
             ->getCommand()
         ;
 
-        $expected = ' '.$command->getExecutable('convert').
-                    ' "'.$source.'"'.
+        $expected = \implode(' ', $command->getExecutable('convert')).
+                    ' '.$source.
                     ' -thumbnail "'.$geometry.'"'.
                     ' -quality '.$quality.
-                    ' "'.$output.'" ';
+                    ' '.$output;
 
         $expected = str_replace('\\', '/', $expected);
 
@@ -194,16 +195,4 @@ class CommandTest extends AbstractTestCase
         }
         $this->assertContains(sprintf("The file \"%s\" is not found.", $file), $exception);
     }
-
-    public function testEscape()
-    {
-        $string = 'PSR\'s a great `code` style standard. ';
-
-        $command = new Command(IMAGEMAGICK_DIR);
-
-        $escaped = $command->escape($string, true);
-
-        $this->assertEquals('"PSR\'s a great \'code\' style standard."', $escaped);
-    }
-
 }
