@@ -20,15 +20,16 @@ php:
     - '7.2'
     - '7.3'
 
-before_install:
-    - composer self-update
-    - curl -L "https://imagemagick.org/download/ImageMagick.tar.gz" | tar xz
-    - cd ImageMagick-*
-    - ./configure
-    - make
-    - sudo make install
-    - cd ..
-    - mkdir -p build/logs
+before_install: |
+    composer self-update
+    curl -L "https://imagemagick.org/download/ImageMagick.tar.gz" | tar xz
+    cd ImageMagick-*
+    ./configure
+    make
+    sudo make install
+    sudo ldconfig /usr/local/lib
+    cd ..
+    mkdir -p build/logs
 
 install:
     - composer install --no-interaction
