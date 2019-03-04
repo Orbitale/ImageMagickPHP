@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Orbitale\Component\ImageMagick;
 
 use Orbitale\Component\ImageMagick\ReferenceClasses\Geometry;
+use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
 /**
@@ -74,10 +75,14 @@ class Command
      */
     protected $version;
 
-    public function __construct(string $magickBinaryPath = '/usr/bin/magick')
+    public function __construct(string $magickBinaryPath = null)
     {
         // Delete trimming directory separator
         $magickBinaryPath = self::cleanPath($magickBinaryPath, true);
+
+        if (!$magickBinaryPath) {
+            $magickBinaryPath = (new ExecutableFinder())->find('magick');
+        }
 
         // Add a proper directory separator at the end if path is not empty.
         // If it's empty, then it's set in the global path.
@@ -118,7 +123,7 @@ class Command
         $this->magickBinaryPath = $magickBinaryPath;
     }
 
-    public static function create(string $magickBinaryPath = '/usr/bin/magick'): self
+    public static function create(string $magickBinaryPath = null): self
     {
         return new self($magickBinaryPath);
     }

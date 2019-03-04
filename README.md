@@ -30,19 +30,20 @@ There are not many settings, but when you instantiate a new `Command` object, yo
 ```php
 use Orbitale\Component\ImageMagick\Command;
 
-// Default directory for many Linux distributions:
+// Default directory for many Linux distributions
 $command = new Command('/usr/bin/magick');
 
-// Or in Windows, depending of the install directory:
+// Or in Windows, depending of the install directory
 $command = new Command('C:\ImageMagick\magick.exe');
 
-// If it is available in the global scope for the user running the script:
+// Will try to automatically discover the path of ImageMagick in your system
+// Note: it uses Symfony's ExecutableFinder to find it in $PATH
 $command = new Command();
 ```
 
 The constructor will automatically search for the `magick` executable, test it, and throw an exception if it's not available.
 
-/!\ Make sure your ImageMagick executable have the "+x" chmod option, and that the user has the rights to execute it.
+⚠️ Make sure your ImageMagick binary is executable.
 
 Usage
 ===============
@@ -61,7 +62,9 @@ First, we recommend you to note all possible scripts that you can use with Image
 * [montage](https://imagemagick.org/script/montage.php)
 * [stream](https://imagemagick.org/script/stream.php)
 
-These correspond to the "legacy binaries", and you can use them when 
+These correspond to the "legacy binaries", and you can use them if you are familiar or comfortable with them.
+
+As of ImageMagick 7, these are not mandatory, but this package is compatible with them.
 
 ### Basic image type converter with ImageMagick's basic logo
 
