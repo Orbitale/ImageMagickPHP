@@ -22,6 +22,8 @@ php:
 
 before_install: |
     composer self-update
+    which magick
+    magick -version
     curl -L "https://imagemagick.org/download/ImageMagick.tar.gz" | tar xz
     cd ImageMagick-*
     ./configure
