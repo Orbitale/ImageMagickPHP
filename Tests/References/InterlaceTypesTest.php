@@ -58,12 +58,12 @@ class InterlaceTypesTest extends TestCase
     }
 
     /**
-     * @param string $interlaceType
-     *
      * @dataProvider provideInvalidInterlaceTypes
      */
     public function testInvalidInterlaceTypes($interlaceType): void
     {
+        $interlaceType = (string) $interlaceType;
+
         $msg = '';
         try {
             $this->ref->interlace($interlaceType);
@@ -81,6 +81,7 @@ class InterlaceTypesTest extends TestCase
         yield [1];
         yield ['2'];
         yield ['wow'];
+        yield ['WoW'];
         yield [''];
         yield [' '];
         yield [0x00];

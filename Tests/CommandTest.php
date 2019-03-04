@@ -114,7 +114,7 @@ class CommandTest extends AbstractTestCase
 
         \copy($sourceImage, $imageOutput);
 
-        \clearstatcache($imageOutput);
+        \clearstatcache(true, $imageOutput);
 
         if (!\file_exists($imageOutput)) {
             static::fail('File could not be copied from resources dir to output dir.');
