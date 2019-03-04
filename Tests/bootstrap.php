@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+use Orbitale\Component\ImageMagick\Command;
+
 $file = __DIR__ . '/../vendor/autoload.php';
 if (!file_exists($file)) {
     throw new RuntimeException('Install dependencies to run test suite.');
@@ -24,20 +26,21 @@ foreach (glob(TEST_RESOURCES_DIR.'/outputs/*') as $file) {
 
 // Check if ImageMagick is installed. Instead, we cannot run tests suite.
 $possibleDirectories = [
-    getenv('IMAGEMAGICK_PATH'),
-    'magick',// In the PATH variable
+    null,// In the PATH variable, default behavior
     '/usr/bin/magick',
     '/usr/local/bin/magick',
+    getenv('IMAGEMAGICK_PATH') ?: null, // Fall back again to PATH
 ];
-foreach ($possibleDirectories as $dir) {
-    if (!$dir) {
+foreach ($possibleDirectories as $path) {
+    if (!$path) {
         // Could happen if "getenv()" returns false or empty string.
         continue;
     }
-    echo 'Check "'.$dir.'" binary'."\n";
-    exec($dir.' -version', $o, $code);
+    $path = Command::findMagickBinaryPath($path);
+    echo 'Check "'.$path.'" binary'."\n";
+    exec($path.' -version', $o, $code);
     if (0 === $code) {
-        define('IMAGEMAGICK_DIR', $dir);
+        define('IMAGEMAGICK_DIR', $path);
         break;
     }
 }
