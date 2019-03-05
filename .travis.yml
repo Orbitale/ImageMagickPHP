@@ -28,6 +28,8 @@ before_install: |
     make
     sudo make install
     sudo ldconfig /usr/local/lib
+    which magick
+    find /usr/local -iname "*magick*"
     cd ..
     mkdir -p build/logs
 

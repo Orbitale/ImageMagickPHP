@@ -118,11 +118,7 @@ class Command
         // Add a proper directory separator at the end if path is not empty.
         // If it's empty, then it's set in the global path.
         if ($magickBinaryPath && !\is_file($magickBinaryPath)) {
-            throw new \InvalidArgumentException(\sprintf(
-                'The specified path (%s) is not a file.'."\n".
-                'You must set the "magickBinaryPath" parameter as the main "magick" binary installed by ImageMagick.',
-                $magickBinaryPath
-            ));
+            throw new MagickBinaryNotFoundException($magickBinaryPath);
         }
 
         if (!\is_executable($magickBinaryPath)) {

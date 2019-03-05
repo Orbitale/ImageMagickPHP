@@ -10,6 +10,7 @@
  */
 
 use Orbitale\Component\ImageMagick\Command;
+use Orbitale\Component\ImageMagick\MagickBinaryNotFoundException;
 
 $file = __DIR__ . '/../vendor/autoload.php';
 if (!file_exists($file)) {
@@ -36,12 +37,15 @@ foreach ($possibleDirectories as $path) {
         // Could happen if "getenv()" returns false or empty string.
         continue;
     }
-    $path = Command::findMagickBinaryPath($path);
     echo 'Check "'.$path.'" binary'."\n";
-    exec($path.' -version', $o, $code);
-    if (0 === $code) {
-        define('IMAGEMAGICK_DIR', $path);
-        break;
+    try {
+        $path = Command::findMagickBinaryPath($path);
+        exec($path.' -version', $o, $code);
+        if (0 === $code) {
+            define('IMAGEMAGICK_DIR', $path);
+            break;
+        }
+    } catch (MagickBinaryNotFoundException $e) {
     }
 }
 
