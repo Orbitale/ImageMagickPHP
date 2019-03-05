@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Orbitale\Component\ImageMagick\Tests;
 
 use Orbitale\Component\ImageMagick\Command;
+use Orbitale\Component\ImageMagick\MagickBinaryNotFoundException;
 
 class CommandTest extends AbstractTestCase
 {
@@ -34,13 +35,13 @@ class CommandTest extends AbstractTestCase
             $exceptionClass = \get_class($e);
         }
         static::assertContains($expectedMessage, $exception);
-        static::assertEquals($exceptionClass, $expectedException);
+        static::assertEquals($expectedException, $exceptionClass);
     }
 
     public function provideWrongConvertDirs(): ?\Generator
     {
-        yield ['/this/is/a/dummy/dir', 'The specified path (/this/is/a/dummy/dir) is not a file.', 'InvalidArgumentException'];
-        yield ['./', 'The specified path (.) is not a file.', 'InvalidArgumentException'];
+        yield ['/this/is/a/dummy/dir', 'The specified path (/this/is/a/dummy/dir) is not a file.', MagickBinaryNotFoundException::class];
+        yield ['./', 'The specified path (.) is not a file.', MagickBinaryNotFoundException::class];
     }
 
     public function testResizeImage(): void
