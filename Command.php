@@ -604,6 +604,23 @@ class Command
         return $this;
     }
 
+    /**
+     * @see http://imagemagick.org/script/command-line-options.php#draw
+     */
+    public function polyline(array $coordinates, string $strokeColor = ''): self
+    {
+        if ($strokeColor) {
+            $this->stroke($strokeColor);
+        }
+
+        $this->fill('transparent');
+
+        $this->command[] = '-draw';
+        $this->command[] = '"polyline '.\implode(' ', $coordinates).'"';
+
+        return $this;
+    }
+
     protected function checkExistingFile(string $file): string
     {
         if (!\file_exists($file)) {
