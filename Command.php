@@ -407,6 +407,19 @@ class Command
     /**
      * @param string|Geometry $geometry
      *
+     * @see http://imagemagick.org/script/command-line-options.php#geometry
+     */
+    public function geometry($geometry): self
+    {
+        $this->command[] = '-geometry';
+        $this->command[] = '"'.$this->ref->geometry($geometry).'"';
+
+        return $this;
+    }
+
+    /**
+     * @param string|Geometry $geometry
+     *
      * @see http://imagemagick.org/script/command-line-options.php#extent
      */
     public function extent($geometry): self
