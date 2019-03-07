@@ -386,7 +386,7 @@ class Command
      */
     public function xc(string $canvasColor = 'none'): self
     {
-        $this->command[] = 'xc:'.$this->ref->color($canvasColor);
+        $this->command[] = '"xc:'.$this->ref->color($canvasColor).'"';
 
         return $this;
     }
@@ -523,7 +523,7 @@ class Command
     public function stroke(string $color): self
     {
         $this->command[] = '-stroke';
-        $this->command[] = $this->ref->color($color);
+        $this->command[] = '"'.$this->ref->color($color).'"';
 
         return $this;
     }
