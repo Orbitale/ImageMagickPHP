@@ -528,6 +528,17 @@ class Command
         return $this;
     }
 
+    /**
+     * @see http://imagemagick.org/script/command-line-options.php#strokewidth
+     */
+    public function strokeWidth(int $strokeWidth): self
+    {
+        $this->command[] = '-strokewidth';
+        $this->command[] = (string) $strokeWidth;
+
+        return $this;
+    }
+
     /* ------------------------------------------ *
      * End of ImageMagick native options.         *
      * Want more? Some options are missing?       *
