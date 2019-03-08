@@ -597,9 +597,8 @@ MSG
      */
     public function text(array $options = []): self
     {
-        $mandatoryKeys = ['text', 'geometry', 'textSize'];
-        foreach ($options as $key => $v) {
-            if (!isset($mandatoryKeys[$key])) {
+        foreach (['text', 'geometry', 'textSize'] as $key) {
+            if (!isset($options[$key])) {
                 throw new \InvalidArgumentException(\sprintf('Key "%s" is missing for the %s function.', $key, __METHOD__));
             }
         }
@@ -624,7 +623,8 @@ MSG
         $this->stroke('none');
 
         $this->command[] = '-annotate';
-        $this->command[] = '"'.$this->ref->geometry($geometry).'"'.$text;
+        $this->command[] = '"'.$this->ref->geometry($geometry).'"';
+        $this->command[] = \escapeshellarg($text);
 
         return $this;
     }
