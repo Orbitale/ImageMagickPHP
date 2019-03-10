@@ -544,7 +544,7 @@ class Command
     /**
      * @see http://imagemagick.org/script/command-line-options.php#strokewidth
      */
-    public function strokeWidth(int $strokeWidth): self
+    public function strokeWidth(float $strokeWidth): self
     {
         $this->command[] = '-strokewidth';
         $this->command[] = (string) $strokeWidth;
@@ -606,9 +606,11 @@ MSG
         $text = $options['text'];
         $textSize = $options['textSize'];
         $geometry = $options['geometry'];
-        $font = $options['font'] ?? '';
+        $font = $options['font'] ?? null;
         $checkFont = $options['checkFont'] ?? false;
-        $textColor = $options['textColor'] ?? '';
+        $textColor = $options['textColor'] ?? null;
+        $strokeWidth = $options['strokeWidth'] ?? null;
+        $strokeColor = $options['strokeColor'] ?? 'none';
 
         if ($font) {
             $this->font($font, $checkFont);
@@ -620,7 +622,10 @@ MSG
             $this->fill($textColor);
         }
 
-        $this->stroke('none');
+        if (null !== $strokeWidth) {
+            $this->strokeWidth($strokeWidth);
+        }
+        $this->stroke($strokeColor);
 
         $this->command[] = '-annotate';
         $this->command[] = '"'.$this->ref->geometry($geometry).'"';
