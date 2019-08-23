@@ -68,6 +68,78 @@ class CommandTest extends AbstractTestCase
         $this->testConvertIdentifyImage($imageOutput, 'JPEG', '100x94+0+0', '8-bit');
     }
 
+    public function testDepthImage(): void
+    {
+        $command = new Command(IMAGEMAGICK_DIR);
+
+        $imageToResize = $this->resourcesDir.'/moon_180.jpg';
+        $imageOutput = $this->resourcesDir.'/outputs/moon.jpg';
+        static::assertFileExists($imageToResize);
+
+        $response = $command
+            ->convert($imageToResize)
+            ->depth(1)
+            ->file($imageOutput, false)
+            ->run()
+        ;
+
+        static::assertFalse($response->hasFailed(), "Errors when testing:\n".$response->getProcess()->getOutput()."\t".$response->getProcess()->getErrorOutput());
+
+        static::assertFileExists($this->resourcesDir.'/outputs/moon.jpg');
+
+        static::assertFalse($response->hasFailed());
+
+        $this->testConvertIdentifyImage($imageOutput, 'JPEG', '180x170+0+0', '8-bit');
+    }
+
+    public function testFlattenImage(): void
+    {
+        $command = new Command(IMAGEMAGICK_DIR);
+
+        $imageToResize = $this->resourcesDir.'/moon_180.jpg';
+        $imageOutput = $this->resourcesDir.'/outputs/moon.jpg';
+        static::assertFileExists($imageToResize);
+
+        $response = $command
+            ->convert($imageToResize)
+            ->flatten()
+            ->file($imageOutput, false)
+            ->run()
+        ;
+
+        static::assertFalse($response->hasFailed(), "Errors when testing:\n".$response->getProcess()->getOutput()."\t".$response->getProcess()->getErrorOutput());
+
+        static::assertFileExists($this->resourcesDir.'/outputs/moon.jpg');
+
+        static::assertFalse($response->hasFailed());
+
+        $this->testConvertIdentifyImage($imageOutput, 'JPEG', '180x170+0+0', '8-bit');
+    }
+
+    public function testColorspaceImage(): void
+    {
+        $command = new Command(IMAGEMAGICK_DIR);
+
+        $imageToResize = $this->resourcesDir.'/moon_180.jpg';
+        $imageOutput = $this->resourcesDir.'/outputs/moon.jpg';
+        static::assertFileExists($imageToResize);
+
+        $response = $command
+            ->convert($imageToResize)
+            ->colorspace('Gray')
+            ->file($imageOutput, false)
+            ->run()
+        ;
+
+        static::assertFalse($response->hasFailed(), "Errors when testing:\n".$response->getProcess()->getOutput()."\t".$response->getProcess()->getErrorOutput());
+
+        static::assertFileExists($this->resourcesDir.'/outputs/moon.jpg');
+
+        static::assertFalse($response->hasFailed());
+
+        $this->testConvertIdentifyImage($imageOutput, 'JPEG', '180x170+0+0', '8-bit');
+    }
+
     /**
      * @dataProvider provideImagesToIdentify
      */

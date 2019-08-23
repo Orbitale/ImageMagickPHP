@@ -133,7 +133,7 @@ final class References
      */
     public function colorspace(string $colorspace): string
     {
-        $colorspace = \mb_strtolower(\trim($colorspace));
+        $colorspace = \trim($colorspace);
 
         $references = $this->getColorspaceValuesReference();
 
