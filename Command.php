@@ -563,6 +563,37 @@ class Command
     }
 
     /**
+     * @see https://imagemagick.org/script/command-line-options.php#depth
+     */
+    public function depth(int $depth): self
+    {
+        $this->command[] = '-depth ' . $depth;
+
+        return $this;
+    }
+
+    /**
+     * @see https://imagemagick.org/script/command-line-options.php#flatten
+     */
+    public function flatten(): self
+    {
+        $this->command[] = '-flatten';
+
+        return $this;
+    }
+
+    /**
+     * @see https://imagemagick.org/script/command-line-options.php#colorspace
+     */
+    public function colorspace(string $colorspace): self
+    {
+        $this->command[] = '-colorspace';
+        $this->command[] = $this->ref->colorspace($colorspace);
+
+        return $this;
+    }
+
+    /**
      * /!\ Append a raw command to ImageMagick.
      * Not safe! Use at your own risks!
      *

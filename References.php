@@ -62,6 +62,14 @@ final class References
     /**
      * @return string[]
      */
+    public function getColorspaceValuesReference(): array
+    {
+        return $this->config['colorspace_values'];
+    }
+
+    /**
+     * @return string[]
+     */
     public function getColorsReference(): array
     {
         return $this->config['colors'];
@@ -117,6 +125,28 @@ final class References
             'Please refer to ImageMagick command line documentation about colors:'."\n%s",
             $color,
             'http://www.imagemagick.org/script/color.php'
+        ));
+    }
+
+    /**
+     * Checks that colorspace value is valid in the references.
+     */
+    public function colorspace(string $colorspace): string
+    {
+        $colorspace = \trim($colorspace);
+
+        $references = $this->getColorspaceValuesReference();
+
+        if (\in_array($colorspace, $references, true)) {
+            return $colorspace;
+        }
+
+        throw new \InvalidArgumentException(\sprintf(
+            'The specified colorspace value (%s) is invalid.'."\n".
+            'The available values are:'."\n%s\n".
+            'Please refer to ImageMagick command line documentation:'."\n%s",
+            $colorspace, \implode(', ', $references),
+            'http://www.imagemagick.org/script/command-line-options.php#colorspace'
         ));
     }
 
