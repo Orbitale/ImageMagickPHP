@@ -474,6 +474,18 @@ class Command
 
         return $this;
     }
+    
+    /**
+     * @see http://imagemagick.org/script/command-line-options.php#trim
+     */
+    public function trim(int $percent_background = 0): self
+    {
+        $this->command[] = '-trim';
+        $this->command[] = '-define';
+        $this->command[] = 'trim:percent-background=' . $percent_background . '%';
+
+        return $this;
+    }
 
     /**
      * @see http://imagemagick.org/script/command-line-options.php#interlace
