@@ -20,7 +20,6 @@ class GravityTest extends AbstractTestCase
 
         $validatedGravity = $gravity->validate();
 
-        static::assertIsString($validatedGravity);
         static::assertNotEmpty($validatedGravity);
 
         $command = new Command(IMAGEMAGICK_DIR);
