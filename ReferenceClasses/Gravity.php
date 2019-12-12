@@ -43,7 +43,7 @@ class Gravity
 
     public function validate(): string
     {
-        if ( !in_array($this->value, self::$validGravity) ) {
+        if (!in_array($this->value, self::$validGravity, true)) {
             throw new \InvalidArgumentException(\sprintf(
                 "Invalid gravity option, \"%s\" given.\nAvailable: %s",
                 $this->value, \implode(', ', self::$validGravity)
