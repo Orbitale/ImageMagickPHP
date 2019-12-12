@@ -29,10 +29,6 @@ class GravityTest extends AbstractTestCase
         static::assertIsString($validatedGravity);
         static::assertNotEmpty($validatedGravity);
 
-        if ('' === $validatedGravity) {
-            static::markTestSkipped('No gravity to check. ['.$validatedGravity.'] ['.\implode(',', \func_get_args()).']');
-        }
-
         $command = new Command(IMAGEMAGICK_DIR);
 
         $outputFile = $this->resourcesDir.'/outputs/moon_180_test_gravity_'.\md5($gravity.'test_geo').'.jpg';

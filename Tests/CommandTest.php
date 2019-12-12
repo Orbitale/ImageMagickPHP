@@ -160,8 +160,6 @@ class CommandTest extends AbstractTestCase
 
         static::assertFileExists($this->resourcesDir.'/outputs/moon.jpg');
 
-        static::assertFalse($response->hasFailed());
-
         $this->testConvertIdentifyImage($imageOutput, 'JPEG', '100x100+0+0', '8-bit');
     }
 
