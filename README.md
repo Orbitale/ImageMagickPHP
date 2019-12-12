@@ -153,6 +153,7 @@ This is why a "few" ones are implemented now, to make sure validation is possibl
 * [`-fill`](http://www.imagemagick.org/script/command-line-options.php#fill)
 * [`-font`](http://www.imagemagick.org/script/command-line-options.php#font)
 * [`-gaussian-blur`](http://www.imagemagick.org/script/command-line-options.php#gaussian-blur)
+* [`-gravity`](http://www.imagemagick.org/script/command-line-options.php#gravity)
 * [`-interlace`](http://www.imagemagick.org/script/command-line-options.php#interlace)
 * [`-pointsize`](http://www.imagemagick.org/script/command-line-options.php#pointsize)
 * [`-quality`](http://www.imagemagick.org/script/command-line-options.php#quality)

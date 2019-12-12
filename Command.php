@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Orbitale\Component\ImageMagick;
 
 use Orbitale\Component\ImageMagick\ReferenceClasses\Geometry;
+use Orbitale\Component\ImageMagick\ReferenceClasses\Gravity;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -426,6 +427,19 @@ class Command
     {
         $this->command[] = '-extent';
         $this->command[] = '"'.$this->ref->geometry($geometry).'"';
+
+        return $this;
+    }
+
+    /**
+     * @param string $gravity
+     *
+     * @see https://www.imagemagick.org/script/command-line-options.php#gravity
+     */
+    public function gravity($gravity): self
+    {
+        $this->command[] = '-gravity';
+        $this->command[] = '"'.$this->ref->gravity($gravity).'"';
 
         return $this;
     }
