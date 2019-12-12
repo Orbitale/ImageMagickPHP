@@ -151,7 +151,7 @@ class CommandTest extends AbstractTestCase
         $response = $command
             ->convert($imageToResize)
             ->gravity('Center')
-			->extent('100x100')
+            ->extent('100x100')
             ->file($imageOutput, false)
             ->run()
         ;
