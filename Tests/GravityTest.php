@@ -18,13 +18,7 @@ class GravityTest extends AbstractTestCase
     {
         $gravity = new Gravity($gravity);
 
-        try {
-            $validatedGravity = $gravity->validate();
-        } catch (\Exception $e) {
-            static::fail($e->getMessage());
-
-            return;
-        }
+        $validatedGravity = $gravity->validate();
 
         static::assertIsString($validatedGravity);
         static::assertNotEmpty($validatedGravity);
