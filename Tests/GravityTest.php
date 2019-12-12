@@ -76,18 +76,11 @@ class GravityTest extends AbstractTestCase
      */
     public function testWrongGravities($gravity): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid gravity option, \"" .$gravity. "\" given.\nAvailable: NorthWest, North, NorthEast, West, Center, East, SouthWest, South, SouthEast" );
+ 
         $testGravity = new Gravity($gravity);
-
-        $message = null;
-
-        try {
-            $testGravity->validate();
-        } catch (\InvalidArgumentException $e) {
-            $message = $e->getMessage();
-        }
-
-        static::assertNotNull($message, 'No exception for gravity "'.$gravity.'"');
-        static::assertStringStartsWith('Invalid gravity option, "'.$gravity.'" given.', $message, "Wrong exception message:\n$message");
+        $testGravity->validate();
     }
 
     public function provideWrongGravities(): ?\Generator
