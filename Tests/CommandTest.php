@@ -116,6 +116,44 @@ class CommandTest extends AbstractTestCase
         $this->testConvertIdentifyImage($imageOutput, 'JPEG', '180x170+0+0', '8-bit');
     }
 
+    public function testTranspose(): void
+    {
+        $command = new Command(IMAGEMAGICK_DIR);
+
+        $imageSource = $this->resourcesDir.'/moon_180.jpg';
+        $imageOutput = $this->resourcesDir.'/outputs/moon_transpose.jpg';
+        static::assertFileExists($imageSource);
+
+        $response = $command
+            ->convert($imageSource)
+            ->transpose()
+            ->file($imageOutput, false)
+            ->run()
+        ;
+
+        static::assertFalse($response->hasFailed());
+        static::assertFileExists($this->resourcesDir.'/outputs/moon_transpose.jpg');
+    }
+
+    public function testTransverse(): void
+    {
+        $command = new Command(IMAGEMAGICK_DIR);
+
+        $imageSource = $this->resourcesDir.'/moon_180.jpg';
+        $imageOutput = $this->resourcesDir.'/outputs/moon_transverse.jpg';
+        static::assertFileExists($imageSource);
+
+        $response = $command
+            ->convert($imageSource)
+            ->transverse()
+            ->file($imageOutput, false)
+            ->run()
+        ;
+
+        static::assertFalse($response->hasFailed());
+        static::assertFileExists($this->resourcesDir.'/outputs/moon_transverse.jpg');
+    }
+
     public function testColorspaceImage(): void
     {
         $command = new Command(IMAGEMAGICK_DIR);
