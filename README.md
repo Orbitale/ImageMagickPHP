@@ -168,6 +168,9 @@ This is why a "few" ones are implemented now, to make sure validation is possibl
 * [`-depth`](http://www.imagemagick.org/script/command-line-options.php#depth)
 * [`-flatten`](http://www.imagemagick.org/script/command-line-options.php#flatten)
 * [`-colorspace`](http://www.imagemagick.org/script/command-line-options.php#colorspace)
+* [`-monochrome`](http://www.imagemagick.org/script/command-line-options.php#monochrome)
+* [`-transpose`](http://www.imagemagick.org/script/command-line-options.php#transpose)
+* [`-transverse`](http://www.imagemagick.org/script/command-line-options.php#transverse)
 * [`xc:`](http://www.imagemagick.org/Usage/canvas/)
 
 Feel free to ask/create an issue if you need more!
