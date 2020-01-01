@@ -619,6 +619,26 @@ class Command
     }
 
     /**
+     * @see http://imagemagick.org/script/command-line-options.php#transpose
+     */
+    public function transpose(): self
+    {
+        $this->command[] = '-transpose';
+
+        return $this;
+    }
+
+    /**
+     * @see http://imagemagick.org/script/command-line-options.php#transverse
+     */
+    public function transverse(): self
+    {
+        $this->command[] = '-transverse';
+
+        return $this;
+    }
+
+    /**
      * /!\ Append a raw command to ImageMagick.
      * Not safe! Use at your own risks!
      *
