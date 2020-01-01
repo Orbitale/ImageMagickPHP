@@ -140,6 +140,25 @@ class CommandTest extends AbstractTestCase
         $this->testConvertIdentifyImage($imageOutput, 'JPEG', '180x170+0+0', '8-bit');
     }
 
+    public function testMonochrome(): void
+    {
+        $command = new Command(IMAGEMAGICK_DIR);
+
+        $imageSource = $this->resourcesDir.'/moon_180.jpg';
+        $imageOutput = $this->resourcesDir.'/outputs/moon_monochrome.jpg';
+        static::assertFileExists($imageSource);
+
+        $response = $command
+            ->convert($imageSource)
+            ->monochrome()
+            ->file($imageOutput, false)
+            ->run()
+        ;
+
+        static::assertFalse($response->hasFailed());
+        static::assertFileExists($this->resourcesDir.'/outputs/moon_monochrome.jpg');
+    }
+
     /**
      * @dataProvider provideImagesToIdentify
      */
