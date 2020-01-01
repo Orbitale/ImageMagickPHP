@@ -489,6 +489,17 @@ class Command
         return $this;
     }
 
+
+    /**
+     * @see http://imagemagick.org/script/command-line-options.php#monochrome
+     */
+    public function monochrome(): self
+    {
+        $this->command[] = '-monochrome';
+
+        return $this;
+    }
+
     /**
      * @see http://imagemagick.org/script/command-line-options.php#interlace
      */
