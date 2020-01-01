@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Orbitale\Component\ImageMagick;
 
 use Orbitale\Component\ImageMagick\ReferenceClasses\Geometry;
+use Orbitale\Component\ImageMagick\ReferenceClasses\Gravity;
 
 /**
  * This class is here to add some validation processes when using options in the Command class.
@@ -93,6 +94,18 @@ final class References
         }
 
         return $geometry->validate();
+    }
+
+     /**
+     * @param string|Gravity $gravity
+     */
+    public function gravity($gravity): string
+    {
+        if (!$gravity instanceof Gravity) {
+            $gravity = new Gravity(\trim($gravity));
+        }
+
+        return $gravity->validate();
     }
 
     /**

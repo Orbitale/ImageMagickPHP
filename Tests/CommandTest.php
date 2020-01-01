@@ -140,7 +140,7 @@ class CommandTest extends AbstractTestCase
         $this->testConvertIdentifyImage($imageOutput, 'JPEG', '180x170+0+0', '8-bit');
     }
 
-    public function testMonochrome(): void
+ public function testMonochrome(): void
     {
         $command = new Command(IMAGEMAGICK_DIR);
 
@@ -157,6 +157,29 @@ class CommandTest extends AbstractTestCase
 
         static::assertFalse($response->hasFailed());
         static::assertFileExists($this->resourcesDir.'/outputs/moon_monochrome.jpg');
+    }
+
+    public function testGravityCommand(): void
+    {
+        $command = new Command(IMAGEMAGICK_DIR);
+
+        $imageToResize = $this->resourcesDir.'/moon_180.jpg';
+        $imageOutput = $this->resourcesDir.'/outputs/moon.jpg';
+        static::assertFileExists($imageToResize);
+
+        $response = $command
+            ->convert($imageToResize)
+            ->gravity('Center')
+            ->extent('100x100')
+            ->file($imageOutput, false)
+            ->run()
+        ;
+
+        static::assertFalse($response->hasFailed(), "Errors when testing:\n".$response->getProcess()->getOutput()."\t".$response->getProcess()->getErrorOutput());
+
+        static::assertFileExists($this->resourcesDir.'/outputs/moon.jpg');
+
+        $this->testConvertIdentifyImage($imageOutput, 'JPEG', '100x100+0+0', '8-bit');
     }
 
     /**
