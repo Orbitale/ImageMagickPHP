@@ -146,15 +146,21 @@ This is why a "few" ones are implemented now, to make sure validation is possibl
 
 **Note:** If an option is not implemented in the `Command` class, you can create an issue or make a Pull Request that implements the new option!
 
+* [`-annotate`](http://www.imagemagick.org/script/command-line-options.php#annotate)
 * [`-background`](http://www.imagemagick.org/script/command-line-options.php#background)
 * [`-blur`](http://www.imagemagick.org/script/command-line-options.php#blur)
+* [`-colorspace`](http://www.imagemagick.org/script/command-line-options.php#colorspace)
 * [`-crop`](http://www.imagemagick.org/script/command-line-options.php#crop)
+* [`-depth`](http://www.imagemagick.org/script/command-line-options.php#depth)
+* [`-draw`](http://www.imagemagick.org/script/command-line-options.php#draw)
 * [`-extent`](http://www.imagemagick.org/script/command-line-options.php#extent)
 * [`-fill`](http://www.imagemagick.org/script/command-line-options.php#fill)
+* [`-flatten`](http://www.imagemagick.org/script/command-line-options.php#flatten)
 * [`-font`](http://www.imagemagick.org/script/command-line-options.php#font)
 * [`-gaussian-blur`](http://www.imagemagick.org/script/command-line-options.php#gaussian-blur)
 * [`-gravity`](http://www.imagemagick.org/script/command-line-options.php#gravity)
 * [`-interlace`](http://www.imagemagick.org/script/command-line-options.php#interlace)
+* [`-monochrome`](http://www.imagemagick.org/script/command-line-options.php#monochrome)
 * [`-pointsize`](http://www.imagemagick.org/script/command-line-options.php#pointsize)
 * [`-quality`](http://www.imagemagick.org/script/command-line-options.php#quality)
 * [`-resize`](http://www.imagemagick.org/script/command-line-options.php#resize)
@@ -163,11 +169,8 @@ This is why a "few" ones are implemented now, to make sure validation is possibl
 * [`-strip`](http://www.imagemagick.org/script/command-line-options.php#strip)
 * [`-stroke`](http://www.imagemagick.org/script/command-line-options.php#stroke)
 * [`-thumbnail`](http://www.imagemagick.org/script/command-line-options.php#thumbnail)
-* [`-annotate`](http://www.imagemagick.org/script/command-line-options.php#annotate)
-* [`-draw`](http://www.imagemagick.org/script/command-line-options.php#draw)
-* [`-depth`](http://www.imagemagick.org/script/command-line-options.php#depth)
-* [`-flatten`](http://www.imagemagick.org/script/command-line-options.php#flatten)
-* [`-colorspace`](http://www.imagemagick.org/script/command-line-options.php#colorspace)
+* [`-transpose`](http://www.imagemagick.org/script/command-line-options.php#transpose)
+* [`-transverse`](http://www.imagemagick.org/script/command-line-options.php#transverse)
 * [`xc:`](http://www.imagemagick.org/Usage/canvas/)
 
 Feel free to ask/create an issue if you need more!
