@@ -184,7 +184,7 @@ final class References
         ));
     }
 
-    public function blur(string $blur): float
+    public function blur(string $blur): string
     {
         $blur = \trim($blur);
 
