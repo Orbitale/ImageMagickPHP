@@ -232,8 +232,9 @@ final class References
 
         if (substr($threshold, -1) == '%') {
             $percent_num = substr($threshold, 0, -1);
-            if (is_numeric($percent_num))
+            if (is_numeric($percent_num)) {
                 return $threshold;
+            }
         } else {
             if (is_int(filter_var($threshold, FILTER_VALIDATE_INT)) && intval($threshold) >= 0)
                 return $threshold;
