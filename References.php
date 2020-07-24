@@ -222,4 +222,29 @@ final class References
             'http://www.imagemagick.org/script/command-line-options.php#interlace'
         ));
     }
+
+    /**
+     * Checks that threshold value is valid according to ImageMagick command line reference.
+     */
+    public function threshold(string $threshold): float
+    {
+        $threshold = \trim($threshold);
+
+        if (substr($threshold, -1) == '%') {
+            $percent_num = substr($threshold, 0, -1);
+            if (is_numeric($percent_num))
+                return $threshold;
+        } else {
+            if (is_int(filter_var($threshold, FILTER_VALIDATE_INT)) && intval($threshold) >= 0)
+                return $threshold;
+        }
+
+        throw new \InvalidArgumentException(\sprintf(
+            'The specified threshold parameter (%s) is invalid.'."\n".
+            'The value must be in percentage or an absolute integer'."\n".
+            'Please refer to ImageMagick command line documentation:'."\n%s",
+            $threshold, 'http://www.imagemagick.org/script/command-line-options.php#threshold'
+        ));
+
+    }
 }
