@@ -226,7 +226,7 @@ final class References
     /**
      * Checks that threshold value is valid according to ImageMagick command line reference.
      */
-    public function threshold(string $threshold): float
+    public function threshold(string $threshold): string
     {
         $threshold = \trim($threshold);
 
