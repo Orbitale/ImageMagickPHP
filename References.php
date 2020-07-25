@@ -235,10 +235,8 @@ final class References
             if (is_numeric($percent_num)) {
                 return $threshold;
             }
-        } else {
-            if (is_numeric($threshold)) {
-                return $threshold;
-            }
+        } else if (is_numeric($threshold)) {
+            return $threshold;
         }
 
         throw new \InvalidArgumentException(\sprintf(
