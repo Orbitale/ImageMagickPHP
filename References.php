@@ -236,8 +236,9 @@ final class References
                 return $threshold;
             }
         } else {
-            if (is_int(filter_var($threshold, FILTER_VALIDATE_INT)) && intval($threshold) >= 0)
+            if (is_numeric($threshold)) {
                 return $threshold;
+            }
         }
 
         throw new \InvalidArgumentException(\sprintf(
