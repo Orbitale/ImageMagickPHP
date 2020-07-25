@@ -242,7 +242,7 @@ final class References
 
         throw new \InvalidArgumentException(\sprintf(
             'The specified threshold parameter (%s) is invalid.'."\n".
-            'The value must be in percentage or an absolute integer'."\n".
+            'The value must be in percentage or an integer'."\n".
             'Please refer to ImageMagick command line documentation:'."\n%s",
             $threshold, 'http://www.imagemagick.org/script/command-line-options.php#threshold'
         ));
