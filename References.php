@@ -230,20 +230,23 @@ final class References
     {
         $threshold = \trim($threshold);
 
+        if (is_numeric($threshold)) {
+            return $threshold;
+        }
+
         if (substr($threshold, -1) == '%') {
-            $percent_num = substr($threshold, 0, -1);
-            if (is_numeric($percent_num)) {
+            $percentNumber = substr($threshold, 0, -1);
+            if (is_numeric($percentNumber)) {
                 return $threshold;
             }
-        } else if (is_numeric($threshold)) {
-            return $threshold;
         }
 
         throw new \InvalidArgumentException(\sprintf(
             'The specified threshold parameter (%s) is invalid.'."\n".
-            'The value must be in percentage or an integer'."\n".
+            'The value must be an integer or a percentage value'."\n".
             'Please refer to ImageMagick command line documentation:'."\n%s",
-            $threshold, 'http://www.imagemagick.org/script/command-line-options.php#threshold'
+            $threshold,
+            'http://www.imagemagick.org/script/command-line-options.php#threshold'
         ));
 
     }
