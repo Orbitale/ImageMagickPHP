@@ -639,6 +639,17 @@ class Command
     }
 
     /**
+     * @see http://www.imagemagick.org/script/command-line-options.php#threshold
+     */
+    public function threshold(string $threshold): self
+    {
+        $this->command[] = '-threshold';
+        $this->command[] = $this->ref->threshold($threshold);
+
+        return $this;
+    }
+
+    /**
      * /!\ Append a raw command to ImageMagick.
      * Not safe! Use at your own risks!
      *
