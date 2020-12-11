@@ -81,7 +81,7 @@ class ColorsTest extends TestCase
         } catch (\InvalidArgumentException $e) {
             $msg = $e->getMessage();
         }
-        static::assertContains(
+        static::assertStringContainsString(
             \sprintf('The specified color (%s) is invalid', $color),
             $msg
         );

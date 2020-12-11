@@ -66,7 +66,7 @@ class ColorspaceValuesTest extends TestCase
         } catch (\InvalidArgumentException $e) {
             $msg = $e->getMessage();
         }
-        static::assertContains(
+        static::assertStringContainsString(
             \sprintf('The specified colorspace value (%s) is invalid', \trim($colorspaceValue)),
             $msg
         );

@@ -34,7 +34,7 @@ class CommandTest extends AbstractTestCase
             $exception = $e->getMessage();
             $exceptionClass = \get_class($e);
         }
-        static::assertContains($expectedMessage, $exception);
+        static::assertStringContainsString($expectedMessage, $exception);
         static::assertEquals($expectedException, $exceptionClass);
     }
 
@@ -236,7 +236,7 @@ class CommandTest extends AbstractTestCase
 
         $content = $response->getOutput();
 
-        static::assertContains(\sprintf(
+        static::assertStringContainsString(\sprintf(
             '%s %s %s %s %s',
             $imageToIdentify,
             $expectedFormat,
@@ -321,11 +321,10 @@ class CommandTest extends AbstractTestCase
         yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_geometry.jpg', '30x30+20+20', 50];
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testWrongExecutable(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $command = new Command(IMAGEMAGICK_DIR);
         $command->getExecutable('this_executable_might_not_exist');
     }
@@ -341,6 +340,6 @@ class CommandTest extends AbstractTestCase
         } catch (\Exception $e) {
             $exception = $e->getMessage();
         }
-        static::assertContains(\sprintf('The file "%s" is not found.', $file), $exception);
+        static::assertStringContainsString(\sprintf('The file "%s" is not found.', $file), $exception);
     }
 }
