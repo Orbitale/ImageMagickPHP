@@ -248,6 +248,5 @@ final class References
             $threshold,
             'http://www.imagemagick.org/script/command-line-options.php#threshold'
         ));
-
     }
 }

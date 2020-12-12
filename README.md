@@ -19,7 +19,7 @@ composer require orbitale/imagemagick-php
 Requirements
 ===============
 
-* PHP 7.1 or higher
+* PHP 7.2 or higher
 * [ImageMagick 7](https://www.imagemagick.org/) has to be installed on your server, and the binaries must be executable by the user running the PHP process.
 
 Settings
