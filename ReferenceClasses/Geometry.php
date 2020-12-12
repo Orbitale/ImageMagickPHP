@@ -39,11 +39,14 @@ class Geometry
      */
     private $value;
 
+    /**
+     * @param string|int|null $width
+     */
     public static function createFromParameters(
         $width = null,
-        int $height = null,
-        int $x = null,
-        int $y = null,
+        ?int $height = null,
+        ?int $x = null,
+        ?int $y = null,
         ?string $aspectRatio = self::RATIO_NONE
     ): string {
         $geometry = $width;
@@ -74,20 +77,21 @@ class Geometry
                 $geometry .= ($y >= 0 ? '+' : '-').\abs($y);
             }
         } elseif (null !== $y) {
-            if (null !== $y) {
-                $geometry .= '+0'.($y >= 0 ? '+' : '-').\abs($y);
-            }
+            $geometry .= '+0'.($y >= 0 ? '+' : '-').\abs($y);
         }
 
         return $geometry;
     }
 
+    /**
+     * @param string|int|null $width
+     */
     public function __construct(
         $width = null,
-        int $height = null,
-        int $x = null,
-        int $y = null,
-        string $aspectRatio = self::RATIO_NONE
+        ?int $height = null,
+        ?int $x = null,
+        ?int $y = null,
+        ?string $aspectRatio = self::RATIO_NONE
     ) {
         $args = \func_get_args();
 

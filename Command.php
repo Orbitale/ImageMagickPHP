@@ -76,7 +76,7 @@ class Command
      */
     protected $version;
 
-    public function __construct(string $magickBinaryPath = null)
+    public function __construct(?string $magickBinaryPath = null)
     {
         $magickBinaryPath = self::findMagickBinaryPath($magickBinaryPath);
 
@@ -102,7 +102,7 @@ class Command
         $this->magickBinaryPath = $magickBinaryPath;
     }
 
-    public static function create(string $magickBinaryPath = null): self
+    public static function create(?string $magickBinaryPath = null): self
     {
         return new self($magickBinaryPath);
     }
@@ -148,7 +148,7 @@ class Command
      *
      * @see https://imagemagick.org/script/command-line-tools.php
      */
-    public function getExecutable(string $binary = null): array
+    public function getExecutable(?string $binary = null): array
     {
         if (!\in_array($binary, static::ALLOWED_EXECUTABLES, true)) {
             throw new \InvalidArgumentException(\sprintf(
@@ -165,7 +165,7 @@ class Command
     /**
      * Entirely reset all current command statements, and start a whole new command.
      */
-    public function newCommand(string $binary = null): self
+    public function newCommand(?string $binary = null): self
     {
         $this->env = [];
         $this->command = $binary ? $this->getExecutable($binary) : [];
@@ -185,7 +185,7 @@ class Command
     /**
      * @see https://imagemagick.org/script/mogrify.php
      */
-    public function mogrify(string $sourceFile = null): self
+    public function mogrify(?string $sourceFile = null): self
     {
         $this->newCommand('mogrify');
         if ($sourceFile) {
@@ -382,7 +382,6 @@ class Command
     /**
      * Create a colored canvas.
      *
-     *
      * @see http://www.imagemagick.org/Usage/canvas/
      */
     public function xc(string $canvasColor = 'none'): self
@@ -432,7 +431,7 @@ class Command
     }
 
     /**
-     * @param string $gravity
+     * @param string|Gravity $gravity
      *
      * @see https://www.imagemagick.org/script/command-line-options.php#gravity
      */

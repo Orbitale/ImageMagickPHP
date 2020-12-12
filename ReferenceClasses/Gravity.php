@@ -28,11 +28,13 @@ class Gravity
      */
     private $value;
 
-    public static function createFromParameters(string $gravity): string {
+    public static function createFromParameters(string $gravity): string
+    {
         return $gravity;
     }
 
-    public function __construct(string $gravity) {
+    public function __construct(string $gravity)
+    {
         $this->value = $gravity;
     }
 
