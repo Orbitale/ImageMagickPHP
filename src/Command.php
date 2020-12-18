@@ -177,9 +177,18 @@ class Command
     /**
      * @see https://imagemagick.org/script/convert.php
      */
-    public function convert(string $sourceFile, bool $checkIfFileExists = true): self
+    public function convert($sourceFiles, bool $checkIfFileExists = true): self
     {
-        return $this->newCommand('convert')->file($sourceFile, $checkIfFileExists);
+        if (!is_array($sourceFiles)) {
+            $sourceFiles = [$sourceFiles];
+        }
+
+        $this->newCommand('convert');
+        foreach ($sourceFiles as $sourceFile) {
+            $this->file($sourceFile, $checkIfFileExists);
+        }
+
+        return $this;
     }
 
     /**

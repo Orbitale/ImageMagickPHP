@@ -44,6 +44,40 @@ class CommandTest extends AbstractTestCase
         yield ['./', 'The specified path (.) is not a file.', MagickBinaryNotFoundException::class];
     }
 
+    /**
+     * @param $fileSources
+     *
+     * @dataProvider convertDataProvider
+     */
+    public function testConvert($fileSources, string $fileOutput): void
+    {
+
+        $command = new Command(IMAGEMAGICK_DIR);
+
+        $response = $command
+            ->convert($fileSources)
+            ->output($fileOutput)
+            ->run();
+
+        static::assertFileExists($fileOutput);
+
+        static::assertFalse($response->hasFailed());
+    }
+
+    public function convertDataProvider(): array
+    {
+        $singleSource = $this->resourcesDir.'/moon_180.jpg';
+        $multipleSources = [
+            $this->resourcesDir.'/moon_180.jpg',
+            $this->resourcesDir.'/dabug.png',
+        ];
+
+        return [
+            [$singleSource, $this->resourcesDir.'/outputs/output1.pdf'],
+            [$multipleSources, $this->resourcesDir.'/outputs/output2.pdf'],
+        ];
+    }
+
     public function testResizeImage(): void
     {
         $command = new Command(IMAGEMAGICK_DIR);
