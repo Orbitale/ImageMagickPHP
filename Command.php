@@ -76,7 +76,7 @@ class Command
      */
     protected $version;
 
-    public function __construct(?string $magickBinaryPath = null)
+    public function __construct(?string $magickBinaryPath = '')
     {
         $magickBinaryPath = self::findMagickBinaryPath($magickBinaryPath);
 
@@ -306,11 +306,11 @@ class Command
     /**
      * Add a file specification to the command, mostly for source or destination file.
      */
-    public function file(string $source, bool $checkIfFileExists = true, bool $appendToCommend = false): self
+    public function file(string $source, bool $checkIfFileExists = true, bool $appendToCommand = false): self
     {
         $source = $checkIfFileExists ? $this->checkExistingFile($source) : self::cleanPath($source);
         $source = \str_replace('\\', '/', $source);
-        if ($appendToCommend) {
+        if ($appendToCommand) {
             $this->commandToAppend[] = $source;
         } else {
             $this->command[] = $source;
