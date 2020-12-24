@@ -274,7 +274,7 @@ class Command
         $output = '';
         $error = '';
 
-        $code = $process->run(function ($type, $buffer) use (&$output, &$error): void {
+        $code = $process->run(static function ($type, $buffer) use (&$output, &$error): void {
             if (Process::ERR === $type) {
                 $error .= $buffer;
             } else {

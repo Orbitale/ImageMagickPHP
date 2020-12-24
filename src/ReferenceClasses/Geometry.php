@@ -104,7 +104,7 @@ class Geometry
         $this->value = $geometry;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->value;
     }

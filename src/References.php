@@ -28,9 +28,9 @@ final class References
 
     public function __construct()
     {
-        $referenceFile = __DIR__.'/Resources/references.php';
+        $referenceFile = \dirname(__DIR__).'/Resources/references.php';
 
-        if (!\file_exists($referenceFile)) {
+        if (!\is_file($referenceFile)) {
             throw new \RuntimeException(\sprintf(
                 'File %s for ImageMagick references does not exist.'."\n".
                 'Check that the file exists and that it is readable.',
@@ -46,6 +46,7 @@ final class References
         foreach ($keysToCheck as $key) {
             if (!\array_key_exists($key, $config)) {
                 $keysExist = false;
+                break;
             }
         }
 
@@ -172,7 +173,7 @@ final class References
     {
         $rotation = \trim($rotation);
 
-        if (\preg_match('~^-?\d+(?:<|>)$~u', $rotation)) {
+        if (\preg_match('~^-?\d+[<>]$~u', $rotation)) {
             return $rotation;
         }
 
@@ -230,12 +231,12 @@ final class References
     {
         $threshold = \trim($threshold);
 
-        if (is_numeric($threshold)) {
+        if (\is_numeric($threshold)) {
             return $threshold;
         }
 
-        if (substr($threshold, -1) == '%') {
-            $percentNumber = substr($threshold, 0, -1);
+        if (\substr($threshold, -1) === '%') {
+            $percentNumber = \substr($threshold, 0, -1);
             if (is_numeric($percentNumber)) {
                 return $threshold;
             }
