@@ -33,10 +33,6 @@ $possibleDirectories = [
     getenv('IMAGEMAGICK_PATH') ?: null, // Fall back again to PATH
 ];
 foreach ($possibleDirectories as $path) {
-    if (!$path) {
-        // Could happen if "getenv()" returns false or empty string.
-        continue;
-    }
     echo 'Check "'.$path.'" binary'."\n";
     try {
         $path = Command::findMagickBinaryPath($path);

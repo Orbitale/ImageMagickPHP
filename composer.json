@@ -23,7 +23,8 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "Orbitale\\Component\\ImageMagick\\": "src/"
+            "Orbitale\\Component\\ImageMagick\\": "src/",
+            "Orbitale\\Component\\ImageMagick\\Tests\\": "Tests/"
         }
     }
 }

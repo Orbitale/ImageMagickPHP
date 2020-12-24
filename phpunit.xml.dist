@@ -1,34 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- http://phpunit.de/manual/4.1/en/appendixes.configuration.html -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/7.5/phpunit.xsd"
-         colors="true"
-         stopOnFailure="false"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         cacheResultFile="build/cache-results"
+         executionOrder="depends,defects"
          bootstrap="Tests/bootstrap.php"
->
+         verbose="true"
+    >
+
     <testsuites>
-        <testsuite name="OrbitaleImageMagickPHP test suite">
-            <directory>Tests</directory>
+        <testsuite name="default">
+            <directory>Tests/</directory>
         </testsuite>
     </testsuites>
 
-    <!--
-    <logging>
-        <log type="coverage-html" target="./build/report/" />
-    </logging>
-    -->
-
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <file>Command.php</file>
-            <file>CommandOptions.php</file>
-            <file>CommandResponse.php</file>
-            <directory suffix=".php">./ReferenceClasses</directory>
-            <exclude>
-                <directory>./build</directory>
-                <directory>./vendor</directory>
-                <directory>./Tests</directory>
-            </exclude>
-        </whitelist>
-    </filter>
+    <coverage cacheDirectory="build/cache-coverage" processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">./src/</directory>
+        </include>
+    </coverage>
 </phpunit>
