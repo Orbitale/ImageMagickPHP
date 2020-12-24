@@ -110,7 +110,7 @@ class Command
     public static function findMagickBinaryPath(?string $magickBinaryPath): string
     {
         // Delete trimming directory separator
-        $magickBinaryPath = self::cleanPath($magickBinaryPath, true);
+        $magickBinaryPath = self::cleanPath((string) $magickBinaryPath, true);
 
         if (!$magickBinaryPath) {
             $magickBinaryPath = (new ExecutableFinder())->find('magick');
