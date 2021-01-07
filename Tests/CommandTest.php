@@ -290,7 +290,7 @@ class CommandTest extends AbstractTestCase
     /**
      * @dataProvider provideTestCommandString
      */
-    public function testCommandString($source, $output, $geometry, $quality): void
+    public function testCommandString($source, $output, $geometry, $quality, $format): void
     {
         $command = new Command(IMAGEMAGICK_DIR);
 
@@ -298,6 +298,7 @@ class CommandTest extends AbstractTestCase
             ->convert($source)
             ->thumbnail($geometry)
             ->quality($quality)
+            ->page($format)
             ->file($output, false)
             ->getCommand()
         ;
@@ -306,6 +307,7 @@ class CommandTest extends AbstractTestCase
                     ' '.$source.
                     ' -thumbnail "'.$geometry.'"'.
                     ' -quality '.$quality.
+                    ' -page "'.$format.'"'.
                     ' '.$output;
 
         $expected = \str_replace('\\', '/', $expected);
@@ -315,10 +317,10 @@ class CommandTest extends AbstractTestCase
 
     public function provideTestCommandString(): ?\Generator
     {
-        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_10_forced.jpg', '10x10!', 10];
-        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_1000.jpg', '1000x1000', 100];
-        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_half.jpg', '50%', 50];
-        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_geometry.jpg', '30x30+20+20', 50];
+        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_10_forced.jpg', '10x10!', 10, 'a4'];
+        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_1000.jpg', '1000x1000', 100, '9x11'];
+        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_half.jpg', '50%', 50, 'halfletter'];
+        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_geometry.jpg', '30x30+20+20', 50, 'Letter+43+43'];
     }
 
     public function testWrongExecutable(): void
