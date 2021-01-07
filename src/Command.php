@@ -468,6 +468,19 @@ class Command
     }
 
     /**
+     * @param string|Geometry $format
+     *
+     * @see http://imagemagick.org/script/command-line-options.php#page
+     */
+    public function page($format): self
+    {
+        $this->command[] = '-page';
+        $this->command[] = '"'.$this->ref->geometry($format).'"';
+
+        return $this;
+    }
+
+    /**
      * @see http://imagemagick.org/script/command-line-options.php#rotate
      */
     public function rotate(string $rotation): self
