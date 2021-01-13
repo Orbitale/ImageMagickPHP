@@ -185,12 +185,18 @@ final class References
         ));
     }
 
-    public function blur(string $blur): float
+    public function blur($blur): string
     {
-        $blur = \trim($blur);
+        if (\is_string($blur)) {
+            $blur = \trim($blur);
+        }
+
+        if (\is_numeric($blur)) {
+            return (string) (float) $blur;
+        }
 
         if (\preg_match('~^\d+(?:\.\d+)?(?:x\d+(?:\.\d+)?)?$~', $blur)) {
-            return (float) $blur;
+            return (string) $blur;
         }
 
         throw new \InvalidArgumentException(\sprintf(

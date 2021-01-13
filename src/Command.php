@@ -522,7 +522,7 @@ class Command
     /**
      * @see http://imagemagick.org/script/command-line-options.php#gaussian-blur
      */
-    public function gaussianBlur(string $blur): self
+    public function gaussianBlur($blur): self
     {
         $this->command[] = '-gaussian-blur';
         $this->command[] = $this->ref->blur($blur);
@@ -533,7 +533,7 @@ class Command
     /**
      * @see http://imagemagick.org/script/command-line-options.php#blur
      */
-    public function blur(string $blur): self
+    public function blur($blur): self
     {
         $this->command[] = '-blur';
         $this->command[] = $this->ref->blur($blur);
