@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of the OrbitaleImageMagickPHP package.
+ *
+ * (c) Alexandre Rock Ancelet <alex@orbitale.io>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Orbitale\Component\ImageMagick\Tests;
 
 use Orbitale\Component\ImageMagick\Command;
@@ -51,15 +60,15 @@ class GravityTest extends AbstractTestCase
 
     public function provideValidGravities(): ?\Generator
     {
-        yield 0 => ["NorthWest"];
-        yield 1 => ["North"];
-        yield 2 => ["NorthEast"];
-        yield 3 => ["West"];
-        yield 4 => ["Center"];
-        yield 5 => ["East"];
-        yield 6 => ["SouthWest"];
-        yield 7 => ["South"];
-        yield 8 => ["SouthEast"];
+        yield 0 => ['NorthWest'];
+        yield 1 => ['North'];
+        yield 2 => ['NorthEast'];
+        yield 3 => ['West'];
+        yield 4 => ['Center'];
+        yield 5 => ['East'];
+        yield 6 => ['SouthWest'];
+        yield 7 => ['South'];
+        yield 8 => ['SouthEast'];
     }
 
     /**
@@ -70,27 +79,27 @@ class GravityTest extends AbstractTestCase
     public function testWrongGravities($gravity): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage("Invalid gravity option, \"" .$gravity. "\" given.\nAvailable: NorthWest, North, NorthEast, West, Center, East, SouthWest, South, SouthEast" );
- 
+        $this->expectExceptionMessage('Invalid gravity option, "'.$gravity."\" given.\nAvailable: NorthWest, North, NorthEast, West, Center, East, SouthWest, South, SouthEast");
+
         $testGravity = new Gravity($gravity);
         $testGravity->validate();
     }
 
     public function provideWrongGravities(): ?\Generator
     {
-        yield 0 => ["Northwest"];
-        yield 1 => ["northwest"];
-        yield 2 => ["north"];
-        yield 3 => ["northEast"];
-        yield 4 => ["Northeast"];
-        yield 5 => ["west"];
-        yield 6 => ["center"];
-        yield 7 => ["east"];
-        yield 8 => ["southwest"];
-        yield 9 => ["south"];
-        yield 10 => ["southeast"];
-        yield 11 => ["Middle"];
-        yield 12 => [""];
-        yield 13 => [" "];
+        yield 0 => ['Northwest'];
+        yield 1 => ['northwest'];
+        yield 2 => ['north'];
+        yield 3 => ['northEast'];
+        yield 4 => ['Northeast'];
+        yield 5 => ['west'];
+        yield 6 => ['center'];
+        yield 7 => ['east'];
+        yield 8 => ['southwest'];
+        yield 9 => ['south'];
+        yield 10 => ['southeast'];
+        yield 11 => ['Middle'];
+        yield 12 => [''];
+        yield 13 => [' '];
     }
 }

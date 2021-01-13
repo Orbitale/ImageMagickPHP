@@ -51,13 +51,13 @@ class CommandTest extends AbstractTestCase
      */
     public function testConvert($fileSources, string $fileOutput): void
     {
-
         $command = new Command(IMAGEMAGICK_DIR);
 
         $response = $command
             ->convert($fileSources)
             ->output($fileOutput)
-            ->run();
+            ->run()
+        ;
 
         static::assertFileExists($fileOutput);
 
@@ -212,7 +212,7 @@ class CommandTest extends AbstractTestCase
         $this->testConvertIdentifyImage($imageOutput, 'JPEG', '180x170+0+0', '8-bit');
     }
 
- public function testMonochrome(): void
+    public function testMonochrome(): void
     {
         $command = new Command(IMAGEMAGICK_DIR);
 

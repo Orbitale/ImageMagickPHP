@@ -52,7 +52,7 @@ return [
         'YDbDr',
         'YIQ',
         'YPbPr',
-        'YUV'
+        'YUV',
     ],
     'colors' => [
         'snow',

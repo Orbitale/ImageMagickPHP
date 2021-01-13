@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of the OrbitaleImageMagickPHP package.
+ *
+ * (c) Alexandre Rock Ancelet <alex@orbitale.io>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Orbitale\Component\ImageMagick\ReferenceClasses;
 
 /**
@@ -12,15 +21,15 @@ namespace Orbitale\Component\ImageMagick\ReferenceClasses;
 class Gravity
 {
     private static $validGravity = [
-        "NorthWest",
-        "North",
-        "NorthEast",
-        "West",
-        "Center",
-        "East",
-        "SouthWest",
-        "South",
-        "SouthEast"
+        'NorthWest',
+        'North',
+        'NorthEast',
+        'West',
+        'Center',
+        'East',
+        'SouthWest',
+        'South',
+        'SouthEast',
     ];
 
     /**
@@ -45,11 +54,8 @@ class Gravity
 
     public function validate(): string
     {
-        if (!in_array($this->value, self::$validGravity, true)) {
-            throw new \InvalidArgumentException(\sprintf(
-                "Invalid gravity option, \"%s\" given.\nAvailable: %s",
-                $this->value, \implode(', ', self::$validGravity)
-            ));
+        if (!\in_array($this->value, self::$validGravity, true)) {
+            throw new \InvalidArgumentException(\sprintf("Invalid gravity option, \"%s\" given.\nAvailable: %s", $this->value, \implode(', ', self::$validGravity)));
         }
 
         return $this->value;

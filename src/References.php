@@ -31,11 +31,7 @@ final class References
         $referenceFile = \dirname(__DIR__).'/Resources/references.php';
 
         if (!\is_file($referenceFile)) {
-            throw new \RuntimeException(\sprintf(
-                'File %s for ImageMagick references does not exist.'."\n".
-                'Check that the file exists and that it is readable.',
-                $referenceFile
-            ));
+            throw new \RuntimeException(\sprintf('File %s for ImageMagick references does not exist.'."\n".'Check that the file exists and that it is readable.', $referenceFile));
         }
 
         $config = require $referenceFile;
@@ -53,11 +49,7 @@ final class References
         if (\is_array($config) && $keysExist) {
             $this->config = $config;
         } else {
-            throw new \InvalidArgumentException(\sprintf(
-                'File %s for ImageMagick references seems to be empty or invalid.'."\n".
-                'If it is a YAML file, please check its contents.',
-                $referenceFile
-            ));
+            throw new \InvalidArgumentException(\sprintf('File %s for ImageMagick references seems to be empty or invalid.'."\n".'If it is a YAML file, please check its contents.', $referenceFile));
         }
     }
 
@@ -97,7 +89,7 @@ final class References
         return $geometry->validate();
     }
 
-     /**
+    /**
      * @param string|Gravity $gravity
      */
     public function gravity($gravity): string
@@ -134,12 +126,7 @@ final class References
             return $color;
         }
 
-        throw new \InvalidArgumentException(\sprintf(
-            'The specified color (%s) is invalid.'."\n".
-            'Please refer to ImageMagick command line documentation about colors:'."\n%s",
-            $color,
-            'http://www.imagemagick.org/script/color.php'
-        ));
+        throw new \InvalidArgumentException(\sprintf('The specified color (%s) is invalid.'."\n".'Please refer to ImageMagick command line documentation about colors:'."\n%s", $color, 'http://www.imagemagick.org/script/color.php'));
     }
 
     /**
@@ -155,13 +142,7 @@ final class References
             return $colorspace;
         }
 
-        throw new \InvalidArgumentException(\sprintf(
-            'The specified colorspace value (%s) is invalid.'."\n".
-            'The available values are:'."\n%s\n".
-            'Please refer to ImageMagick command line documentation:'."\n%s",
-            $colorspace, \implode(', ', $references),
-            'http://www.imagemagick.org/script/command-line-options.php#colorspace'
-        ));
+        throw new \InvalidArgumentException(\sprintf('The specified colorspace value (%s) is invalid.'."\n".'The available values are:'."\n%s\n".'Please refer to ImageMagick command line documentation:'."\n%s", $colorspace, \implode(', ', $references), 'http://www.imagemagick.org/script/command-line-options.php#colorspace'));
     }
 
     /**
@@ -177,12 +158,7 @@ final class References
             return $rotation;
         }
 
-        throw new \InvalidArgumentException(\sprintf(
-            'The specified rotate parameter (%s) is invalid.'."\n".
-            'Please refer to ImageMagick command line documentation about the "-rotate" option:'."\n%s",
-            $rotation,
-            'http://www.imagemagick.org/script/command-line-options.php#rotate'
-        ));
+        throw new \InvalidArgumentException(\sprintf('The specified rotate parameter (%s) is invalid.'."\n".'Please refer to ImageMagick command line documentation about the "-rotate" option:'."\n%s", $rotation, 'http://www.imagemagick.org/script/command-line-options.php#rotate'));
     }
 
     public function blur($blur): string
@@ -199,13 +175,7 @@ final class References
             return (string) $blur;
         }
 
-        throw new \InvalidArgumentException(\sprintf(
-            'Gaussian blur must respect formats "%s" or "%s".'."\n".
-            'Please refer to ImageMagick command line documentation about the "-gaussian-blur" and "-blur" options:'."\n%s\n%s",
-            '{radius}', '{radius}x{sigma}',
-            'http://www.imagemagick.org/script/command-line-options.php#blur',
-            'http://www.imagemagick.org/script/command-line-options.php#gaussian-blur'
-        ));
+        throw new \InvalidArgumentException(\sprintf('Gaussian blur must respect formats "%s" or "%s".'."\n".'Please refer to ImageMagick command line documentation about the "-gaussian-blur" and "-blur" options:'."\n%s\n%s", '{radius}', '{radius}x{sigma}', 'http://www.imagemagick.org/script/command-line-options.php#blur', 'http://www.imagemagick.org/script/command-line-options.php#gaussian-blur'));
     }
 
     /**
@@ -221,13 +191,7 @@ final class References
             return $interlaceType;
         }
 
-        throw new \InvalidArgumentException(\sprintf(
-            'The specified interlace type (%s) is invalid.'."\n".
-            'The available values are:'."\n%s\n".
-            'Please refer to ImageMagick command line documentation:'."\n%s",
-            $interlaceType, \implode(', ', $references),
-            'http://www.imagemagick.org/script/command-line-options.php#interlace'
-        ));
+        throw new \InvalidArgumentException(\sprintf('The specified interlace type (%s) is invalid.'."\n".'The available values are:'."\n%s\n".'Please refer to ImageMagick command line documentation:'."\n%s", $interlaceType, \implode(', ', $references), 'http://www.imagemagick.org/script/command-line-options.php#interlace'));
     }
 
     /**
@@ -241,19 +205,13 @@ final class References
             return $threshold;
         }
 
-        if (\substr($threshold, -1) === '%') {
-            $percentNumber = \substr($threshold, 0, -1);
-            if (is_numeric($percentNumber)) {
+        if ('%' === \mb_substr($threshold, -1)) {
+            $percentNumber = \mb_substr($threshold, 0, -1);
+            if (\is_numeric($percentNumber)) {
                 return $threshold;
             }
         }
 
-        throw new \InvalidArgumentException(\sprintf(
-            'The specified threshold parameter (%s) is invalid.'."\n".
-            'The value must be an integer or a percentage value'."\n".
-            'Please refer to ImageMagick command line documentation:'."\n%s",
-            $threshold,
-            'http://www.imagemagick.org/script/command-line-options.php#threshold'
-        ));
+        throw new \InvalidArgumentException(\sprintf('The specified threshold parameter (%s) is invalid.'."\n".'The value must be an integer or a percentage value'."\n".'Please refer to ImageMagick command line documentation:'."\n%s", $threshold, 'http://www.imagemagick.org/script/command-line-options.php#threshold'));
     }
 }

@@ -89,12 +89,7 @@ class Command
         }
 
         if (0 !== $code || !$process->isSuccessful()) {
-            throw new \InvalidArgumentException(\sprintf(
-                "ImageMagick does not seem to work well, the test command resulted in an error.\n".
-                "Execution returned message: \"{$process->getExitCodeText()}\"\n".
-                "To solve this issue, please run this command and check your error messages to see if ImageMagick was correctly installed:\n%s",
-                $magickBinaryPath.' -version'
-            ));
+            throw new \InvalidArgumentException(\sprintf("ImageMagick does not seem to work well, the test command resulted in an error.\n"."Execution returned message: \"{$process->getExitCodeText()}\"\n"."To solve this issue, please run this command and check your error messages to see if ImageMagick was correctly installed:\n%s", $magickBinaryPath.' -version'));
         }
 
         $this->ref = new References();
@@ -123,10 +118,7 @@ class Command
         }
 
         if (!\is_executable($magickBinaryPath)) {
-            throw new \InvalidArgumentException(\sprintf(
-                'The specified script (%s) is not executable.',
-                $magickBinaryPath
-            ));
+            throw new \InvalidArgumentException(\sprintf('The specified script (%s) is not executable.', $magickBinaryPath));
         }
 
         return $magickBinaryPath;
@@ -151,12 +143,7 @@ class Command
     public function getExecutable(?string $binary = null): array
     {
         if (!\in_array($binary, static::ALLOWED_EXECUTABLES, true)) {
-            throw new \InvalidArgumentException(\sprintf(
-                "The ImageMagick executable \"%s\" is not allowed.\n".
-                "The only binaries allowed to be executed are the following:\n%s",
-                $binary,
-                \implode(', ', static::ALLOWED_EXECUTABLES)
-            ));
+            throw new \InvalidArgumentException(\sprintf("The ImageMagick executable \"%s\" is not allowed.\n"."The only binaries allowed to be executed are the following:\n%s", $binary, \implode(', ', static::ALLOWED_EXECUTABLES)));
         }
 
         return [$this->magickBinaryPath, $binary];
@@ -179,7 +166,7 @@ class Command
      */
     public function convert($sourceFiles, bool $checkIfFileExists = true): self
     {
-        if (!is_array($sourceFiles)) {
+        if (!\is_array($sourceFiles)) {
             $sourceFiles = [$sourceFiles];
         }
 
@@ -497,7 +484,6 @@ class Command
         return $this;
     }
 
-
     /**
      * @see http://imagemagick.org/script/command-line-options.php#monochrome
      */
@@ -600,7 +586,7 @@ class Command
      */
     public function depth(int $depth): self
     {
-        $this->command[] = '-depth ' . $depth;
+        $this->command[] = '-depth '.$depth;
 
         return $this;
     }
@@ -665,14 +651,14 @@ class Command
      */
     public function rawCommand(string $command, bool $append = false): self
     {
-        $msg = <<<MSG
+        $msg = <<<'MSG'
 This command is not safe and therefore should not be used, unless you need to use an option that is not supported yet.
 Use at your own risk!
 If you are certain of what you are doing, you can silence this error using the "@" sign on the instruction that executes this method.
 If the option you need is not supported, please open an issue or a pull-request at https://github.com/Orbitale/ImageMagickPHP in order for us to implement the option you need! 😃
 MSG
 ;
-        @trigger_error($msg, E_STRICT);
+        @\trigger_error($msg, E_STRICT);
 
         if ($append) {
             $this->commandToAppend[] = $command;
@@ -784,11 +770,7 @@ MSG
     protected function checkExistingFile(string $file): string
     {
         if (!\file_exists($file)) {
-            throw new \InvalidArgumentException(\sprintf(
-                'The file "%s" is not found.'."\n".
-                'If the file really exists in your filesystem, then maybe it is not readable.',
-                $file
-            ));
+            throw new \InvalidArgumentException(\sprintf('The file "%s" is not found.'."\n".'If the file really exists in your filesystem, then maybe it is not readable.', $file));
         }
 
         return self::cleanPath($file);

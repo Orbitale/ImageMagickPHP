@@ -64,10 +64,7 @@ class Geometry
         }
 
         if ($aspectRatio && !\in_array($aspectRatio, self::$validRatios, true)) {
-            throw new \InvalidArgumentException(\sprintf(
-                "Invalid aspect ratio value to generate geometry, \"%s\" given.\nAvailable: %s",
-                $aspectRatio, \implode(', ', self::$validRatios)
-            ));
+            throw new \InvalidArgumentException(\sprintf("Invalid aspect ratio value to generate geometry, \"%s\" given.\nAvailable: %s", $aspectRatio, \implode(', ', self::$validRatios)));
         }
         $geometry .= $aspectRatio;
 
@@ -139,13 +136,7 @@ class Geometry
         }
 
         if (\count($errors)) {
-            throw new \InvalidArgumentException(\sprintf(
-                "The specified geometry (%s) is invalid.\n%s\n".
-                "Please refer to ImageMagick command line documentation about geometry:\n%s\n",
-                $this->value,
-                \implode("\n", $errors),
-                'http://www.imagemagick.org/script/command-line-processing.php#geometry'
-            ));
+            throw new \InvalidArgumentException(\sprintf("The specified geometry (%s) is invalid.\n%s\n"."Please refer to ImageMagick command line documentation about geometry:\n%s\n", $this->value, \implode("\n", $errors), 'http://www.imagemagick.org/script/command-line-processing.php#geometry'));
         }
 
         $this->value = \trim($this->value);
