@@ -1,0 +1,44 @@
+name: PHP CI
+
+on: [push]
+
+jobs:
+    build-test:
+        runs-on: ${{ matrix.operating-system }}
+
+        strategy:
+            matrix:
+                operating-system: [ ubuntu-latest ]
+                php-version:
+                    - '7.2'
+                    - '7.3'
+                    - '7.4'
+                    - '8.0'
+        name: PHP ${{ matrix.php-version }} on ${{ matrix.operating-system }}
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Install ImageMagick
+              run: |
+                  sudo apt install libjpeg-dev libpng-dev libgif-dev imagemagick
+                  mkdir -p build/logs
+
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: "${{ matrix.php-version }}"
+                  extensions: gd, zip
+
+            - run: composer validate
+
+            - id: composer-cache
+              run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+            - uses: actions/cache@v1
+              with:
+                  path: ${{ steps.composer-cache.outputs.dir }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                  restore-keys: ${{ runner.os }}-composer-
+
+            - run: composer install
+
+            - run: vendor/bin/phpunit
