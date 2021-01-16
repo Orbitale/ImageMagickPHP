@@ -20,7 +20,8 @@ jobs:
 
             - name: Install ImageMagick
               run: |
-                  sudo apt install libjpeg-dev libpng-dev libgif-dev imagemagick
+                  sudo apt-get update
+                  sudo apt-get upgrade -y libjpeg-dev libpng-dev libgif-dev imagemagick
                   mkdir -p build/logs
 
             - uses: shivammathur/setup-php@v2
