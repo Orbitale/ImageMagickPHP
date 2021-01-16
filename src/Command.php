@@ -117,7 +117,7 @@ class Command
             throw new MagickBinaryNotFoundException($magickBinaryPath);
         }
 
-        if (!\is_executable($magickBinaryPath)) {
+        if ($magickBinaryPath && !\is_executable($magickBinaryPath)) {
             throw new \InvalidArgumentException(\sprintf('The specified script (%s) is not executable.', $magickBinaryPath));
         }
 
