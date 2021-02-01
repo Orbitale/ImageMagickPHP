@@ -112,7 +112,7 @@ class Command
         }
 
         if (!$magickBinaryPath) {
-            throw new MagickBinaryNotFoundException($magickBinaryPath);
+            throw new MagickBinaryNotFoundException((string) $magickBinaryPath);
         }
 
         // Add a proper directory separator at the end if path is not empty.
