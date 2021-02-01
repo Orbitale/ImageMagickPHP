@@ -1,3 +1,10 @@
+# [v3.1.1](https://github.com/Orbitale/ImageMagickPHP/releases/tag/v3.1.1) - 01 Feb 2021
+
+## Fixes
+
+* Fix an issue with `References::rotation()` not taking decimal nor single values in account.
+* Fix issues when ImageMagick path is empty when creating a new `Command`.
+
 # [v3.1.0](https://github.com/Orbitale/ImageMagickPHP/releases/tag/v3.1.0) - 13 Jan 2021
 
 ## New features
