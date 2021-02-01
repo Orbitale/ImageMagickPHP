@@ -154,7 +154,7 @@ final class References
     {
         $rotation = \trim($rotation);
 
-        if (\preg_match('~^-?\d+[<>]$~u', $rotation)) {
+        if (\preg_match('~^-?\d+[<>]?$~u', $rotation)) {
             return $rotation;
         }
 
