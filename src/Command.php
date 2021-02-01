@@ -473,7 +473,7 @@ class Command
     public function rotate(string $rotation): self
     {
         $this->command[] = '-rotate';
-        $this->command[] = $this->ref->rotation($rotation);
+        $this->command[] = \escapeshellarg($this->ref->rotation($rotation));
 
         return $this;
     }
