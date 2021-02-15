@@ -40,7 +40,12 @@ final class References
 
         $config = require $referenceFile;
 
-        $keysToCheck = ['colors', 'interlace_types'];
+        $keysToCheck = [
+            'colors',
+            'colorspace_values',
+            'interlace_types',
+            'paper_sizes',
+        ];
         $keysExist = true;
 
         foreach ($keysToCheck as $key) {
@@ -54,8 +59,7 @@ final class References
             $this->config = $config;
         } else {
             throw new \InvalidArgumentException(\sprintf(
-                'File %s for ImageMagick references seems to be empty or invalid.'."\n".
-                'If it is a YAML file, please check its contents.',
+                'ImageMagick references file "%s" seems to be empty or invalid.',
                 $referenceFile
             ));
         }
@@ -83,6 +87,11 @@ final class References
     public function getInterlaceTypesReference(): array
     {
         return $this->config['interlace_types'];
+    }
+
+    public function getPaperSizes()
+    {
+        return $this->config['paper_sizes'];
     }
 
     /**
@@ -249,5 +258,34 @@ final class References
             $threshold,
             'http://www.imagemagick.org/script/command-line-options.php#threshold'
         ));
+    }
+
+    /**
+     * @param string|Geometry $page
+     */
+    public function page($page): string
+    {
+        if ($page instanceof Geometry) {
+            return $page->validate();
+        }
+
+        $paperSizesRegex = '(?<papersize>'.\implode('|', $this->getPaperSizes()).')';
+        $offsetRegex = '[-+]\d+';
+        $offsetsRegex = \sprintf("(?<offsetx>%s)?(?<offsety>%s)?", $offsetRegex, $offsetRegex);
+        $ratioRegex = '(?<ratio>[^!<>])?';
+
+        $pageOptionRegex = $paperSizesRegex.$offsetsRegex.$ratioRegex;
+
+        if (!\preg_match($pageOptionRegex, $page)) {
+            throw new \InvalidArgumentException(\sprintf(
+                'Page option is invalid.'."\n".
+                'It must be either a Geometry value, or match the "%s" expression.'."\n".
+                'Please refer to ImageMagick command line documentation:'."\n%s",
+                'media[offset][{^!<>}]',
+                'https://imagemagick.org/script/command-line-options.php#page'
+            ));
+        }
+
+        return $page;
     }
 }

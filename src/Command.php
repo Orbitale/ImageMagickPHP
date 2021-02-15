@@ -15,6 +15,7 @@ namespace Orbitale\Component\ImageMagick;
 
 use Orbitale\Component\ImageMagick\ReferenceClasses\Geometry;
 use Orbitale\Component\ImageMagick\ReferenceClasses\Gravity;
+use Orbitale\Component\ImageMagick\ReferenceClasses\PageMedia;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -468,14 +469,14 @@ class Command
     }
 
     /**
-     * @param string|Geometry $format
+     * @param string|PageMedia $page
      *
      * @see http://imagemagick.org/script/command-line-options.php#page
      */
-    public function page($format): self
+    public function page($page): self
     {
         $this->command[] = '-page';
-        $this->command[] = '"'.$this->ref->geometry($format).'"';
+        $this->command[] = '"'.$this->ref->page($page).'"';
 
         return $this;
     }
