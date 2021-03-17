@@ -17,7 +17,7 @@ This means you can use the method like this: `->convert(['file1.jpg', 'file2.jpg
 
 * Automatically find `magick` binary (#31 by @pbories).
 * Fix issue making path unresolvable if null.
-* Fix blur type issues, and add test for it.
+* Fix blur type issues, and add test for it. (#23 by @AMK9978, [83914560](https://github.com/Orbitale/ImageMagickPHP/commit/83914560495b0e911ea3d040d663e32c633868a2) by @pierstoval)
   
 ## Miscellaneous
 
