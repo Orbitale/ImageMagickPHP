@@ -239,7 +239,7 @@ final class References
         $offsetsRegex = \sprintf("(?<offsetx>%s)?(?<offsety>%s)?", $offsetRegex, $offsetRegex);
         $ratioRegex = '(?<ratio>[^!<>])?';
 
-        $pageOptionRegex = $paperSizesRegex.$offsetsRegex.$ratioRegex;
+        $pageOptionRegex = '~'.$paperSizesRegex.$offsetsRegex.$ratioRegex.'~i';
 
         if (!\preg_match($pageOptionRegex, $page)) {
             throw new \InvalidArgumentException(\sprintf(
