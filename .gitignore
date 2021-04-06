@@ -9,3 +9,6 @@ Tests/Resources/outputs/*
 phpunit.xml
 .phpunit.result.cache
 .phpunit.cache
+
+ImageMagick*.tar.gz
+/ImageMagick-*/

@@ -18,11 +18,20 @@ jobs:
         steps:
             - uses: actions/checkout@v2
 
-            - name: Install ImageMagick
+            - name: Install ImageMagick dependencies
               run: |
                   sudo apt-get update
-                  sudo apt-get upgrade -y libjpeg-dev libpng-dev libgif-dev imagemagick
-                  mkdir -p build/logs
+                  sudo apt-get upgrade -y libjpeg-dev libpng-dev libgif-dev make wget
+
+            - name: Install ImageMagick
+              run: |
+                  wget https://www.imagemagick.org/download/ImageMagick.tar.gz
+                  tar xvzf ImageMagick.tar.gz
+                  cd ImageMagick-*
+                  ./configure
+                  make
+                  sudo make install
+                  sudo ldconfig /usr/local/lib
 
             - uses: shivammathur/setup-php@v2
               with:
