@@ -16,12 +16,12 @@ $file = __DIR__ . '/../vendor/autoload.php';
 if (!file_exists($file)) {
     throw new RuntimeException('Install dependencies to run test suite.');
 }
-$autoload = require_once $file;
+$autoload = require $file;
 
 define('TEST_RESOURCES_DIR', __DIR__.'/Resources');
 
 // Remove potential older output files
-foreach (glob(TEST_RESOURCES_DIR.'/outputs/*') as $file) {
+foreach (glob(TEST_RESOURCES_DIR.'/outputs/*', GLOB_NOSORT) as $file) {
     unlink($file);
 }
 

@@ -469,7 +469,7 @@ class Command
     }
 
     /**
-     * @param string|PageMedia $page
+     * @param string|Geometry $page
      *
      * @see http://imagemagick.org/script/command-line-options.php#page
      */

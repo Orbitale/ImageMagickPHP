@@ -351,10 +351,10 @@ class CommandTest extends AbstractTestCase
 
     public function provideTestCommandString(): ?\Generator
     {
-        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_10_forced.jpg', '10x10!', 10, 'a4'];
-        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_1000.jpg', '1000x1000', 100, '9x11'];
-        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_half.jpg', '50%', 50, 'halfletter'];
-        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_geometry.jpg', '30x30+20+20', 50, 'Letter+43+43'];
+        yield 0 => [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_10_forced.jpg', '10x10!', 10, 'a4'];
+        yield 1 => [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_1000.jpg', '1000x1000', 100, '9x11'];
+        yield 2 => [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_half.jpg', '50%', 50, 'halfletter'];
+        yield 3 => [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_geometry.jpg', '30x30+20+20', 50, 'Letter+43+43'];
     }
 
     public function testWrongExecutable(): void

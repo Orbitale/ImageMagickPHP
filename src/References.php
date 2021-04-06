@@ -193,7 +193,7 @@ final class References
      */
     public function interlace(string $interlaceType): string
     {
-        $interlaceType = \mb_strtolower(\trim($interlaceType));
+        $interlaceType = \strtolower(\trim($interlaceType));
 
         $references = $this->getInterlaceTypesReference();
 
@@ -215,8 +215,8 @@ final class References
             return $threshold;
         }
 
-        if ('%' === \mb_substr($threshold, -1)) {
-            $percentNumber = \mb_substr($threshold, 0, -1);
+        if (\str_ends_with($threshold, '%')) {
+            $percentNumber = \substr($threshold, 0, -1);
             if (\is_numeric($percentNumber)) {
                 return $threshold;
             }
