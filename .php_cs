@@ -39,7 +39,6 @@ return PhpCsFixer\Config::create()
         'heredoc_to_nowdoc'               => true,
         'linebreak_after_opening_tag'     => true,
         'logical_operators'               => true,
-        'mb_str_functions'                => true,
         'native_function_invocation'      => true,
         'no_null_property_initialization' => true,
         'no_php4_constructor'             => true,

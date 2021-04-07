@@ -28,10 +28,10 @@ class AbstractTestCase extends TestCase
         $this->resourcesDir = TEST_RESOURCES_DIR;
     }
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $dir = TEST_RESOURCES_DIR.'/outputs';
-        foreach (\scandir($dir, SCANDIR_SORT_NONE) as $file) {
+        foreach (\scandir($dir, \SCANDIR_SORT_NONE) as $file) {
             if ('.' !== $file && '..' !== $file && '.gitkeep' !== $file) {
                 \unlink($dir.'/'.$file);
             }

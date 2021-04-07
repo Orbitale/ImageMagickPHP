@@ -823,6 +823,7 @@ class GeometryTest extends AbstractTestCase
 
         new Geometry(null, null, null, null, 'invalid_ratio');
     }
+
     public function testInvalidWidthHeightSeparator(): void
     {
         $geometryString = '120+1+1';
@@ -831,7 +832,7 @@ class GeometryTest extends AbstractTestCase
         $this->expectExceptionMessage(\sprintf(
             "The specified geometry (%s) is invalid.\n%s\n"."Please refer to ImageMagick command line documentation about geometry:\nhttp://www.imagemagick.org/script/command-line-processing.php#geometry\n",
             '120+1+1',
-            "When using offsets and only width, you must specify the \"x\" separator like this: 120x+1+1"
+            'When using offsets and only width, you must specify the "x" separator like this: 120x+1+1'
         ));
 
         $geometry = new Geometry($geometryString);
