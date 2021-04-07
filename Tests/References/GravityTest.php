@@ -11,10 +11,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Orbitale\Component\ImageMagick\Tests;
+namespace Orbitale\Component\ImageMagick\Tests\References;
 
 use Orbitale\Component\ImageMagick\Command;
 use Orbitale\Component\ImageMagick\ReferenceClasses\Gravity;
+use Orbitale\Component\ImageMagick\Tests\AbstractTestCase;
 
 class GravityTest extends AbstractTestCase
 {

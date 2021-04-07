@@ -11,23 +11,18 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Orbitale\Component\ImageMagick\Tests;
+namespace Orbitale\Component\ImageMagick\Tests\References;
 
 use Orbitale\Component\ImageMagick\Command;
 use Orbitale\Component\ImageMagick\ReferenceClasses\Geometry;
+use Orbitale\Component\ImageMagick\Tests\AbstractTestCase;
 
 class GeometryTest extends AbstractTestCase
 {
     /**
-     * @param int    $width
-     * @param int    $height
-     * @param int    $x
-     * @param int    $y
-     * @param string $aspectRatio
-     *
      * @dataProvider provideValidGeometries
      */
-    public function testGeometry($width, $height, $x, $y, $aspectRatio): void
+    public function testGeometry(?int $width, ?int $height, ?int $x, ?int $y, ?string $aspectRatio): void
     {
         $geometry = new Geometry($width, $height, $x, $y, $aspectRatio);
 
@@ -333,15 +328,9 @@ class GeometryTest extends AbstractTestCase
     }
 
     /**
-     * @param int    $width
-     * @param int    $height
-     * @param int    $x
-     * @param int    $y
-     * @param string $aspectRatio
-     *
      * @dataProvider provideWrongGeometries
      */
-    public function testWrongGeometry($width, $height, $x, $y, $aspectRatio): void
+    public function testWrongGeometry(?int $width, ?int $height, ?int $x, ?int $y, ?string $aspectRatio): void
     {
         $geometry = new Geometry($width, $height, $x, $y, $aspectRatio);
 
@@ -825,5 +814,27 @@ class GeometryTest extends AbstractTestCase
         yield 461 => [100, 0, 1, 1, '!'];
         yield 462 => [100, 0, 1, 1, '^'];
         yield 463 => [100, 0, 1, 1, '>'];
+    }
+
+    public function testInvalidAspectRatio(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(\sprintf("Invalid aspect ratio value to generate geometry, \"%s\" given.\nAvailable: <, !, ^, >", 'invalid_ratio'));
+
+        new Geometry(null, null, null, null, 'invalid_ratio');
+    }
+    public function testInvalidWidthHeightSeparator(): void
+    {
+        $geometryString = '120+1+1';
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(\sprintf(
+            "The specified geometry (%s) is invalid.\n%s\n"."Please refer to ImageMagick command line documentation about geometry:\nhttp://www.imagemagick.org/script/command-line-processing.php#geometry\n",
+            '120+1+1',
+            "When using offsets and only width, you must specify the \"x\" separator like this: 120x+1+1"
+        ));
+
+        $geometry = new Geometry($geometryString);
+        $geometry->validate();
     }
 }
