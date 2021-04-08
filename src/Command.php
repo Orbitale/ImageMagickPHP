@@ -85,11 +85,11 @@ class Command
         try {
             $code = $process->run();
         } catch (\Throwable $e) {
-            throw new \RuntimeException('Could not check ImageMagick version', 1, $e);
+            throw new MagickBinaryNotFoundException('Could not check ImageMagick version', 1, $e);
         }
 
         if (0 !== $code || !$process->isSuccessful()) {
-            throw new \InvalidArgumentException(\sprintf("ImageMagick does not seem to work well, the test command resulted in an error.\n"."Execution returned message: \"{$process->getExitCodeText()}\"\n"."To solve this issue, please run this command and check your error messages to see if ImageMagick was correctly installed:\n%s", $magickBinaryPath.' -version'));
+            throw new MagickBinaryNotFoundException(\sprintf("ImageMagick does not seem to work well, the test command resulted in an error.\n"."Execution returned message: \"{$process->getExitCodeText()}\"\n"."To solve this issue, please run this command and check your error messages to see if ImageMagick was correctly installed:\n%s", $magickBinaryPath.' -version'));
         }
 
         $this->ref = new References();
@@ -271,6 +271,13 @@ class Command
                 $output .= $buffer;
             }
         });
+
+        if ($code !== 0) {
+            echo "\n>>> Command-line: « {$process->getCommandLine()} » \n";
+            echo "\n>>> Output:\n>{$output}\n";
+            echo "\n>>> Error:\n>{$error}\n";
+        }
+
 
         return new CommandResponse($process, $code, $output, $error);
     }

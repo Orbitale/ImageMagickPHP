@@ -18,18 +18,6 @@ jobs:
         steps:
             - uses: actions/checkout@v2
 
-            - name: Install ImageMagick
-              run: |
-                  sudo apt-get update
-                  sudo apt-get upgrade -y libjpeg-dev libpng-dev libgif-dev make wget
-                  wget https://www.imagemagick.org/download/ImageMagick.tar.gz
-                  tar xvzf ImageMagick.tar.gz
-                  cd ImageMagick-*
-                  ./configure
-                  make
-                  sudo make install
-                  sudo ldconfig /usr/local/lib
-
             - uses: shivammathur/setup-php@v2
               with:
                   php-version: "${{ matrix.php-version }}"
@@ -46,8 +34,10 @@ jobs:
                   key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
                   restore-keys: ${{ runner.os }}-composer-
 
-            - run: composer install
+            - name: Setup
+              run: |
+                  make install
 
-            - run: |
-                # export IMAGEMAGICK_PATH="docker run --rm --volume `pwd`:`pwd` --workdir=`pwd` --entrypoint="`pwd`/docker_entrypoint.sh" --user=$UID:$GID dpokidov/imagemagick:latest magick"
-                vendor/bin/phpunit
+            - name: Test
+              run: |
+                  make test

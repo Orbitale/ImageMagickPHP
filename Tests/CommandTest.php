@@ -23,25 +23,18 @@ class CommandTest extends AbstractTestCase
      */
     public function testWrongConvertDirs($path, $expectedMessage, $expectedException): void
     {
-        $exception = '';
-        $exceptionClass = '';
-
         $path = \str_replace('\\', '/', $path);
         $expectedMessage = \str_replace('\\', '/', $expectedMessage);
-        try {
-            new Command($path);
-        } catch (\Exception $e) {
-            $exception = $e->getMessage();
-            $exceptionClass = \get_class($e);
-        }
-        static::assertStringContainsString($expectedMessage, $exception);
-        static::assertEquals($expectedException, $exceptionClass);
+        $this->expectExceptionMessage($expectedMessage);
+        $this->expectException($expectedException);
+
+        new Command($path);
     }
 
     public function provideWrongConvertDirs(): ?\Generator
     {
-        yield ['/this/is/a/dummy/dir', 'The specified path (/this/is/a/dummy/dir) is not a file.', MagickBinaryNotFoundException::class];
-        yield ['./', 'The specified path (.) is not a file.', MagickBinaryNotFoundException::class];
+        yield ['/this/is/a/dummy/dir', "ImageMagick does not seem to work well, the test command resulted in an error.\nExecution returned message: \"Command not found\"\nTo solve this issue, please run this command and check your error messages to see if ImageMagick was correctly installed:\n/this/is/a/dummy/dir -version", MagickBinaryNotFoundException::class];
+        yield ['./', "The specified path (\"ImageMagick does not seem to work well, the test command resulted in an error.\nExecution returned message: \"Misuse of shell builtins\"\nTo solve this issue, please run this command and check your error messages to see if ImageMagick was correctly installed:\n. -version\") is not a file.\nYou must set the \"magickBinaryPath\" parameter as the main \"magick\" binary installed by ImageMagick.", MagickBinaryNotFoundException::class];
     }
 
     /**
