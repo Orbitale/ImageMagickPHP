@@ -1,3 +1,10 @@
+# [v3.2.0](https://github.com/Orbitale/ImageMagickPHP/releases/tag/v3.2.0) - 08 Apr 2021
+
+* Implement the `-page` option ([@pbories](https://github.com/pbories))
+* Refactor the CI setup to use ImageMagick Docker image
+* Don't make `Command` be so strict about ImageMagick binaries when resolving the `convert` binary.<br>
+  This is important because it means that now you can use a compound binary, such as using `docker run ...` or `docker exec ...`.
+
 # [v3.1.1](https://github.com/Orbitale/ImageMagickPHP/releases/tag/v3.1.1) - 01 Feb 2021
 
 ## Fixes
