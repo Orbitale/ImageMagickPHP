@@ -71,7 +71,7 @@ class InterlaceTypesTest extends TestCase
             $msg = $e->getMessage();
         }
         static::assertStringContainsString(
-            \sprintf('The specified interlace type (%s) is invalid', \mb_strtolower(\trim($interlaceType))),
+            \sprintf('The specified interlace type (%s) is invalid', \strtolower(\trim($interlaceType))),
             $msg
         );
     }

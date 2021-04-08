@@ -20,7 +20,7 @@ class MagickBinaryNotFoundException extends Exception
     public function __construct(string $magickBinaryPath)
     {
         parent::__construct(\sprintf(
-            'The specified path (%s) is not a file.'."\n".
+            'The specified path ("%s") is not a file.'."\n".
             'You must set the "magickBinaryPath" parameter as the main "magick" binary installed by ImageMagick.',
             $magickBinaryPath
         ));

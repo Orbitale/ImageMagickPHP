@@ -80,16 +80,16 @@ class Command
     {
         $magickBinaryPath = self::findMagickBinaryPath($magickBinaryPath);
 
-        $process = new Process([$magickBinaryPath, '-version']);
+        $process = Process::fromShellCommandline($magickBinaryPath.' -version');
 
         try {
             $code = $process->run();
         } catch (\Throwable $e) {
-            throw new \RuntimeException('Could not check ImageMagick version', 1, $e);
+            throw new MagickBinaryNotFoundException('Could not check ImageMagick version', 1, $e);
         }
 
         if (0 !== $code || !$process->isSuccessful()) {
-            throw new \InvalidArgumentException(\sprintf("ImageMagick does not seem to work well, the test command resulted in an error.\n"."Execution returned message: \"{$process->getExitCodeText()}\"\n"."To solve this issue, please run this command and check your error messages to see if ImageMagick was correctly installed:\n%s", $magickBinaryPath.' -version'));
+            throw new MagickBinaryNotFoundException(\sprintf("ImageMagick does not seem to work well, the test command resulted in an error.\n"."Execution returned message: \"{$process->getExitCodeText()}\"\n"."To solve this issue, please run this command and check your error messages to see if ImageMagick was correctly installed:\n%s", $magickBinaryPath.' -version'));
         }
 
         $this->ref = new References();
@@ -113,16 +113,6 @@ class Command
 
         if (!$magickBinaryPath) {
             throw new MagickBinaryNotFoundException((string) $magickBinaryPath);
-        }
-
-        // Add a proper directory separator at the end if path is not empty.
-        // If it's empty, then it's set in the global path.
-        if (!\is_file($magickBinaryPath)) {
-            throw new MagickBinaryNotFoundException($magickBinaryPath);
-        }
-
-        if (!\is_executable($magickBinaryPath)) {
-            throw new \InvalidArgumentException(\sprintf('The specified script (%s) is not executable.', $magickBinaryPath));
         }
 
         return $magickBinaryPath;
@@ -281,6 +271,13 @@ class Command
                 $output .= $buffer;
             }
         });
+
+        if ($code !== 0) {
+            echo "\n>>> Command-line: « {$process->getCommandLine()} » \n";
+            echo "\n>>> Output:\n>{$output}\n";
+            echo "\n>>> Error:\n>{$error}\n";
+        }
+
 
         return new CommandResponse($process, $code, $output, $error);
     }
@@ -463,6 +460,19 @@ class Command
     {
         $this->command[] = '-quality';
         $this->command[] = (string) $quality;
+
+        return $this;
+    }
+
+    /**
+     * @param string|Geometry $page
+     *
+     * @see http://imagemagick.org/script/command-line-options.php#page
+     */
+    public function page($page): self
+    {
+        $this->command[] = '-page';
+        $this->command[] = '"'.$this->ref->page($page).'"';
 
         return $this;
     }
@@ -662,7 +672,7 @@ If you are certain of what you are doing, you can silence this error using the "
 If the option you need is not supported, please open an issue or a pull-request at https://github.com/Orbitale/ImageMagickPHP in order for us to implement the option you need! 😃
 MSG
 ;
-        @\trigger_error($msg, E_STRICT);
+        @\trigger_error($msg, \E_STRICT);
 
         if ($append) {
             $this->commandToAppend[] = $command;

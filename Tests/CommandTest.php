@@ -23,25 +23,18 @@ class CommandTest extends AbstractTestCase
      */
     public function testWrongConvertDirs($path, $expectedMessage, $expectedException): void
     {
-        $exception = '';
-        $exceptionClass = '';
-
         $path = \str_replace('\\', '/', $path);
         $expectedMessage = \str_replace('\\', '/', $expectedMessage);
-        try {
-            new Command($path);
-        } catch (\Exception $e) {
-            $exception = $e->getMessage();
-            $exceptionClass = \get_class($e);
-        }
-        static::assertStringContainsString($expectedMessage, $exception);
-        static::assertEquals($expectedException, $exceptionClass);
+        $this->expectExceptionMessage($expectedMessage);
+        $this->expectException($expectedException);
+
+        new Command($path);
     }
 
     public function provideWrongConvertDirs(): ?\Generator
     {
-        yield ['/this/is/a/dummy/dir', 'The specified path (/this/is/a/dummy/dir) is not a file.', MagickBinaryNotFoundException::class];
-        yield ['./', 'The specified path (.) is not a file.', MagickBinaryNotFoundException::class];
+        yield ['/this/is/a/dummy/dir', "ImageMagick does not seem to work well, the test command resulted in an error.\nExecution returned message: \"Command not found\"\nTo solve this issue, please run this command and check your error messages to see if ImageMagick was correctly installed:\n/this/is/a/dummy/dir -version", MagickBinaryNotFoundException::class];
+        yield ['./', "The specified path (\"ImageMagick does not seem to work well, the test command resulted in an error.\nExecution returned message: \"Misuse of shell builtins\"\nTo solve this issue, please run this command and check your error messages to see if ImageMagick was correctly installed:\n. -version\") is not a file.\nYou must set the \"magickBinaryPath\" parameter as the main \"magick\" binary installed by ImageMagick.", MagickBinaryNotFoundException::class];
     }
 
     /**
@@ -324,7 +317,7 @@ class CommandTest extends AbstractTestCase
     /**
      * @dataProvider provideTestCommandString
      */
-    public function testCommandString($source, $output, $geometry, $quality): void
+    public function testCommandString($source, $output, $geometry, $quality, $format): void
     {
         $command = new Command(IMAGEMAGICK_DIR);
 
@@ -332,6 +325,7 @@ class CommandTest extends AbstractTestCase
             ->convert($source)
             ->thumbnail($geometry)
             ->quality($quality)
+            ->page($format)
             ->file($output, false)
             ->getCommand()
         ;
@@ -340,6 +334,7 @@ class CommandTest extends AbstractTestCase
                     ' '.$source.
                     ' -thumbnail "'.$geometry.'"'.
                     ' -quality '.$quality.
+                    ' -page "'.$format.'"'.
                     ' '.$output;
 
         $expected = \str_replace('\\', '/', $expected);
@@ -349,10 +344,10 @@ class CommandTest extends AbstractTestCase
 
     public function provideTestCommandString(): ?\Generator
     {
-        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_10_forced.jpg', '10x10!', 10];
-        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_1000.jpg', '1000x1000', 100];
-        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_half.jpg', '50%', 50];
-        yield [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_geometry.jpg', '30x30+20+20', 50];
+        yield 0 => [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_10_forced.jpg', '10x10!', 10, 'a4'];
+        yield 1 => [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_1000.jpg', '1000x1000', 100, '9x11'];
+        yield 2 => [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_half.jpg', '50%', 50, 'halfletter'];
+        yield 3 => [$this->resourcesDir.'/moon_180.jpg', $this->resourcesDir.'/outputs/moon_geometry.jpg', '30x30+20+20', 50, 'Letter+43+43'];
     }
 
     public function testWrongExecutable(): void
