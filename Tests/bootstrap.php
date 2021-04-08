@@ -27,13 +27,13 @@ foreach (glob(TEST_RESOURCES_DIR.'/outputs/*', GLOB_NOSORT) as $file) {
 
 // Check if ImageMagick is installed. Instead, we cannot run tests suite.
 $possibleDirectories = [
+    getenv('IMAGEMAGICK_PATH') ?: null,
     null,// In the PATH variable, default behavior
     '/usr/bin/magick',
     '/usr/local/bin/magick',
-    getenv('IMAGEMAGICK_PATH') ?: null, // Fall back again to PATH
 ];
 foreach ($possibleDirectories as $path) {
-    echo 'Check "'.$path.'" binary'."\n";
+    echo 'Check for ImageMagick with path "'.$path."\"\n";
     try {
         $path = Command::findMagickBinaryPath($path);
         exec($path.' -version', $o, $code);
@@ -42,6 +42,7 @@ foreach ($possibleDirectories as $path) {
             break;
         }
     } catch (MagickBinaryNotFoundException $e) {
+        echo 'Did not find ImageMagick with path "'.$path.'". '.$e->getMessage()."\n";
     }
 }
 
@@ -53,5 +54,5 @@ if (!defined('IMAGEMAGICK_DIR')) {
     );
 }
 
-echo 'Analyzed ImageMagick directory: '.IMAGEMAGICK_DIR."\n";
+echo 'ImageMagick resolved to: "'.IMAGEMAGICK_DIR."\"\n";
 system(IMAGEMAGICK_DIR.' -version');

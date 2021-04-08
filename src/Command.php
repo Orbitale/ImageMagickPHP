@@ -80,7 +80,7 @@ class Command
     {
         $magickBinaryPath = self::findMagickBinaryPath($magickBinaryPath);
 
-        $process = new Process([$magickBinaryPath, '-version']);
+        $process = Process::fromShellCommandline($magickBinaryPath.' -version');
 
         try {
             $code = $process->run();
@@ -113,16 +113,6 @@ class Command
 
         if (!$magickBinaryPath) {
             throw new MagickBinaryNotFoundException((string) $magickBinaryPath);
-        }
-
-        // Add a proper directory separator at the end if path is not empty.
-        // If it's empty, then it's set in the global path.
-        if (!\is_file($magickBinaryPath)) {
-            throw new MagickBinaryNotFoundException($magickBinaryPath);
-        }
-
-        if (!\is_executable($magickBinaryPath)) {
-            throw new \InvalidArgumentException(\sprintf('The specified script (%s) is not executable.', $magickBinaryPath));
         }
 
         return $magickBinaryPath;
