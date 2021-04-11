@@ -463,7 +463,17 @@ class Command
 
         return $this;
     }
-
+    /**
+     * @see http://imagemagick.org/script/command-line-options.php#density
+     */
+    public function density(int $density): self
+    {
+        $densityAry = [];
+        $densityAry[] = '-density';
+        $densityAry[] = (string) $density;
+        array_splice($this->command,2,0,$densityAry); //density option only works when it's on second place in command (tested for pdf to image)
+        return $this;
+    }
     /**
      * @param string|Geometry $page
      *
