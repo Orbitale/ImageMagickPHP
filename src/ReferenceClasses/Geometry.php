@@ -19,7 +19,8 @@ namespace Orbitale\Component\ImageMagick\ReferenceClasses;
  *
  * How to build the monstruous regexp? Check the gist link.
  *
- * @see https://gist.github.com/Pierstoval/eac8d182d2c51c93202f
+ * @see http://www.orbitale.io/2016/03/25/gist-regular-expression-for-imagemagick-geometry.html
+ *
  * @see http://www.imagemagick.org/script/command-line-processing.php#geometry
  */
 class Geometry
