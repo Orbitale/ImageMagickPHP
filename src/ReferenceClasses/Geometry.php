@@ -102,18 +102,11 @@ class Geometry
         $this->value = $geometry;
     }
 
-    public function __toString(): string
-    {
-        return (string) $this->value;
-    }
-
     public function validate(): string
     {
         $errors = [];
 
-        if (!\preg_match(static::REGEX_VALIDATE, $this->value, $matches)) {
-            $errors[] = 'Invalid regexp.';
-        }
+        \preg_match(static::REGEX_VALIDATE, $this->value, $matches);
 
         $w = isset($matches['w']) && '' !== $matches['w'] ? $matches['w'] : null;
         $h = isset($matches['h']) && '' !== $matches['h'] ? $matches['h'] : null;
