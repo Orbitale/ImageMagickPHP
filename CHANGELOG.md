@@ -1,3 +1,9 @@
+# [v3.2.1](https://github.com/Orbitale/ImageMagickPHP/releases/tag/v3.2.1) - 02 Jul 2021
+
+* Add tests for the `-threshold` option.
+* Removed useless method `__toString()` in the Geometry class.
+* Remove a check to the regex in the Geometry class that was always returning false.
+
 # [v3.2.0](https://github.com/Orbitale/ImageMagickPHP/releases/tag/v3.2.0) - 08 Apr 2021
 
 * Implement the `-page` option ([@pbories](https://github.com/pbories))
