@@ -1,6 +1,7 @@
 SHELL := /bin/bash
 
 IMAGEMAGICK_DOCKER_IMAGE = orbitale-imphp
+PHP_BIN = php
 
 # Helper vars
 _TITLE := "\033[32m[%s]\033[0m %s\n"
@@ -25,7 +26,7 @@ stop: ## Stop testing Docker image
 
 test: start ## Start Docker image for testing
 	export IMAGEMAGICK_PATH="docker exec $(IMAGEMAGICK_DOCKER_IMAGE) `pwd`/docker_entrypoint.sh magick" && \
-	vendor/bin/phpunit
+	$(PHP_BIN) vendor/bin/phpunit
 	$(MAKE) stop
 .PHONY: test
 
@@ -44,6 +45,6 @@ imagemagick-docker:
 		--workdir=`pwd` \
 		--entrypoint="`pwd`/docker_entrypoint.sh" \
 		dpokidov/imagemagick:latest \
-		sleep 99999 \
+		sleep 9999999 \
 		>/dev/null
 .PHONY: imagemagick-docker

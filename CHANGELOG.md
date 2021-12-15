@@ -1,3 +1,9 @@
+# [v3.3.0](https://github.com/Orbitale/ImageMagickPHP/releases/tag/v3.3.0) - 15 Dec 2021
+
+* Drop support for Symfony 4 (Please upgrade 😉)
+* Change minimum required Symfony version to 5.3 instead of 4.0|5.0
+* Test the package with more Symfony & PHP versions
+
 # [v3.2.1](https://github.com/Orbitale/ImageMagickPHP/releases/tag/v3.2.1) - 02 Jul 2021
 
 * Add tests for the `-threshold` option.

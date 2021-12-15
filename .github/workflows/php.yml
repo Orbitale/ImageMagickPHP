@@ -4,17 +4,31 @@ on: [push]
 
 jobs:
     build-test:
-        runs-on: ${{ matrix.operating-system }}
+        runs-on: ubuntu-latest
 
         strategy:
             matrix:
-                operating-system: [ ubuntu-latest ]
                 php-version:
                     - '7.2'
                     - '7.3'
                     - '7.4'
                     - '8.0'
-        name: PHP ${{ matrix.php-version }} on ${{ matrix.operating-system }}
+                    - '8.1'
+
+                symfony-version:
+                    - '5.3'
+                    - '5.4'
+                    - '6.0'
+
+                exclude:
+                    - php-version: 7.2
+                      symfony-version: 6.0
+                    - php-version: 7.3
+                      symfony-version: 6.0
+                    - php-version: 7.4
+                      symfony-version: 6.0
+
+        name: PHP ${{ matrix.php-version }} and Symfony ${{ matrix.symfony-version }}
         steps:
             - uses: actions/checkout@v2
 
@@ -36,7 +50,8 @@ jobs:
 
             - name: Setup
               run: |
-                  make install
+                  sed -i composer.json -e 's/\^5\.3\(.[0-9]\+\)\?[|]\^6\.0/${{ matrix.symfony-version }}.*/g'
+                  make install start
 
             - name: Test
               run: |
