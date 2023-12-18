@@ -1,3 +1,7 @@
+# [v3.3.1](https://github.com/Orbitale/ImageMagickPHP/releases/tag/v3.3.1) - 18 Dec 2023
+
+* Add support for Symfony 7, PHP 8.2 and 8.3 ([@derrabus](https://github.com/derrabus))
+
 # [v3.3.0](https://github.com/Orbitale/ImageMagickPHP/releases/tag/v3.3.0) - 15 Dec 2021
 
 * Drop support for Symfony 4 (Please upgrade 😉)
