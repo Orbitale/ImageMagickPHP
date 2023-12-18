@@ -1,9 +1,6 @@
 ImageMagickPHP
 ===============
 
-[![Build Status](https://travis-ci.org/Orbitale/ImageMagickPHP.png)](https://travis-ci.org/Orbitale/ImageMagickPHP)
-[![Coverage Status](https://coveralls.io/repos/Orbitale/ImageMagickPHP/badge.png)](https://coveralls.io/r/Orbitale/ImageMagickPHP)
-
 An ImageMagick "exec" component for PHP apps.
 
 Installation
