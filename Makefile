@@ -16,7 +16,7 @@ help: ## Show this help.
 install: vendor imagemagick-docker ## Install composer dependencies and Docker image for testing
 .PHONY: install
 
-start: imagemagick-docker ## Start Docker image for testing
+start: ## Start Docker image for testing
 	@docker start $(IMAGEMAGICK_DOCKER_IMAGE)
 .PHONY: start
 
