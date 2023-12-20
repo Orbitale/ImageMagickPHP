@@ -672,7 +672,7 @@ If you are certain of what you are doing, you can silence this error using the "
 If the option you need is not supported, please open an issue or a pull-request at https://github.com/Orbitale/ImageMagickPHP in order for us to implement the option you need! 😃
 MSG
 ;
-        @\trigger_error($msg, \E_USER_NOTICE);
+        @\trigger_error($msg, \E_USER_WARNING);
 
         if ($append) {
             $this->commandToAppend[] = $command;
