@@ -1,3 +1,7 @@
+# [v3.3.3](https://github.com/Orbitale/ImageMagickPHP/releases/tag/v3.3.3) - 10 Jun 2024
+
+* Make sure latest versions of Symfony and PHP are compatible
+
 # [v3.3.2](https://github.com/Orbitale/ImageMagickPHP/releases/tag/v3.3.2) - 21 Dec 2023
 
 * Don't call trigger_error with E_STRICT ([@koenig-k](https://github.com/koenig-k))
