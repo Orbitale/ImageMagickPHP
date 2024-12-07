@@ -126,6 +126,9 @@ class Command
             $path = \rtrim($path, '/');
         }
 
+        $path = \trim($path, '"');
+        $path = '"' . $path . '"';
+
         return $path;
     }
 

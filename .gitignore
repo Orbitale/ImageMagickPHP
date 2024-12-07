@@ -12,3 +12,5 @@ phpunit.xml
 
 ImageMagick*.tar.gz
 /ImageMagick-*/
+
+.idea
