@@ -126,8 +126,7 @@ class Command
             $path = \rtrim($path, '/');
         }
 
-        $path = \trim($path, '"');
-        $path = '"' . $path . '"';
+        $path = \escapeshellarg($path);
 
         return $path;
     }
