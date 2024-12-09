@@ -1,3 +1,7 @@
+# [v3.3.4](https://github.com/Orbitale/ImageMagickPHP/releases/tag/v3.3.4) - 9 Dec 2024
+
+* Fix: use `escapeshellarg()` on paths to support names containing spaces
+
 # [v3.3.3](https://github.com/Orbitale/ImageMagickPHP/releases/tag/v3.3.3) - 10 Jun 2024
 
 * Make sure latest versions of Symfony and PHP are compatible
