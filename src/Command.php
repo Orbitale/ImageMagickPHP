@@ -105,7 +105,7 @@ class Command
     public static function findMagickBinaryPath(?string $magickBinaryPath): string
     {
         // Delete trimming directory separator
-        $magickBinaryPath = self::cleanPath((string) $magickBinaryPath, true);
+        $magickBinaryPath = self::cleanPath((string) $magickBinaryPath, true, false);
 
         if (!$magickBinaryPath) {
             $magickBinaryPath = (new ExecutableFinder())->find('magick');
@@ -118,7 +118,7 @@ class Command
         return $magickBinaryPath;
     }
 
-    private static function cleanPath(string $path, bool $rtrim = false): string
+    private static function cleanPath(string $path, bool $rtrim = false, bool $escape = true): string
     {
         $path = \str_replace('\\', '/', $path);
 
@@ -126,7 +126,9 @@ class Command
             $path = \rtrim($path, '/');
         }
 
-        $path = \escapeshellarg($path);
+        if ($escape) {
+            $path = \escapeshellarg($path);
+        }
 
         return $path;
     }

@@ -331,11 +331,11 @@ class CommandTest extends AbstractTestCase
         ;
 
         $expected = \implode(' ', $command->getExecutable('convert')).
-                    ' '.$source.
+                    ' \''.$source.'\''.
                     ' -thumbnail "'.$geometry.'"'.
                     ' -quality '.$quality.
                     ' -page "'.$format.'"'.
-                    ' '.$output;
+                    ' \''.$output.'\'';
 
         $expected = \str_replace('\\', '/', $expected);
 
