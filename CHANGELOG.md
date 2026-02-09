@@ -1,3 +1,7 @@
+# [v3.3.5](https://github.com/Orbitale/ImageMagickPHP/releases/tag/v3.3.5) - 09 Feb 2026
+
+* Add support for Symfony up to 8.0 and PHP up to 8.5 ([@SchmidtClaudia](https://github.com/SchmidtClaudia))
+
 # [v3.3.4](https://github.com/Orbitale/ImageMagickPHP/releases/tag/v3.3.4) - 9 Dec 2024
 
 * Fix: use `escapeshellarg()` on paths to support names containing spaces
